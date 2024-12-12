@@ -292,7 +292,7 @@ const UserManagement = () => {
   const [roles, setRoles] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(8);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
   const [formErrors, setFormErrors] = useState({
     fullname: "",
     contactNumber: "",
