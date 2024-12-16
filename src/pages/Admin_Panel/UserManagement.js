@@ -468,7 +468,7 @@ const UserManagement = () => {
               <TableRow key={user._id}sx={{
                 '&:hover': {
                   backgroundColor: 'rgba(119, 119, 119, 0.1)',
-                  boxShadow: '0 0px 0px rgba(212, 208, 208, 0.2)', 
+                  boxShadow: '0 0px 0px rgba(0, 0, 0, 0.2)', 
                 },
               }}>
                 <TableCell>{user.fullname}</TableCell>
