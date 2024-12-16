@@ -17,24 +17,25 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  Button,
+  Box,
 } from "@mui/material";
 import { toast } from "react-toastify";
 import VisibilityIcon from "@mui/icons-material/Visibility";
-import config from "../../config/ServiceApi";
-import { Button } from "@mui/material";
-
+import api from '../../config/ServiceApi';
 const LeaseTable = () => {
   const [leases, setLeases] = useState([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [searchQuery, setSearchQuery] = useState("");
-  const [openModal, setOpenModal] = useState(false); // State for opening modal
-  const [selectedLease, setSelectedLease] = useState(null); // State for selected lease information
+  const [openModal, setOpenModal] = useState(false);
+  const [selectedLease, setSelectedLease] = useState(null);
+  const [totalLeases, setTotalLeases] = useState(0);
 
-  // Fetch data
   useEffect(() => {
     const fetchLeases = async () => {
+      setLoading(true);
       try {
         const token = localStorage.getItem("authToken");
         if (!token) {
@@ -43,15 +44,20 @@ const LeaseTable = () => {
         }
 
         const response = await axios.get(
-          `${config.baseURL}${config.leaseExpred}`,
+          `${api.baseURL}${api.leaseExpred}`,
           {
+            params: {
+              page: page + 1,
+              limit: rowsPerPage,
+            },
             headers: {
               Authorization: `Bearer ${token}`,
             },
           }
         );
 
-        setLeases(response.data);
+        setLeases(response.data.leases);
+        setTotalLeases(response.data.totalLeases);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching leases:", error);
@@ -61,25 +67,8 @@ const LeaseTable = () => {
     };
 
     fetchLeases();
-  }, []);
+  }, [page, rowsPerPage]);
 
-  // Handle page change
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  // Handle rows per page change
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
-
-  // Handle search query change
-  const handleSearchChange = (event) => {
-    setSearchQuery(event.target.value);
-  };
-
-  // Filter leases based on the search query for tenant name and property name
   const filteredLeases = leases.filter((lease) => {
     const tenantName = lease.tenantInformation?.fullname.toLowerCase() || "";
     const propertyName = lease.propertyDetails?.name.toLowerCase() || "";
@@ -87,15 +76,22 @@ const LeaseTable = () => {
     return tenantName.includes(searchTerm) || propertyName.includes(searchTerm);
   });
 
-  // Get the data for the current page
-  const currentLeases = filteredLeases.slice(
-    page * rowsPerPage,
-    page * rowsPerPage + rowsPerPage
-  );
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
 
-  // Handle modal open and close
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
+  const handleSearchChange = (event) => {
+    setSearchQuery(event.target.value);
+    setPage(0);
+  };
+
   const handleOpenModal = (lease) => {
-    setSelectedLease(lease); // Set the selected lease data
+    setSelectedLease(lease);
     setOpenModal(true);
   };
 
@@ -109,7 +105,6 @@ const LeaseTable = () => {
       <Typography variant="h4" mt={3} align="center" gutterBottom>
         Lease Information
       </Typography>
-
       <div
         style={{ display: "flex", justifyContent: "end", marginBottom: "20px" }}
       >
@@ -147,12 +142,6 @@ const LeaseTable = () => {
                   <b>Contact Number</b>
                 </TableCell>
                 <TableCell>
-                  <b>Lease Start Date</b>
-                </TableCell>
-                <TableCell>
-                  <b>Lease End Date</b>
-                </TableCell>
-                <TableCell>
                   <b>Property Name</b>
                 </TableCell>
                 <TableCell>
@@ -174,14 +163,19 @@ const LeaseTable = () => {
                   <b>Landlord Contact</b>
                 </TableCell>
                 <TableCell>
+                  <b>Lease Start Date</b>
+                </TableCell>
+                <TableCell>
+                  <b>Lease End Date</b>
+                </TableCell>
+                <TableCell>
                   <b>Action</b>
-                </TableCell>{" "}
-                {/* New Action column */}
+                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {currentLeases.length > 0 ? (
-                currentLeases.map((lease, index) => (
+              {filteredLeases.length > 0 ? (
+                filteredLeases.map((lease, index) => (
                   <TableRow key={index}>
                     <TableCell>
                       {lease.tenantInformation?.fullname || "N/A"}
@@ -192,12 +186,7 @@ const LeaseTable = () => {
                     <TableCell>
                       {lease.tenantInformation?.contactNumber || "N/A"}
                     </TableCell>
-                    <TableCell>
-                      {new Date(lease.leaseStartDate).toLocaleDateString()}
-                    </TableCell>
-                    <TableCell>
-                      {new Date(lease.leaseEndDate).toLocaleDateString()}
-                    </TableCell>
+                  
                     <TableCell>
                       {lease.propertyDetails?.name || "N/A"}
                     </TableCell>
@@ -220,6 +209,12 @@ const LeaseTable = () => {
                       {lease.landlordContactInformation || "N/A"}
                     </TableCell>
                     <TableCell>
+                      {new Date(lease.leaseStartDate).toLocaleDateString()}
+                    </TableCell>
+                    <TableCell>
+                      {new Date(lease.leaseEndDate).toLocaleDateString()}
+                    </TableCell>
+                    <TableCell>
                       <IconButton onClick={() => handleOpenModal(lease)}>
                         <VisibilityIcon sx={{ color: "green" }} />
                       </IconButton>
@@ -238,67 +233,100 @@ const LeaseTable = () => {
         </TableContainer>
       )}
 
-      <TablePagination
-        rowsPerPageOptions={[5, 10, 25]}
-        component="div"
-        count={filteredLeases.length}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-      />
+      <Box display="flex" justifyContent="end" alignItems="end" mt={2}>
+        <Button onClick={() => setPage(0)} disabled={page === 0}>
+          {"<<"}
+        </Button>
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 25]}
+          component="div"
+          count={totalLeases}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
+        <Button
+          onClick={() => setPage(Math.floor(totalLeases / rowsPerPage))}
+          disabled={page === Math.floor(totalLeases / rowsPerPage)}
+        >
+          {">>"}
+        </Button>
+      </Box>
 
-      {/* Modal for viewing lease information */}
       <Dialog open={openModal} onClose={handleCloseModal} maxWidth="md">
         <DialogTitle>Lease Information</DialogTitle>
         <DialogContent dividers>
           {selectedLease ? (
             <div style={{ marginBottom: "20px" }}>
-              <Typography variant="h6">
-                Tenant Name:{" "}
-                {selectedLease.tenantInformation?.fullname || "N/A"}
-              </Typography>
-              <Typography>
-                Email: {selectedLease.tenantInformation?.email || "N/A"}
-              </Typography>
-              <Typography>
-                Contact Number:{" "}
-                {selectedLease.tenantInformation?.contactNumber || "N/A"}
-              </Typography>
-              <Typography>
-                Lease Start Date:{" "}
-                {new Date(selectedLease.leaseStartDate).toLocaleDateString()}
-              </Typography>
-              <Typography>
-                Lease End Date:{" "}
-                {new Date(selectedLease.leaseEndDate).toLocaleDateString()}
-              </Typography>
-              <Typography>
-                Property Name: {selectedLease.propertyDetails?.name || "N/A"}
-              </Typography>
-              <Typography>
-                Property Address:{" "}
-                {selectedLease.propertyDetails?.address || "N/A"}
-              </Typography>
-              <Typography>
-                Square Footage:{" "}
-                {selectedLease.propertyDetails?.squareFootage || "N/A"}
-              </Typography>
-              <Typography>
-                Rent: {selectedLease.propertyDetails?.rent || "N/A"}
-              </Typography>
-              <Typography>
-                Security Deposit:{" "}
-                {selectedLease.propertyDetails?.securityDeposit || "N/A"}
-              </Typography>
-              <Typography>
-                Payment Due Date:{" "}
-                {new Date(selectedLease.paymentDueDate).toLocaleDateString()}
-              </Typography>
-              <Typography>
-                Landlord Contact:{" "}
-                {selectedLease.landlordContactInformation || "N/A"}
-              </Typography>
+              {[
+                {
+                  label: "Tenant Name",
+                  value: selectedLease.tenantInformation?.fullname || "N/A",
+                },
+                {
+                  label: "Email",
+                  value: selectedLease.tenantInformation?.email || "N/A",
+                },
+                {
+                  label: "Contact Number",
+                  value:
+                    selectedLease.tenantInformation?.contactNumber || "N/A",
+                },
+               
+                {
+                  label: "Property Name",
+                  value: selectedLease.propertyDetails?.name || "N/A",
+                },
+                {
+                  label: "Property Address",
+                  value: selectedLease.propertyDetails?.address || "N/A",
+                },
+                {
+                  label: "Square Footage",
+                  value: selectedLease.propertyDetails?.squareFootage || "N/A",
+                },
+                {
+                  label: "Rent",
+                  value: selectedLease.propertyDetails?.rent || "N/A",
+                },
+                {
+                  label: "Security Deposit",
+                  value:
+                    selectedLease.propertyDetails?.securityDeposit || "N/A",
+                },
+                {
+                  label: "Payment Due Date",
+                  value: new Date(
+                    selectedLease.paymentDueDate
+                  ).toLocaleDateString(),
+                },
+                {
+                  label: "Landlord Contact",
+                  value: selectedLease.landlordContactInformation || "N/A",
+                },
+                {
+                  label: "Lease Start Date",
+                  value: new Date(
+                    selectedLease.leaseStartDate
+                  ).toLocaleDateString(),
+                },
+                {
+                  label: "Lease End Date",
+                  value: new Date(
+                    selectedLease.leaseEndDate
+                  ).toLocaleDateString(),
+                },
+              ].map((item, index) => (
+                <Typography
+                  key={index}
+                  variant="body1"
+                  style={{ marginBottom: "10px" }}
+                >
+                  <strong>{item.label}: </strong>
+                  {item.value}
+                </Typography>
+              ))}
             </div>
           ) : (
             <Typography>No lease details available</Typography>

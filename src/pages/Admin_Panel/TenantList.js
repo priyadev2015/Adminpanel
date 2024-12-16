@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
-import api from '../../config/ServiceApi'; // Assuming `api` is in the same folder
+import api from '../../config/ServiceApi';
 import {
   Table,
   TableHead,
@@ -20,9 +20,9 @@ const TenantList = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Pagination state
+  
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5); // Default rows per page
+  const [rowsPerPage, setRowsPerPage] = useState(5);
 
   useEffect(() => {
     const fetchTenantList = async () => {
@@ -45,7 +45,7 @@ const TenantList = () => {
         }
 
         const data = await response.json();
-        setTenantList(data.tenantList); // Assuming API returns data with tenantList key
+        setTenantList(data.tenantList); 
       } catch (err) {
         setError(err.message);
       } finally {
@@ -62,7 +62,7 @@ const TenantList = () => {
 
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0); // Reset to the first page
+    setPage(0); 
   };
 
   if (loading) {
@@ -102,7 +102,7 @@ const TenantList = () => {
           </TableHead>
           <TableBody>
             {tenantList
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage) // Paginate rows
+              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage) 
               .map((tenant) => (
                 <TableRow key={tenant.requestId}>
                   <TableCell>{tenant.tenantName}</TableCell>
@@ -117,13 +117,13 @@ const TenantList = () => {
         </Table>
       </TableContainer>
       <TablePagination
-        rowsPerPageOptions={[5, 10, 15]} // Rows per page options
+        rowsPerPageOptions={[5, 10, 15]} 
         component="div"
-        count={tenantList.length} // Total number of rows
-        rowsPerPage={rowsPerPage} // Rows per page
-        page={page} // Current page
-        onPageChange={handleChangePage} // Handle page change
-        onRowsPerPageChange={handleChangeRowsPerPage} // Handle rows per page change
+        count={tenantList.length} 
+        rowsPerPage={rowsPerPage}
+        page={page} 
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage} 
       />
     </Box>
   );

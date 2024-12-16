@@ -23,7 +23,6 @@ import {
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import AddIcon from "@mui/icons-material/Add";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import SearchIcon from "@mui/icons-material/Search";
 
@@ -39,6 +38,7 @@ const PropertiesList = () => {
   const [editProperty, setEditProperty] = useState(null);
   const [deletePropertyId, setDeletePropertyId] = useState(null);
   const [viewProperty, setViewProperty] = useState(null);
+  const [totalProperties, setTotalProperties] = useState(0);
   const [newProperty, setNewProperty] = useState({
     name: "",
     image: null,
@@ -71,20 +71,33 @@ const PropertiesList = () => {
         const response = await axios.get(
           `https://propertymanagement-nf5c.onrender.com/api/properties`,
           {
+            params: {
+              page: page + 1,
+              limit: rowsPerPage,
+            },
             headers: { Authorization: `Bearer ${token}` },
           }
         );
-        setProperties(response.data);
+        if (response.data && Array.isArray(response.data.properties)) {
+          setProperties(response.data.properties);
+          setTotalProperties(response.data.totalProperties);
+        } else {
+          toast.error(
+            "Invalid response format. Expected 'properties' to be an array."
+          );
+          setProperties([]);
+        }
       } catch (error) {
         console.error("Error fetching properties list:", error);
         toast.error("Error fetching properties list: " + error.message);
+        setProperties([]);
       } finally {
         setLoading(false);
       }
     };
 
     fetchPropertiesList();
-  }, []);
+  }, [page, rowsPerPage]);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -108,34 +121,91 @@ const PropertiesList = () => {
     setOpenEditModal(false);
     setEditProperty(null);
   };
-
   const validateForm = (property) => {
     const errors = {};
-    if (!property.name) errors.name = "Property name is required";
-    if (!property.propertyAddress)
+
+    if (!property.name) {
+      errors.name = "Property name is required";
+    } else if (property.name.length < 4 || property.name.length > 10) {
+      errors.name = "Property name must be between 4 and 10 characters";
+    }
+
+    if (!property.propertyAddress) {
       errors.propertyAddress = "Property address is required";
-    if (!property.rent || isNaN(property.rent) || property.rent <= 0)
-      errors.rent = "Valid rent is required";
-    if (
-      !property.securityDeposit ||
+    } else if (
+      property.propertyAddress.length < 5 ||
+      property.propertyAddress.length > 15
+    ) {
+      errors.propertyAddress =
+        "Property address must be between 5 and 15 characters";
+    }
+
+    if (!property.rent) {
+      errors.rent = "Rent is required";
+    } else if (
+      isNaN(property.rent) ||
+      property.rent < 100 ||
+      property.rent > 100000
+    ) {
+      errors.rent = "Rent must be between 100 and 100000";
+    }
+
+    // Security Deposit validation: must be between 100 and 1000
+    if (!property.securityDeposit) {
+      errors.securityDeposit = "Security deposit is required";
+    } else if (
       isNaN(property.securityDeposit) ||
-      property.securityDeposit <= 0
-    )
-      errors.securityDeposit = "Valid security deposit is required";
-    if (
-      !property.squareFootage ||
+      property.securityDeposit < 100 ||
+      property.securityDeposit > 100000
+    ) {
+      errors.securityDeposit =
+        "Security deposit must be between 100 and 100000";
+    }
+
+    // Square Footage validation: must be between 100 and 1000
+    if (!property.squareFootage) {
+      errors.squareFootage = "Square footage is required";
+    } else if (
       isNaN(property.squareFootage) ||
-      property.squareFootage <= 0
-    )
-      errors.squareFootage = "Valid square footage is required";
-    if (
-      !property.totalIncome ||
+      property.squareFootage < 100 ||
+      property.squareFootage > 100000
+    ) {
+      errors.squareFootage = "Square footage must be between 100 and 100000";
+    }
+
+    // Total Income validation: must be between 100 and 10000
+    if (!property.totalIncome) {
+      errors.totalIncome = "Total income is required";
+    } else if (
       isNaN(property.totalIncome) ||
-      property.totalIncome <= 0
-    )
-      errors.totalIncome = "Valid total income is required";
+      property.totalIncome < 100 ||
+      property.totalIncome > 1000000
+    ) {
+      errors.totalIncome = "Total income must be between 100 and 1000000";
+    }
 
     return errors;
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+
+    setNewProperty((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+
+    setFormErrors((prevErrors) => ({
+      ...prevErrors,
+      [name]: "",
+    }));
+
+    const validationErrors = validateForm({
+      ...newProperty,
+      [name]: value,
+    });
+
+    setFormErrors(validationErrors);
   };
 
   const handleEditSubmit = async () => {
@@ -319,10 +389,9 @@ const PropertiesList = () => {
         variant="contained"
         color="primary"
         onClick={() => setOpenCreateModal(true)}
-        startIcon={<AddIcon />}
         style={{ marginBottom: "20px" }}
       >
-        Create Property
+        Create
       </Button>
 
       <TextField
@@ -344,7 +413,6 @@ const PropertiesList = () => {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>S.no</TableCell>
               <TableCell>Property ID</TableCell>
               <TableCell>Property Name</TableCell>
               <TableCell>Address</TableCell>
@@ -354,15 +422,15 @@ const PropertiesList = () => {
               <TableCell>Owner Name</TableCell>
               <TableCell>Owner Email</TableCell>
               <TableCell>Owner Role</TableCell>
+              <TableCell>date</TableCell>
+              <TableCell>Time</TableCell>
               <TableCell>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {filteredProperties
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((property, index) => (
+            {filteredProperties.length > 0 ? (
+              filteredProperties.map((property) => (
                 <TableRow key={property._id}>
-                  <TableCell>{index + 1 + page * rowsPerPage}</TableCell>
                   <TableCell>{property.propertyId}</TableCell>
                   <TableCell>{property.name}</TableCell>
                   <TableCell>{property.propertyAddress}</TableCell>
@@ -372,6 +440,12 @@ const PropertiesList = () => {
                   <TableCell>{property.owner?.fullname || "N/A"}</TableCell>
                   <TableCell>{property.owner?.email || "N/A"}</TableCell>
                   <TableCell>{property.owner?.role || "N/A"}</TableCell>
+                  <TableCell>
+                    {new Date(property.createdAt).toLocaleDateString()}
+                  </TableCell>
+                  <TableCell>
+                    {new Date(property.createdAt).toLocaleTimeString()}
+                  </TableCell>
                   <TableCell sx={{ display: "flex" }}>
                     <IconButton
                       onClick={() => handleViewOpen(property)}
@@ -393,7 +467,14 @@ const PropertiesList = () => {
                     </IconButton>
                   </TableCell>
                 </TableRow>
-              ))}
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={12} align="center">
+                  No properties found.
+                </TableCell>
+              </TableRow>
+            )}
           </TableBody>
         </Table>
       </TableContainer>
@@ -401,7 +482,7 @@ const PropertiesList = () => {
       <TablePagination
         rowsPerPageOptions={[5, 10, 25]}
         component="div"
-        count={filteredProperties.length}
+        count={totalProperties}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}
@@ -415,9 +496,8 @@ const PropertiesList = () => {
             label="Property Name"
             fullWidth
             value={newProperty.name}
-            onChange={(e) =>
-              setNewProperty({ ...newProperty, name: e.target.value })
-            }
+            onChange={handleInputChange}
+            name="name"
             margin="normal"
             error={!!formErrors.name}
             helperText={formErrors.name}
@@ -426,12 +506,8 @@ const PropertiesList = () => {
             label="Property Address"
             fullWidth
             value={newProperty.propertyAddress}
-            onChange={(e) =>
-              setNewProperty({
-                ...newProperty,
-                propertyAddress: e.target.value,
-              })
-            }
+            onChange={handleInputChange}
+            name="propertyAddress"
             margin="normal"
             error={!!formErrors.propertyAddress}
             helperText={formErrors.propertyAddress}
@@ -441,9 +517,8 @@ const PropertiesList = () => {
             type="number"
             fullWidth
             value={newProperty.rent}
-            onChange={(e) =>
-              setNewProperty({ ...newProperty, rent: e.target.value })
-            }
+            onChange={handleInputChange}
+            name="rent"
             margin="normal"
             error={!!formErrors.rent}
             helperText={formErrors.rent}
@@ -453,12 +528,8 @@ const PropertiesList = () => {
             type="number"
             fullWidth
             value={newProperty.securityDeposit}
-            onChange={(e) =>
-              setNewProperty({
-                ...newProperty,
-                securityDeposit: e.target.value,
-              })
-            }
+            onChange={handleInputChange}
+            name="securityDeposit"
             margin="normal"
             error={!!formErrors.securityDeposit}
             helperText={formErrors.securityDeposit}
@@ -468,9 +539,8 @@ const PropertiesList = () => {
             type="number"
             fullWidth
             value={newProperty.squareFootage}
-            onChange={(e) =>
-              setNewProperty({ ...newProperty, squareFootage: e.target.value })
-            }
+            onChange={handleInputChange}
+            name="squareFootage"
             margin="normal"
             error={!!formErrors.squareFootage}
             helperText={formErrors.squareFootage}
@@ -480,16 +550,19 @@ const PropertiesList = () => {
             type="number"
             fullWidth
             value={newProperty.totalIncome}
-            onChange={(e) =>
-              setNewProperty({ ...newProperty, totalIncome: e.target.value })
-            }
+            onChange={handleInputChange}
+            name="totalIncome"
             margin="normal"
             error={!!formErrors.totalIncome}
             helperText={formErrors.totalIncome}
           />
 
           <div style={{ marginTop: "10px" }}>
-            <input type="file" onChange={handleFileChange} />
+            <input
+              type="file"
+              onChange={handleFileChange}
+              accept="image/*" // Restricting file type to images only
+            />
           </div>
         </DialogContent>
 
@@ -506,7 +579,6 @@ const PropertiesList = () => {
       <Dialog open={openViewModal} onClose={handleViewClose}>
         <DialogTitle>View Property</DialogTitle>
         <DialogContent>
-          {/* Property Name */}
           <TextField
             label="Property Name"
             fullWidth
@@ -523,7 +595,6 @@ const PropertiesList = () => {
             margin="normal"
           />
 
-          {/* Status */}
           <TextField
             label="Status"
             fullWidth
@@ -532,7 +603,6 @@ const PropertiesList = () => {
             margin="normal"
           />
 
-          {/* Occupancy */}
           <TextField
             label="Occupancy"
             type="number"
@@ -542,7 +612,6 @@ const PropertiesList = () => {
             margin="normal"
           />
 
-          {/* Total Income */}
           <TextField
             label="Total Income"
             type="number"
@@ -551,7 +620,7 @@ const PropertiesList = () => {
             InputProps={{ readOnly: true }}
             margin="normal"
           />
-          {/* Square Footage */}
+
           <TextField
             label="Square Footage"
             type="number"
@@ -561,7 +630,6 @@ const PropertiesList = () => {
             margin="normal"
           />
 
-          {/* Rent */}
           <TextField
             label="Rent"
             type="number"
@@ -571,7 +639,6 @@ const PropertiesList = () => {
             margin="normal"
           />
 
-          {/* Security Deposit */}
           <TextField
             label="Security Deposit"
             type="number"
@@ -581,7 +648,6 @@ const PropertiesList = () => {
             margin="normal"
           />
 
-          {/* Total Requests */}
           <TextField
             label="Total Requests"
             type="number"
@@ -591,7 +657,6 @@ const PropertiesList = () => {
             margin="normal"
           />
 
-          {/* Owner Info */}
           <TextField
             label="Owner Name"
             fullWidth
@@ -614,7 +679,6 @@ const PropertiesList = () => {
             margin="normal"
           />
 
-          {/* Property ID */}
           <TextField
             label="Property ID"
             fullWidth
@@ -623,7 +687,6 @@ const PropertiesList = () => {
             margin="normal"
           />
 
-          {/* Created Date */}
           <TextField
             label="Created At"
             fullWidth
@@ -735,8 +798,6 @@ const PropertiesList = () => {
           </Button>
         </DialogActions>
       </Dialog>
-
-      {/* Delete Property Modal */}
       <Dialog open={openDeleteModal} onClose={handleDeleteClose}>
         <DialogTitle>Confirm Deletion</DialogTitle>
         <DialogContent>

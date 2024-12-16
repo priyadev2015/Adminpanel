@@ -63,6 +63,7 @@ const RoleCreate = () => {
       setEditRole(null);
     }
   };
+  
 
   const handleClose = () => {
     setOpen(false);
@@ -74,12 +75,12 @@ const RoleCreate = () => {
     const value = e.target.value;
     setRoleName(value);
 
-    // Trigger validation immediately when input changes
-    if (roleNameError) {
-      setRoleNameError(""); // Clear error message if any
-    }
 
-    validateRoleName(value); // Validate the input immediately on change
+    if (roleNameError) {
+      setRoleNameError(""); 
+      }
+
+    validateRoleName(value); 
   };
 
   const validateRoleName = (value) => {
@@ -119,10 +120,14 @@ const RoleCreate = () => {
           fetchRoles();
           setRoleName("");
           handleClose();
-          toast.success("Role created successfully");
+          toast.success("Role created successfully",{
+            autoClose: 2000,
+          });
         })
         .catch((error) => {
-          toast.error("Error saving role: " + error.message);
+          toast.error("Error saving role: " + error.message,{
+            autoClose: 2000,
+          });
         });
     }
   };
@@ -163,7 +168,7 @@ const RoleCreate = () => {
 
   const handleDeleteRole = (roleId) => {
     setRoleToDelete(roleId);
-    setDeleteOpen(true); // Open the confirmation modal
+    setDeleteOpen(true); 
   };
 
   const confirmDelete = () => {
@@ -213,7 +218,7 @@ const RoleCreate = () => {
             top: "0px",
           }}
         >
-          Created Roles
+          Roles
         </Typography>
         <div
           style={{
@@ -239,7 +244,7 @@ const RoleCreate = () => {
           />
         </div>
         <Button variant="contained" onClick={handleOpen}>
-          Create Role
+          Create 
         </Button>
 
         <MUI_Modal
@@ -284,9 +289,9 @@ const RoleCreate = () => {
                 <Button
                   variant="contained"
                   type="submit"
-                  disabled={!!roleNameError} // Disable submit button if there is a validation error
+                  disabled={!!roleNameError} 
                 >
-                  {editRole ? "Update Role" : "Create Role"}
+                  {editRole ? "Update" : "Create "}
                 </Button>
               </div>
             </form>
@@ -323,7 +328,6 @@ const RoleCreate = () => {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>S.No</TableCell>
                 <TableCell>Role Name</TableCell>
                 <TableCell>Actions</TableCell>
               </TableRow>
@@ -332,7 +336,6 @@ const RoleCreate = () => {
               {filteredRoles.length > 0 ? (
                 filteredRoles.map((role, index) => (
                   <TableRow key={role._id}>
-                    <TableCell>{index + 1}</TableCell>
                     <TableCell>{role.name}</TableCell>
                     <TableCell>
                       <IconButton
@@ -389,3 +392,10 @@ const ModalContent = styled("div")(
 );
 
 export default RoleCreate;
+
+
+
+
+
+
+
