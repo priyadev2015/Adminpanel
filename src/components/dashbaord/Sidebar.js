@@ -201,7 +201,6 @@ export default function Sidebar() {
 
         <Divider />
         <List>
-          {/* Dashboard Item */}
           <ListItem disablePadding sx={{ display: "block" }}>
             <Tooltip title={open ? "" : "Dashboard"} arrow>
               <ListItemButton
@@ -238,7 +237,6 @@ export default function Sidebar() {
             </Tooltip>
           </ListItem>
 
-          {/* Other Sidebar Items */}
           {[
             { text: "Roles", path: "/role-create" },
             { text: "User Management", path: "/user-management" },
