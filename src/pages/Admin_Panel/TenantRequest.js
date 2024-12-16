@@ -51,7 +51,7 @@ const TenantRequests = () => {
           return;
         }
 
-        let url = `http://localhost:5000/api${config.tenantrequest}`;
+        let url = `https://propertymanagement-nf5c.onrender.com/api${config.tenantrequest}`;
 
         const params = {
           page: page + 1,

@@ -10,7 +10,7 @@ module.exports = {
   leaseExpred: "/leases/all",
   tenantlist: "/tenant-requests/tenant-list",
   tenantpropertyapprovedbyowner: "/tenant-requests/approved-owner-list",
-  tenantrequest: "/tenant-requests",
+  tenantrequest: "/tenant-requests",  
   users: "/auth/users", // Fetch users
   roles: "/roles", // Fetch roles
   createUser: "/auth/register", 
