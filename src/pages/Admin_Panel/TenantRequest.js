@@ -50,9 +50,7 @@ const TenantRequests = () => {
           toast.error("No token found. Please log in again.");
           return;
         }
-
         let url = `https://propertymanagement-nf5c.onrender.com/api${config.tenantrequest}`;
-
         const params = {
           page: page + 1,
           limit: rowsPerPage,
@@ -95,10 +93,10 @@ const TenantRequests = () => {
 
   const handleSearchChange = (event) => {
     setSearchQuery(event.target.value);
-    setPage(0); // Reset to page 0 when search changes
+    setPage(0); 
   };
 
-  // Filter requests based on search query
+ 
   const filteredRequests = tenantRequests.filter((request) => {
     const tenantName = request.userId.fullname.toLowerCase();
     const tenantEmail = request.userId.email.toLowerCase();
