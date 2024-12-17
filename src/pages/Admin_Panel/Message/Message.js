@@ -1,4 +1,7 @@
 
+
+
+
 import React, { useEffect, useState } from "react";
 import { Box, Button, TextField, Typography } from "@mui/material";
 import axios from "axios";
@@ -30,7 +33,7 @@ const MessageApp = ({ selectedUser }) => {
 
       // Fetch received messages
       const receivedMessagesResponse = await axios.get(
-        `https://propertymanagement-nf5c.onrender.com/api/messages/received/${selectedUser.id}`,
+        `${apiconfig.baseURL}/messages/received/${selectedUser.id}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -54,7 +57,7 @@ const MessageApp = ({ selectedUser }) => {
 
   useEffect(() => {
     fetchMessages();
-  }, [selectedUser]);
+  }, [selectedUser]); // Automatically fetch messages when selectedUser changes
 
   const handleSendMessage = async () => {
     if (!selectedUser || !message.trim()) {
@@ -148,13 +151,11 @@ const MessageApp = ({ selectedUser }) => {
         style={{ marginTop: 20 }}
         onClick={handleSendMessage}
       >
-        Send Message
+        Send
       </Button>
     </Box>
   );
 };
 
 export default MessageApp;
-
-
 

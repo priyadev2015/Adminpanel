@@ -15,7 +15,7 @@ import {
   TableContainer,
   Paper,
 } from "@mui/material";
-import { styled, css } from "@mui/system";
+import { styled } from "@mui/system";
 import axios from "axios";
 import config from "../../config/ServiceApi";
 import { toast } from "react-toastify";
@@ -381,20 +381,13 @@ const RoleCreate = () => {
                       },
                     }}
                   >
-                    <TableCell
-                      sx={{
-                        textAlign: "center",
-                        border: "1px solid #e0e0e0",
-                      }}
-                    >
-                      {role.name}
-                    </TableCell>
+                    <TableCell sx={{ textAlign: "center" }}>{role.name}</TableCell>
                     <TableCell
                       sx={{
                         display: "flex",
                         justifyContent: "center",
                         gap: "10px",
-                        border: "1px solid #e0e0e0",
+                        textAlign: "center",
                       }}
                     >
                       <IconButton onClick={() => handleEditRole(role)}>
