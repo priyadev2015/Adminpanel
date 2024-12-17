@@ -11,8 +11,8 @@ module.exports = {
   tenantlist: "/tenant-requests/tenant-list",
   tenantpropertyapprovedbyowner: "/tenant-requests/approved-owner-list",
   tenantrequest: "/tenant-requests",
-  users: "/auth/users", // Fetch users
-  roles: "/roles", // Fetch roles
+  users: "/auth/users", 
+  roles: "/roles",
   createUser: "/auth/register",
   messageList: "/tenant-requests/owners-and-tenants",
   receivedMessages: "/messages/received", // Endpoint for received messages
