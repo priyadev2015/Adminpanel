@@ -440,5 +440,4 @@ const ModalContent = styled("div")({
   padding: "20px",
   borderRadius: "8px",
 });
-
 export default RoleCreate;
