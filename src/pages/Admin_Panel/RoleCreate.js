@@ -11,9 +11,7 @@ import {
   Typography,
   IconButton,
   InputAdornment,
-  Select,
-  MenuItem,
-  FormControl,
+  TablePagination,
 } from "@mui/material";
 import { styled, css } from "@mui/system";
 import axios from "axios";
@@ -24,7 +22,6 @@ import Loader from "../../components/Loader/Loader";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import SearchIcon from "@mui/icons-material/Search";
-import Pagination from "@mui/material/Pagination";
 
 const RoleCreate = () => {
   const [open, setOpen] = useState(false);
@@ -36,7 +33,7 @@ const RoleCreate = () => {
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [roleToDelete, setRoleToDelete] = useState(null);
   const [roleNameError, setRoleNameError] = useState("");
-  const [page, setPage] = useState(1); // Page index starts from 1
+  const [page, setPage] = useState(0); // Page index starts from 1
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [totalRoles, setTotalRoles] = useState(0);
 
@@ -53,13 +50,13 @@ const RoleCreate = () => {
           Authorization: `Bearer ${token}`,
         },
         params: {
-          page: page,
+          page: page + 1, // +1 because page is zero-indexed
           limit: rowsPerPage,
         },
       })
       .then((response) => {
         setRoles(response.data.roles);
-        setTotalRoles(response.data.totalRoles);
+        setTotalRoles(response.data.pagination.totalRoles);
         setLoading(false);
       })
       .catch((error) => {
@@ -212,7 +209,7 @@ const RoleCreate = () => {
 
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(Number(event.target.value));
-    setPage(0);
+    setPage(0); 
   };
 
   const filteredRoles = roles.filter((role) =>
@@ -308,7 +305,7 @@ const RoleCreate = () => {
                   type="submit"
                   disabled={!!roleNameError}
                 >
-                  {editRole ? "Update" : "Create "}
+                  {editRole ? "Update" : "Create " }
                 </Button>
               </div>
             </form>
@@ -316,7 +313,7 @@ const RoleCreate = () => {
         </MUI_Modal>
 
         <MUI_Modal open={deleteOpen} onClose={() => setDeleteOpen(false)}>
-          <ModalContent sx={{ width: 400 }}>
+          <ModalContent sx={{ width: 400, position:"relative" ,top:"45%" }}>
             <Typography variant="h6">
               Are you sure you want to delete this role?
             </Typography>
@@ -385,23 +382,15 @@ const RoleCreate = () => {
           </Table>
         </div>
 
-        <div
-          style={{ display: "flex", justifyContent: "end", marginTop: "16px" }}
-        >
-          <FormControl>
-            <Select value={rowsPerPage} onChange={handleChangeRowsPerPage}>
-              <MenuItem value={5}>5 rows</MenuItem>
-              <MenuItem value={10}>10 rows</MenuItem>
-              <MenuItem value={20}>20 rows</MenuItem>
-            </Select>
-          </FormControl>
-          <Pagination
-            count={Math.ceil(totalRoles / rowsPerPage)}
-            page={page}
-            onChange={handleChangePage}
-            color="primary"
-          />
-        </div>
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 20]}  // Options for number of rows per page
+          component="div"
+          count={totalRoles}                  // Total number of rows
+          rowsPerPage={rowsPerPage}           // Current rows per page
+          page={page}                         // Current page (0-indexed)
+          onPageChange={handleChangePage}     // Handler for page change
+          onRowsPerPageChange={handleChangeRowsPerPage}  // Handler for rows per page change
+        />
       </div>
     </>
   );

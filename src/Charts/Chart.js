@@ -270,7 +270,7 @@ const Chart = () => {
                     key={row.date}
                     sx={{
                       backgroundColor: index % 2 === 0 ? '#f9f9f9' : '#fff',
-                      '&:hover': { backgroundColor: '#eaeaea' }, // Hover effect
+                      '&:hover': { backgroundColor: '#eaeaea' }, 
                     }}
                   >
                     <TableCell>{row.date}</TableCell>

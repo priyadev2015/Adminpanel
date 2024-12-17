@@ -234,9 +234,7 @@ const LeaseTable = () => {
       )}
 
       <Box display="flex" justifyContent="end" alignItems="end" mt={2}>
-        <Button onClick={() => setPage(0)} disabled={page === 0}>
-          {"<<"}
-        </Button>
+      
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
@@ -246,12 +244,7 @@ const LeaseTable = () => {
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
-        <Button
-          onClick={() => setPage(Math.floor(totalLeases / rowsPerPage))}
-          disabled={page === Math.floor(totalLeases / rowsPerPage)}
-        >
-          {">>"}
-        </Button>
+       
       </Box>
 
       <Dialog open={openModal} onClose={handleCloseModal} maxWidth="md">
