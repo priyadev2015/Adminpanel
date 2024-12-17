@@ -48,7 +48,7 @@ const RoleCreate = () => {
     const token = localStorage.getItem("authToken");
     setLoading(true);
     axios
-      .get(`http://localhost:5000/api${config.roleCreate}`, {
+      .get(`https://propertymanagement-nf5c.onrender.com/api${config.roleCreate}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
