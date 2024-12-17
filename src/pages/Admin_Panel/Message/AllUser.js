@@ -92,7 +92,7 @@ const AllUserList = () => {
         </List>
       </Grid>
 
-      {/* Message App Section */}
+      
       <Grid item xs={8}>
         {selectedUser ? (
           <MessageApp selectedUser={selectedUser} />
