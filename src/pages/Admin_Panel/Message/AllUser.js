@@ -2,9 +2,9 @@ import React, { useEffect, useState } from "react";
 import { Grid, List, ListItem, ListItemText, Typography, Divider } from "@mui/material";
 import axios from "axios";
 import { toast } from "react-toastify";
-import MessageApp from "./Message"; 
-import Loader from "../../../components/Loader/Loader"; 
-import apiconfig from "../../../config/ServiceApi"; 
+import MessageApp from "./Message"; // Message Component
+import Loader from "../../../components/Loader/Loader"; // Loader Component
+import apiconfig from "../../../config/ServiceApi"; // API Config
 
 const AllUserList = () => {
   const [users, setUsers] = useState({ owners: [], tenants: [], maintenance: [] });
@@ -22,10 +22,12 @@ const AllUserList = () => {
         const userData = response.data;
         setUsers(userData);
 
-        // Set the default selected user (first user found in the list)
+        // Automatically select the first user if available
         const firstUser =
-          userData.owners[0] || userData.tenants[0] || userData.maintenance[0] || null;
-        setSelectedUser(firstUser);
+          userData.maintenance[0] || userData.tenants[0] || userData.owners[0] || null;
+        if (firstUser) {
+          setSelectedUser(firstUser);
+        }
       } catch (error) {
         console.error("Failed to fetch users:", error);
         toast.error("Failed to fetch users.");
@@ -52,13 +54,15 @@ const AllUserList = () => {
           overflowY: "auto",
           maxHeight: "100vh",
           padding: "20px",
+          backgroundColor: "#fff", // Set background to white
         }}
       >
         <Typography variant="h6" style={{ marginBottom: 10 }}>
           Users
         </Typography>
         <List style={{ maxHeight: "80vh", overflowY: "auto" }}>
-          {["owners", "tenants", "maintenance"].map((role) => (
+          {/* Displaying Maintenance first, followed by Tenants and Owners */}
+          {["maintenance", "tenants", "owners"].map((role) => (
             <React.Fragment key={role}>
               <Typography variant="subtitle1" style={{ marginTop: 10, fontWeight: "bold" }}>
                 {role.charAt(0).toUpperCase() + role.slice(1)}
@@ -71,10 +75,10 @@ const AllUserList = () => {
                     key={user.id || user.tenantId}
                     onClick={() => setSelectedUser(user)}
                     style={{
-                      backgroundColor: selectedUser?.id === user.id || selectedUser?.tenantId === user.tenantId ? "#f0f0f0" : "transparent",
                       padding: "10px",
                       borderRadius: "5px",
                       marginBottom: "5px",
+                      transition: "background-color 0.3s", // Smooth transition
                     }}
                   >
                     <ListItemText primary={user.name || user.tenantName || "No Name"} />
