@@ -27,9 +27,9 @@ import {
 } from 'chart.js';
 import moment from 'moment';
 import config from "../config/ServiceApi";
-import Loader from '../components/Loader/Loader'; // Import your loader component
+import Loader from '../components/Loader/Loader'; 
 
-// Register ChartJS components
+
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
 
 const Chart = () => {
@@ -38,7 +38,7 @@ const Chart = () => {
   });
 
   const [timePeriod, setTimePeriod] = useState('monthly');
-  const [loading, setLoading] = useState(true); // State to track loading
+  const [loading, setLoading] = useState(true); 
 
   useEffect(() => {
     const fetchData = async () => {
@@ -49,7 +49,7 @@ const Chart = () => {
           return;
         }
 
-        // Fetch occupancy data
+      
         const occupancyResponse = await fetch(
            `${config.baseURL}${config.graphoccupancy}`,
           {
@@ -73,9 +73,9 @@ const Chart = () => {
         );
         const squareFootageData = await squareFootageResponse.json();
 
-        // Normalize and merge data based on date
+    
         const mergedData = occupancyData
-          .filter((item) => item.date) // Exclude null dates
+          .filter((item) => item.date)
           .map((occupancyItem) => {
             const formattedDate = moment(occupancyItem.date, 'DD-MM-YY').format(
               'YYYY-MM-DD'
@@ -95,10 +95,10 @@ const Chart = () => {
           });
 
         setChartData({ monthlyData: mergedData });
-        setLoading(false); // Set loading to false when data is fetched
+        setLoading(false); 
       } catch (error) {
         console.error('Error fetching chart data:', error);
-        setLoading(false); // Set loading to false in case of error
+        setLoading(false); 
       }
     };
 
@@ -287,5 +287,4 @@ const Chart = () => {
     </Grid>
   );
 };
-
 export default Chart;
