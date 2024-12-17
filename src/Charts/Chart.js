@@ -29,7 +29,7 @@ import moment from 'moment';
 import config from "../config/ServiceApi";
 import Loader from '../components/Loader/Loader'; // Import your loader component
 
-
+// Register ChartJS components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
 
 const Chart = () => {
@@ -38,7 +38,7 @@ const Chart = () => {
   });
 
   const [timePeriod, setTimePeriod] = useState('monthly');
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true); // State to track loading
 
   useEffect(() => {
     const fetchData = async () => {
@@ -73,9 +73,9 @@ const Chart = () => {
         );
         const squareFootageData = await squareFootageResponse.json();
 
-        
+        // Normalize and merge data based on date
         const mergedData = occupancyData
-          .filter((item) => item.date) 
+          .filter((item) => item.date) // Exclude null dates
           .map((occupancyItem) => {
             const formattedDate = moment(occupancyItem.date, 'DD-MM-YY').format(
               'YYYY-MM-DD'
@@ -95,10 +95,10 @@ const Chart = () => {
           });
 
         setChartData({ monthlyData: mergedData });
-        setLoading(false); 
+        setLoading(false); // Set loading to false when data is fetched
       } catch (error) {
         console.error('Error fetching chart data:', error);
-        setLoading(false);
+        setLoading(false); // Set loading to false in case of error
       }
     };
 
@@ -121,20 +121,20 @@ const Chart = () => {
 
   const filteredData = getFilteredData();
 
- 
+  // Bar chart data configuration
   const barData = {
     labels: filteredData.map((item) => item.date),
     datasets: [
       {
         label: 'Total Square Footage Created',
         data: filteredData.map((item) => item.totalSquareFootage),
-        backgroundColor: '#FF9800',
+        backgroundColor: '#FF9800', // Softer, contrasting color
         yAxisID: 'y1',
       },
       {
         label: 'Square Footage Booked (Occupied)',
         data: filteredData.map((item) => item.totalOccupancy),
-        backgroundColor: '#2196F3',
+        backgroundColor: '#2196F3', // Soft blue for contrast
         yAxisID: 'y2',
       },
     ],
@@ -167,7 +167,7 @@ const Chart = () => {
       x: {
         beginAtZero: true,
         grid: {
-          display: false, 
+          display: false, // Hide gridlines for a cleaner look
         },
       },
       y1: {
@@ -242,7 +242,7 @@ const Chart = () => {
                     key={row.date}
                     sx={{
                       backgroundColor: index % 2 === 0 ? '#f9f9f9' : '#fff',
-                      '&:hover': { backgroundColor: '#eaeaea' }, 
+                      '&:hover': { backgroundColor: '#eaeaea' }, // Hover effect
                     }}
                   >
                     <TableCell>{row.date}</TableCell>
@@ -272,7 +272,7 @@ const Chart = () => {
                     key={row.date}
                     sx={{
                       backgroundColor: index % 2 === 0 ? '#f9f9f9' : '#fff',
-                      '&:hover': { backgroundColor: '#eaeaea' },
+                      '&:hover': { backgroundColor: '#eaeaea' }, // Hover effect
                     }}
                   >
                     <TableCell>{row.date}</TableCell>
