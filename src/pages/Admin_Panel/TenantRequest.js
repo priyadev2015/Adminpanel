@@ -93,10 +93,9 @@ const TenantRequests = () => {
 
   const handleSearchChange = (event) => {
     setSearchQuery(event.target.value);
-    setPage(0); 
+    setPage(0);
   };
 
- 
   const filteredRequests = tenantRequests.filter((request) => {
     const tenantName = request.userId.fullname.toLowerCase();
     const tenantEmail = request.userId.email.toLowerCase();
@@ -224,10 +223,13 @@ const TenantRequests = () => {
               <TableHead>
                 <TableRow>
                   <TableCell>
-                    <strong>Full Name</strong>
+                    <strong>Tenant Name</strong>
                   </TableCell>
                   <TableCell>
                     <strong>Email</strong>
+                  </TableCell>
+                  <TableCell>
+                    <strong>Contact No</strong>
                   </TableCell>
                   <TableCell>
                     <strong>Property ID</strong>
@@ -241,8 +243,15 @@ const TenantRequests = () => {
                   <TableCell>
                     <strong>Lease Start Date</strong>
                   </TableCell>
+
                   <TableCell>
                     <strong>Lease End Date</strong>
+                  </TableCell>
+                  <TableCell>
+                    <strong>Date</strong>
+                  </TableCell>
+                  <TableCell>
+                    <strong>Time</strong>
                   </TableCell>
                   <TableCell>
                     <strong>Area</strong>
@@ -258,6 +267,9 @@ const TenantRequests = () => {
                     <TableRow key={request._id}>
                       <TableCell>{request.userId.fullname}</TableCell>
                       <TableCell>{request.userId.email}</TableCell>
+                      <TableCell>
+                        {request.userId.contactNumber || "N/A"}
+                      </TableCell>
                       <TableCell>{request.propertyId}</TableCell>
                       <TableCell>{request.status}</TableCell>
                       <TableCell>{request.leaseStatus}</TableCell>
@@ -266,6 +278,12 @@ const TenantRequests = () => {
                       </TableCell>
                       <TableCell>
                         {new Date(request.leaseEndDate).toLocaleDateString()}
+                      </TableCell>
+                      <TableCell>
+                        {new Date(request.createdAt).toLocaleDateString()}
+                      </TableCell>
+                      <TableCell>
+                        {new Date(request.createdAt).toLocaleTimeString()}
                       </TableCell>
                       <TableCell>{request.area}</TableCell>
                       <TableCell className="d-flex">
@@ -339,6 +357,10 @@ const TenantRequests = () => {
               <Typography variant="body1" style={{ marginBottom: "5px" }}>
                 <strong>Email:</strong>{" "}
                 {selectedRequest?.userId?.email || "N/A"}
+              </Typography>
+              <Typography variant="body1" style={{ marginBottom: "5px" }}>
+                <strong>Contact Number:</strong>{" "}
+                {selectedRequest?.userId?.contactNumber || "N/A"}
               </Typography>
               <Typography variant="body1" style={{ marginBottom: "5px" }}>
                 <strong>Property ID:</strong>{" "}

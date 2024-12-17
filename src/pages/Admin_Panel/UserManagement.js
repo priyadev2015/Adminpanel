@@ -450,9 +450,9 @@ const UserManagement = () => {
             <TableCell>Full Name</TableCell>
             <TableCell>Email</TableCell>
             <TableCell>Role</TableCell>
-            <TableCell>Contact Number</TableCell>{" "}
-            {/* Added Contact Number column */}
+            <TableCell>Contact Number</TableCell> 
             <TableCell>Date</TableCell>
+            <TableCell>Time</TableCell>
             <TableCell>Actions</TableCell>
           </TableRow>
         </TableHead>
@@ -465,12 +465,15 @@ const UserManagement = () => {
             </TableRow>
           ) : (
             (filteredUsers.length > 0 ? filteredUsers : users).map((user) => (
-              <TableRow key={user._id}sx={{
-                '&:hover': {
-                  backgroundColor: 'rgba(119, 119, 119, 0.1)',
-                  boxShadow: '0px 0px 0px rgba(0, 0, 0, 0.2)', 
-                },
-              }}>
+              <TableRow
+                key={user._id}
+                sx={{
+                  "&:hover": {
+                    backgroundColor: "rgba(119, 119, 119, 0.1)",
+                    boxShadow: "0px 0px 0px rgba(0, 0, 0, 0.2)",
+                  },
+                }}
+              >
                 <TableCell>{user.fullname}</TableCell>
                 <TableCell>{user.email}</TableCell>
                 <TableCell>{user.role}</TableCell>
@@ -479,7 +482,9 @@ const UserManagement = () => {
                 <TableCell>
                   {new Date(user.createdAt).toLocaleDateString()}
                 </TableCell>{" "}
-          
+                <TableCell>
+                  {new Date(user.createdAt).toLocaleTimeString()}
+                </TableCell>
                 <TableCell>
                   <IconButton onClick={() => handleViewUser(user)}>
                     <VisibilityIcon sx={{ color: "green" }} />

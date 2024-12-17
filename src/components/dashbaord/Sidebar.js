@@ -215,7 +215,7 @@ export default function Sidebar() {
                     : defaultStyle),
                   "&:hover": {
                     backgroundColor:
-                      location.pathname === "/dashboard" ? "black" : "#f5f5f5", // Change hover color to black for active item
+                      location.pathname === "/dashboard" ? "black" : "#f5f5f5", 
                     color:
                       location.pathname === "/dashboard"
                         ? "white"
@@ -239,11 +239,11 @@ export default function Sidebar() {
 
           {[
             { text: "Roles", path: "/role-create" },
-            { text: "User Management", path: "/user-management" },
+            { text: "User Maagement", path: "/user-management" },
             { text: "Message", path: "/message" },
             { text: "Properties", path: "/properties-list" },
             { text: "Property Alloted", path: "/property-alloted-list" },
-            { text: "Lease ", path: "/lease-expired" },
+            { text: "Lease", path: "/lease-expired" },
             { text: "Tenant Request", path: "/tenant-request" },
           ].map(({ text, path }) => (
             <ListItem key={text} disablePadding sx={{ display: "block" }}>

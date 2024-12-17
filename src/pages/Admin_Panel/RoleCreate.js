@@ -63,7 +63,6 @@
 //       setEditRole(null);
 //     }
 //   };
-  
 
 //   const handleClose = () => {
 //     setOpen(false);
@@ -75,12 +74,11 @@
 //     const value = e.target.value;
 //     setRoleName(value);
 
-
 //     if (roleNameError) {
-//       setRoleNameError(""); 
+//       setRoleNameError("");
 //       }
 
-//     validateRoleName(value); 
+//     validateRoleName(value);
 //   };
 
 //   const validateRoleName = (value) => {
@@ -96,7 +94,7 @@
 //       setRoleNameError("Role name must be less than 13 characters.");
 //       return false;
 //     }
-//     setRoleNameError(""); 
+//     setRoleNameError("");
 //     return true;
 //   };
 
@@ -168,7 +166,7 @@
 
 //   const handleDeleteRole = (roleId) => {
 //     setRoleToDelete(roleId);
-//     setDeleteOpen(true); 
+//     setDeleteOpen(true);
 //   };
 
 //   const confirmDelete = () => {
@@ -244,7 +242,7 @@
 //           />
 //         </div>
 //         <Button variant="contained" onClick={handleOpen}>
-//           Create 
+//           Create
 //         </Button>
 
 //         <MUI_Modal
@@ -289,7 +287,7 @@
 //                 <Button
 //                   variant="contained"
 //                   type="submit"
-//                   disabled={!!roleNameError} 
+//                   disabled={!!roleNameError}
 //                 >
 //                   {editRole ? "Update" : "Create "}
 //                 </Button>
@@ -393,12 +391,6 @@
 
 // export default RoleCreate;
 
-
-
-
-
-
-
 import React, { useState, useEffect } from "react";
 import {
   Button,
@@ -425,7 +417,7 @@ import Loader from "../../components/Loader/Loader";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import SearchIcon from "@mui/icons-material/Search";
-import Pagination from "@mui/material/Pagination";  // Import Pagination from Material UI
+import Pagination from "@mui/material/Pagination";
 
 const RoleCreate = () => {
   const [open, setOpen] = useState(false);
@@ -437,13 +429,13 @@ const RoleCreate = () => {
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [roleToDelete, setRoleToDelete] = useState(null);
   const [roleNameError, setRoleNameError] = useState("");
-  const [page, setPage] = useState(1);  // Page index starts from 1
-  const [rowsPerPage, setRowsPerPage] = useState(5);  
-  const [totalRoles, setTotalRoles] = useState(0); 
+  const [page, setPage] = useState(1); // Page index starts from 1
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [totalRoles, setTotalRoles] = useState(0);
 
   useEffect(() => {
     fetchRoles();
-  }, [page, rowsPerPage]); 
+  }, [page, rowsPerPage]);
 
   const fetchRoles = () => {
     const token = localStorage.getItem("authToken");
@@ -460,7 +452,7 @@ const RoleCreate = () => {
       })
       .then((response) => {
         setRoles(response.data.roles);
-        setTotalRoles(response.data.totalRoles);  
+        setTotalRoles(response.data.totalRoles);
         setLoading(false);
       })
       .catch((error) => {
@@ -487,7 +479,7 @@ const RoleCreate = () => {
     const value = e.target.value;
     setRoleName(value);
     if (roleNameError) {
-      setRoleNameError(""); 
+      setRoleNameError("");
     }
     validateRoleName(value);
   };
@@ -505,7 +497,7 @@ const RoleCreate = () => {
       setRoleNameError("Role name must be less than 13 characters.");
       return false;
     }
-    setRoleNameError(""); 
+    setRoleNameError("");
     return true;
   };
 
@@ -529,12 +521,12 @@ const RoleCreate = () => {
           fetchRoles();
           setRoleName("");
           handleClose();
-          toast.success("Role created successfully",{
+          toast.success("Role created successfully", {
             autoClose: 2000,
           });
         })
         .catch((error) => {
-          toast.error("Error saving role: " + error.message,{
+          toast.error("Error saving role: " + error.message, {
             autoClose: 2000,
           });
         });
@@ -577,7 +569,7 @@ const RoleCreate = () => {
 
   const handleDeleteRole = (roleId) => {
     setRoleToDelete(roleId);
-    setDeleteOpen(true); 
+    setDeleteOpen(true);
   };
 
   const confirmDelete = () => {
@@ -608,12 +600,12 @@ const RoleCreate = () => {
   };
 
   const handleChangePage = (event, newPage) => {
-    setPage(newPage); // Update page state
+    setPage(newPage); 
   };
 
   const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(Number(event.target.value)); 
-    setPage(0); 
+    setRowsPerPage(Number(event.target.value));
+    setPage(0);
   };
 
   const filteredRoles = roles.filter((role) =>
@@ -662,7 +654,7 @@ const RoleCreate = () => {
           />
         </div>
         <Button variant="contained" onClick={handleOpen}>
-          Create 
+          Create
         </Button>
 
         <MUI_Modal
@@ -671,7 +663,7 @@ const RoleCreate = () => {
           aria-labelledby="create-role-modal"
           aria-describedby="create-role-modal-description"
         >
-          <ModalContent sx={{ width: 400 }}>
+          <ModalContent sx={{ width: 400, position:"relative",top:"250px"}}>
             <Typography
               variant="h5"
               id="create-role-modal"
@@ -707,9 +699,9 @@ const RoleCreate = () => {
                 <Button
                   variant="contained"
                   type="submit"
-                  disabled={!!roleNameError} 
+                  disabled={!!roleNameError}
                 >
-                  {editRole ? "Update" : "Create " }
+                  {editRole ? "Update" : "Create "}
                 </Button>
               </div>
             </form>
@@ -786,20 +778,18 @@ const RoleCreate = () => {
           </Table>
         </div>
 
-        
-        <div style={{ display: "flex", justifyContent: "end", marginTop: "16px" }}>
+        <div
+          style={{ display: "flex", justifyContent: "end", marginTop: "16px" }}
+        >
           <FormControl>
-            <Select
-              value={rowsPerPage}
-              onChange={handleChangeRowsPerPage}
-            >
+            <Select value={rowsPerPage} onChange={handleChangeRowsPerPage}>
               <MenuItem value={5}>5 rows</MenuItem>
               <MenuItem value={10}>10 rows</MenuItem>
               <MenuItem value={20}>20 rows</MenuItem>
             </Select>
           </FormControl>
           <Pagination
-            count={Math.ceil(totalRoles / rowsPerPage)}  
+            count={Math.ceil(totalRoles / rowsPerPage)}
             page={page}
             onChange={handleChangePage}
             color="primary"
@@ -810,18 +800,15 @@ const RoleCreate = () => {
   );
 };
 
-const ModalContent = styled("div")(
-  css`
-    background-color: white;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    height: auto;
-    width: 500px;
-    margin: auto;
-  `
-);
+const ModalContent = styled("div")(css`
+  background-color: white;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: auto;
+  width: 500px;
+  margin: auto;
+`);
 
 export default RoleCreate;
-

@@ -9,19 +9,19 @@ import ViewListIcon from '@mui/icons-material/ViewList'; // Import ViewListIcon
 
 export const getIconForText = (text) => {
   switch (text) {
-    case 'RoleCreate':
+    case 'Roles':
       return <PersonAddAltIcon />; // Use PersonAddAltIcon for RoleCreate
-    case 'UserManagement':
+    case 'User Maagement':
       return <PeopleIcon />; // Use PeopleIcon for UserManagement
     case 'Message':
       return <MessageIcon />; // Use MessageIcon for Message
-    case 'PropertiesList':
+    case 'Properties':
       return <ViewListIcon />; // Use ViewListIcon for PropertiesList
-    case 'PropertyAllotedList':
+    case 'Property Alloted':
       return <InboxIcon />; // Use InboxIcon for PropertyAllotedList
-    case 'LeaseExpired':
+    case 'Lease':
       return <InboxIcon />; // Use InboxIcon for LeaseExpired
-    case 'TenantRequest':
+    case 'Tenant Request':
       return <MailIcon />; // Use MailIcon for TenantRequest
     case 'OwnerList':
       return <PeopleIcon />; // Use PeopleIcon for OwnerList

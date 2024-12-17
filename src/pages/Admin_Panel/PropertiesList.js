@@ -416,7 +416,6 @@ const PropertiesList = () => {
               <TableCell>Property ID</TableCell>
               <TableCell>Property Name</TableCell>
               <TableCell>Address</TableCell>
-              <TableCell>Status</TableCell>
               <TableCell>Occupancy</TableCell>
               <TableCell>Total Income</TableCell>
               <TableCell>Owner Name</TableCell>
@@ -434,7 +433,6 @@ const PropertiesList = () => {
                   <TableCell>{property.propertyId}</TableCell>
                   <TableCell>{property.name}</TableCell>
                   <TableCell>{property.propertyAddress}</TableCell>
-                  <TableCell>{property.status}</TableCell>
                   <TableCell>{property.occupancy}</TableCell>
                   <TableCell>{property.totalIncome}</TableCell>
                   <TableCell>{property.owner?.fullname || "N/A"}</TableCell>
@@ -591,14 +589,6 @@ const PropertiesList = () => {
             label="Property Address"
             fullWidth
             value={viewProperty?.propertyAddress || ""}
-            InputProps={{ readOnly: true }}
-            margin="normal"
-          />
-
-          <TextField
-            label="Status"
-            fullWidth
-            value={viewProperty?.status || ""}
             InputProps={{ readOnly: true }}
             margin="normal"
           />
