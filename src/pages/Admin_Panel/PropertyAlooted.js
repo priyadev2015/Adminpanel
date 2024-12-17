@@ -150,7 +150,7 @@ const PropertyApprovedList = () => {
         />
       </div>
 
-      <TableContainer component={Paper} elevation={3}>
+      {/* <TableContainer component={Paper} elevation={3}>
         <Table>
           <TableHead>
             <TableRow>
@@ -183,7 +183,13 @@ const PropertyApprovedList = () => {
           <TableBody>
             {filteredList.length > 0 ? (
               filteredList.map((property, index) => (
-                <TableRow key={index}>
+                <TableRow key={index}
+                sx={{
+                  "&:hover": {
+                    backgroundColor: "rgba(119, 119, 119, 0.1)",
+                    boxShadow: "0px 0px 0px rgba(0, 0, 0, 0.2)",
+                  },
+                }}>
                   <TableCell>{property.propertyName}</TableCell>
                   <TableCell>{property.propertyAddress}</TableCell>
                   <TableCell>{property.ownerName}</TableCell>
@@ -208,7 +214,93 @@ const PropertyApprovedList = () => {
             )}
           </TableBody>
         </Table>
-      </TableContainer>
+      </TableContainer> */}
+
+<TableContainer component={Paper} elevation={3}>
+  <Table>
+    <TableHead>
+      <TableRow>
+        {[
+          "Property Name",
+          "Address",
+          "Owner Name",
+          "Owner Email",
+          "Lease Start",
+          "Lease End",
+          "Tenant Name",
+          "Actions",
+        ].map((header) => (
+          <TableCell
+            key={header}
+            sx={{
+              fontWeight: "bold",
+              textAlign: "center",
+              border: "1px solid #ddd", // Adds borders
+              backgroundColor: "#f9f9f9", // Light background for header
+              whiteSpace: 'nowrap', 
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+            }}
+          >
+            {header}
+          </TableCell>
+        ))}
+      </TableRow>
+    </TableHead>
+    <TableBody>
+      {filteredList.length > 0 ? (
+        filteredList.map((property, index) => (
+          <TableRow
+            key={index}
+            sx={{
+              "&:hover": {
+                backgroundColor: "rgba(119, 119, 119, 0.1)",
+              },
+            }}
+          >
+            <TableCell sx={{ border: "1px solid #ddd" }}>
+              {property.propertyName}
+            </TableCell>
+            <TableCell sx={{ border: "1px solid #ddd" }}>
+              {property.propertyAddress}
+            </TableCell>
+            <TableCell sx={{ border: "1px solid #ddd" }}>
+              {property.ownerName}
+            </TableCell>
+            <TableCell sx={{ border: "1px solid #ddd" }}>
+              {property.ownerEmail}
+            </TableCell>
+            <TableCell sx={{ border: "1px solid #ddd" }}>
+              {property.leaseStart}
+            </TableCell>
+            <TableCell sx={{ border: "1px solid #ddd" }}>
+              {property.leaseEnd}
+            </TableCell>
+            <TableCell sx={{ border: "1px solid #ddd" }}>
+              {property.tenantName || "N/A"}
+            </TableCell>
+            <TableCell
+              sx={{
+                textAlign: "center",
+                border: "1px solid #ddd",
+              }}
+            >
+              <IconButton onClick={() => handleModalOpen(property)}>
+                <VisibilityIcon sx={{ color: "green" }} />
+              </IconButton>
+            </TableCell>
+          </TableRow>
+        ))
+      ) : (
+        <TableRow>
+          <TableCell colSpan={8} align="center" sx={{ border: "1px solid #ddd" }}>
+            No properties found
+          </TableCell>
+        </TableRow>
+      )}
+    </TableBody>
+  </Table>
+</TableContainer>
 
       <TablePagination
         rowsPerPageOptions={[5, 10, 25]}

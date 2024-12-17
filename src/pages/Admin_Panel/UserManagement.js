@@ -22,6 +22,8 @@ import {
   DialogTitle,
   InputAdornment,
   IconButton,
+  TableContainer,
+  Paper,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import BorderColorIcon from "@mui/icons-material/BorderColor";
@@ -44,6 +46,7 @@ const UserManagement = () => {
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [totalUsers, setTotalUsers] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [isRolesLoading, setIsRolesLoading] = useState(true);
   const [userData, setUserData] = useState({
     fullname: "",
     email: "",
@@ -92,17 +95,19 @@ const UserManagement = () => {
       toast.error("Token is missing. Please log in again.");
       return;
     }
-
     axios
       .get("https://propertymanagement-nf5c.onrender.com/api/roles", {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((response) => {
-        setRoles(response.data);
+        setRoles(response.data.roles);
+        setIsRolesLoading(false);
+        console.log("Fetched Roles:", response.data.roles);
       })
       .catch((error) => {
         console.error("Error fetching roles:", error);
         toast.error("Error fetching roles: " + error.message);
+        setIsRolesLoading(false);
       });
   };
 
@@ -292,7 +297,12 @@ const UserManagement = () => {
     });
     setFormErrors({});
   };
-
+  const handleRoleChange = (e) => {
+    setUserData({
+      ...userData,
+      role: e.target.value,
+    });
+  };
   const handleViewUser = (user) => {
     setSelectedUser(user);
     setOpenViewModal(true);
@@ -330,7 +340,12 @@ const UserManagement = () => {
         <TextField
           label="Search by Name, Email, or Role"
           variant="outlined"
-          sx={{ width: "300px", position: "relative", left: "650px" }}
+          sx={{
+            width: "300px",
+            position: "relative",
+            left: "650px",
+            bottom: "10px",
+          }}
           value={searchQuery}
           onChange={handleSearch}
           InputProps={{
@@ -353,7 +368,7 @@ const UserManagement = () => {
             borderRadius: "8px",
           }}
         >
-          <Typography variant="h6">
+          <Typography variant="h6" sx={{display:"flex",justifyContent:"center"}}>
             {editUserId ? "Edit User" : "Create New User"}
           </Typography>
           <form onSubmit={editUserId ? handleUpdateUser : handleCreateUser}>
@@ -411,11 +426,15 @@ const UserManagement = () => {
               <InputLabel>Role</InputLabel>
               <Select
                 value={userData.role}
-                onChange={handleInputChange}
+                onChange={handleRoleChange}
                 label="Role"
                 name="role"
               >
-                {roles.length > 0 ? (
+                {isRolesLoading ? (
+                  <MenuItem value="">
+                    <CircularProgress size={24} /> Loading Roles...
+                  </MenuItem>
+                ) : roles.length > 0 ? (
                   roles.map((roleItem) => (
                     <MenuItem key={roleItem._id} value={roleItem.name}>
                       {roleItem.name}
@@ -429,78 +448,148 @@ const UserManagement = () => {
                 {formErrors.role}
               </Typography>
             </FormControl>
-
-            <Button type="submit" variant="contained" sx={{ width: "100%" }}>
-              {editUserId ? "Update " : "Create "}
-            </Button>
-            <Button
-              variant="outlined"
-              fullWidth
-              sx={{ marginTop: "10px" }}
-              onClick={handleCloseModal}
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                gap: "10px",
+                position:"relative",top:"10px"
+              }}
             >
-              Cancel
-            </Button>
+              <Button
+                variant="outlined"
+                fullWidth
+                onClick={handleCloseModal}
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                variant="contained"
+                fullWidth
+                sx={{ padding: "10px" }}
+              >
+                {editUserId ? "Update" : "Create"}
+              </Button>
+            </div>
           </form>
         </div>
       </Modal>
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell>Full Name</TableCell>
-            <TableCell>Email</TableCell>
-            <TableCell>Role</TableCell>
-            <TableCell>Contact Number</TableCell> 
-            <TableCell>Date</TableCell>
-            <TableCell>Time</TableCell>
-            <TableCell>Actions</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {loading ? (
+
+      <TableContainer component={Paper} elevation={3}>
+        <Table>
+          <TableHead>
             <TableRow>
-              <TableCell colSpan={6}>
-                <CircularProgress />
-              </TableCell>
-            </TableRow>
-          ) : (
-            (filteredUsers.length > 0 ? filteredUsers : users).map((user) => (
-              <TableRow
-                key={user._id}
-                sx={{
-                  "&:hover": {
-                    backgroundColor: "rgba(119, 119, 119, 0.1)",
-                    boxShadow: "0px 0px 0px rgba(0, 0, 0, 0.2)",
-                  },
-                }}
-              >
-                <TableCell>{user.fullname}</TableCell>
-                <TableCell>{user.email}</TableCell>
-                <TableCell>{user.role}</TableCell>
-                <TableCell>{user.contactNumber}</TableCell>{" "}
-                {/* Display Contact Number */}
-                <TableCell>
-                  {new Date(user.createdAt).toLocaleDateString()}
-                </TableCell>{" "}
-                <TableCell>
-                  {new Date(user.createdAt).toLocaleTimeString()}
+              {[
+                "Full Name",
+                "Email",
+                "Role",
+                "Contact Number",
+                "Date",
+                "Time",
+                "Actions",
+              ].map((header) => (
+                <TableCell
+                  key={header}
+                  sx={{
+                    fontWeight: "bold",
+                    textAlign: "center",
+                    backgroundColor: "#f9f9f9",
+                    border: "1px solid #e0e0e0",
+                  }}
+                >
+                  {header}
                 </TableCell>
-                <TableCell>
-                  <IconButton onClick={() => handleViewUser(user)}>
-                    <VisibilityIcon sx={{ color: "green" }} />
-                  </IconButton>
-                  <IconButton onClick={() => handleEditUser(user)}>
-                    <BorderColorIcon sx={{ color: "blue" }} />
-                  </IconButton>
-                  <IconButton onClick={() => handleDeleteDialogOpen(user)}>
-                    <DeleteIcon sx={{ color: "red" }} />
-                  </IconButton>
+              ))}
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {loading ? (
+              <TableRow>
+                <TableCell
+                  colSpan={7}
+                  align="center"
+                  sx={{ border: "1px solid #e0e0e0" }}
+                >
+                  <CircularProgress />
                 </TableCell>
               </TableRow>
-            ))
-          )}
-        </TableBody>
-      </Table>
+            ) : (filteredUsers.length > 0 ? filteredUsers : users).length >
+              0 ? (
+              (filteredUsers.length > 0 ? filteredUsers : users).map((user) => (
+                <TableRow
+                  key={user._id}
+                  sx={{
+                    "&:hover": {
+                      backgroundColor: "rgba(0, 0, 0, 0.05)",
+                      boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+                    },
+                  }}
+                >
+                  <TableCell
+                    sx={{ textAlign: "center", border: "1px solid #e0e0e0" }}
+                  >
+                    {user.fullname}
+                  </TableCell>
+                  <TableCell
+                    sx={{ textAlign: "center", border: "1px solid #e0e0e0" }}
+                  >
+                    {user.email}
+                  </TableCell>
+                  <TableCell
+                    sx={{ textAlign: "center", border: "1px solid #e0e0e0" }}
+                  >
+                    {user.role}
+                  </TableCell>
+                  <TableCell
+                    sx={{ textAlign: "center", border: "1px solid #e0e0e0" }}
+                  >
+                    {user.contactNumber || "N/A"}
+                  </TableCell>
+                  <TableCell
+                    sx={{ textAlign: "center", border: "1px solid #e0e0e0" }}
+                  >
+                    {new Date(user.createdAt).toLocaleDateString()}
+                  </TableCell>
+                  <TableCell
+                    sx={{ textAlign: "center", border: "1px solid #e0e0e0" }}
+                  >
+                    {new Date(user.createdAt).toLocaleTimeString()}
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      display: "flex",
+                      justifyContent: "center",
+                      gap: "10px",
+                      border: "1px solid #e0e0e0",
+                    }}
+                  >
+                    <IconButton onClick={() => handleViewUser(user)}>
+                      <VisibilityIcon sx={{ color: "green" }} />
+                    </IconButton>
+                    <IconButton onClick={() => handleEditUser(user)}>
+                      <BorderColorIcon sx={{ color: "blue" }} />
+                    </IconButton>
+                    <IconButton onClick={() => handleDeleteDialogOpen(user)}>
+                      <DeleteIcon sx={{ color: "red" }} />
+                    </IconButton>
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell
+                  colSpan={7}
+                  align="center"
+                  sx={{ border: "1px solid #e0e0e0" }}
+                >
+                  No users found.
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </TableContainer>
 
       <TablePagination
         component="div"
@@ -563,14 +652,12 @@ const UserManagement = () => {
 
             {selectedUser && (
               <div>
-                {/* Full Name */}
                 <div
                   style={{
                     marginBottom: "15px",
                     padding: "10px",
                     border: "1px solid #ddd",
                     borderRadius: "8px",
-                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
                   }}
                 >
                   <Typography variant="body1">
@@ -578,7 +665,6 @@ const UserManagement = () => {
                   </Typography>
                 </div>
 
-                {/* Email */}
                 <div
                   style={{
                     marginBottom: "15px",
@@ -593,7 +679,6 @@ const UserManagement = () => {
                   </Typography>
                 </div>
 
-                {/* Contact Number */}
                 <div
                   style={{
                     marginBottom: "15px",
@@ -609,7 +694,6 @@ const UserManagement = () => {
                   </Typography>
                 </div>
 
-                {/* Role */}
                 <div
                   style={{
                     marginBottom: "15px",
@@ -624,7 +708,6 @@ const UserManagement = () => {
                   </Typography>
                 </div>
 
-                {/* Verified */}
                 <div
                   style={{
                     marginBottom: "15px",
@@ -655,7 +738,6 @@ const UserManagement = () => {
                   </Typography>
                 </div>
 
-                {/* Created At - Time */}
                 <div
                   style={{
                     marginBottom: "20px",

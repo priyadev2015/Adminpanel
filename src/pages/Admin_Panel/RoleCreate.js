@@ -12,6 +12,8 @@ import {
   IconButton,
   InputAdornment,
   TablePagination,
+  TableContainer,
+  Paper,
 } from "@mui/material";
 import { styled, css } from "@mui/system";
 import axios from "axios";
@@ -45,15 +47,18 @@ const RoleCreate = () => {
     const token = localStorage.getItem("authToken");
     setLoading(true);
     axios
-      .get(`https://propertymanagement-nf5c.onrender.com/api${config.roleCreate}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        params: {
-          page: page + 1, // +1 because page is zero-indexed
-          limit: rowsPerPage,
-        },
-      })
+      .get(
+        `https://propertymanagement-nf5c.onrender.com/api${config.roleCreate}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          params: {
+            page: page + 1, // +1 because page is zero-indexed
+            limit: rowsPerPage,
+          },
+        }
+      )
       .then((response) => {
         setRoles(response.data.roles);
         setTotalRoles(response.data.pagination.totalRoles);
@@ -204,12 +209,12 @@ const RoleCreate = () => {
   };
 
   const handleChangePage = (event, newPage) => {
-    setPage(newPage); 
+    setPage(newPage);
   };
 
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(Number(event.target.value));
-    setPage(0); 
+    setPage(0);
   };
 
   const filteredRoles = roles.filter((role) =>
@@ -239,7 +244,7 @@ const RoleCreate = () => {
             display: "flex",
             justifyContent: "end",
             position: "relative",
-            top: "45px",
+            top: "25px",
           }}
         >
           <TextField
@@ -257,7 +262,7 @@ const RoleCreate = () => {
             }}
           />
         </div>
-        <Button variant="contained" onClick={handleOpen}>
+        <Button variant="contained" onClick={handleOpen} sx={{position:"relative", bottom:"10px"}}>
           Create
         </Button>
 
@@ -267,7 +272,7 @@ const RoleCreate = () => {
           aria-labelledby="create-role-modal"
           aria-describedby="create-role-modal-description"
         >
-          <ModalContent sx={{ width: 400, position:"relative",top:"250px"}}>
+          <ModalContent sx={{ width: 400, position: "relative", top: "250px" }}>
             <Typography
               variant="h5"
               id="create-role-modal"
@@ -305,7 +310,7 @@ const RoleCreate = () => {
                   type="submit"
                   disabled={!!roleNameError}
                 >
-                  {editRole ? "Update" : "Create " }
+                  {editRole ? "Update" : "Create "}
                 </Button>
               </div>
             </form>
@@ -313,7 +318,7 @@ const RoleCreate = () => {
         </MUI_Modal>
 
         <MUI_Modal open={deleteOpen} onClose={() => setDeleteOpen(false)}>
-          <ModalContent sx={{ width: 400, position:"relative" ,top:"45%" }}>
+          <ModalContent sx={{ width: 400, position: "relative", top: "45%" }}>
             <Typography variant="h6">
               Are you sure you want to delete this role?
             </Typography>
@@ -338,58 +343,90 @@ const RoleCreate = () => {
           </ModalContent>
         </MUI_Modal>
 
-        <div className="mt-4" sx={{ mt: 10 }}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Role Name</TableCell>
-                <TableCell>Actions</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {filteredRoles.length > 0 ? (
-                filteredRoles.map((role) => (
-                  <TableRow key={role._id}>
-                    <TableCell>{role.name}</TableCell>
-                    <TableCell>
-                      <IconButton
-                        onClick={() => handleEditRole(role)}
-                        sx={{ mr: 1 }}
+        
+          <TableContainer component={Paper} elevation={3}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  {["Role Name", "Actions"].map((header) => (
+                    <TableCell
+                      key={header}
+                      sx={{
+                        fontWeight: "bold",
+                        textAlign: "center",
+                        backgroundColor: "#f9f9f9",
+                        border: "1px solid #e0e0e0",
+                      }}
+                    >
+                      {header}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {filteredRoles.length > 0 ? (
+                  filteredRoles.map((role) => (
+                    <TableRow
+                      key={role._id}
+                      sx={{
+                        "&:hover": {
+                          backgroundColor: "rgba(0, 0, 0, 0.05)",
+                          boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+                        },
+                      }}
+                    >
+                      <TableCell
+                        sx={{
+                          textAlign: "center",
+                          border: "1px solid #e0e0e0",
+                        }}
                       >
-                        <EditIcon />
-                      </IconButton>
-                      <IconButton
-                        onClick={() => handleDeleteRole(role._id)}
-                        color="error"
+                        {role.name}
+                      </TableCell>
+                      <TableCell
+                        sx={{
+                          display: "flex",
+                          justifyContent: "center",
+                          gap: "10px",
+                          border: "1px solid #e0e0e0",
+                        }}
                       >
-                        <DeleteIcon />
-                      </IconButton>
+                        <IconButton onClick={() => handleEditRole(role)}>
+                          <EditIcon sx={{ color: "blue" }} />
+                        </IconButton>
+                        <IconButton
+                          onClick={() => handleDeleteRole(role._id)}
+                          color="error"
+                        >
+                          <DeleteIcon sx={{ color: "red" }} />
+                        </IconButton>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell
+                      colSpan={2}
+                      align="center"
+                      sx={{ border: "1px solid #e0e0e0" }}
+                    >
+                      No roles found.
                     </TableCell>
                   </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell
-                    variant="h6"
-                    sx={{ textAlign: "center", marginBottom: 2 }}
-                    colSpan={3}
-                  >
-                    No roles found.
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </div>
+                )}
+              </TableBody>
+            </Table>
+          </TableContainer>
+       
 
         <TablePagination
-          rowsPerPageOptions={[5, 10, 20]}  // Options for number of rows per page
+          rowsPerPageOptions={[5, 10, 20]}
           component="div"
-          count={totalRoles}                  // Total number of rows
-          rowsPerPage={rowsPerPage}           // Current rows per page
-          page={page}                         // Current page (0-indexed)
-          onPageChange={handleChangePage}     // Handler for page change
-          onRowsPerPageChange={handleChangeRowsPerPage}  // Handler for rows per page change
+          count={totalRoles} 
+          rowsPerPage={rowsPerPage} 
+          page={page} 
+          onPageChange={handleChangePage} 
+          onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </div>
     </>

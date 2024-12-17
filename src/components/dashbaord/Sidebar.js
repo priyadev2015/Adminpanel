@@ -239,7 +239,7 @@ export default function Sidebar() {
 
           {[
             { text: "Roles", path: "/role-create" },
-            { text: "User Maagement", path: "/user-management" },
+            { text: "User management", path: "/user-management" },
             { text: "Message", path: "/message" },
             { text: "Properties", path: "/properties-list" },
             { text: "Property Alloted", path: "/property-alloted-list" },

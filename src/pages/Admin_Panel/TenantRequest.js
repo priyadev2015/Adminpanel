@@ -218,111 +218,117 @@ const TenantRequests = () => {
 
       <Grid container spacing={2} justifyContent="center">
         <Grid item xs={12} md={10}>
-          <TableContainer component={Paper}>
-            <Table aria-label="tenant requests table">
-              <TableHead>
-                <TableRow>
-                  <TableCell>
-                    <strong>Tenant Name</strong>
-                  </TableCell>
-                  <TableCell>
-                    <strong>Email</strong>
-                  </TableCell>
-                  <TableCell>
-                    <strong>Contact No</strong>
-                  </TableCell>
-                  <TableCell>
-                    <strong>Property ID</strong>
-                  </TableCell>
-                  <TableCell>
-                    <strong>Status</strong>
-                  </TableCell>
-                  <TableCell>
-                    <strong>Lease Status</strong>
-                  </TableCell>
-                  <TableCell>
-                    <strong>Lease Start Date</strong>
-                  </TableCell>
+<TableContainer component={Paper}>
+  <Table aria-label="tenant requests table">
+    <TableHead>
+      <TableRow>
+        {[
+          "Tenant Name",
+          "Email",
+          "Contact No",
+          "Property ID",
+          "Status",
+          "Lease Status",
+          "Lease Start Date",
+          "Lease End Date",
+          "Date",
+          "Time",
+          "Area",
+          "Actions",
+        ].map((header) => (
+          <TableCell
+            key={header}
+            sx={{
+              fontWeight: "bold",
+              whiteSpace: "nowrap",
+              textAlign: "center",
+              border: "1px solid #ddd", // Adds border to each header cell
+              backgroundColor: "#f9f9f9", // Light background for header
+            }}
+          >
+            {header}
+          </TableCell>
+        ))}
+      </TableRow>
+    </TableHead>
+    <TableBody>
+      {filteredRequests.length > 0 ? (
+        filteredRequests.map((request) => (
+          <TableRow key={request._id}
+          sx={{
+            "&:hover": {
+              backgroundColor: "rgba(119, 119, 119, 0.1)",
+              boxShadow: "0px 0px 0px rgba(0, 0, 0, 0.2)",
+            },
+          }}>
+            <TableCell sx={{ border: "1px solid #ddd" }}>
+              {request.userId.fullname}
+            </TableCell>
+            <TableCell sx={{ border: "1px solid #ddd" }}>
+              {request.userId.email}
+            </TableCell>
+            <TableCell sx={{ border: "1px solid #ddd" }}>
+              {request.userId.contactNumber || "N/A"}
+            </TableCell>
+            <TableCell sx={{ border: "1px solid #ddd" }}>
+              {request.propertyId}
+            </TableCell>
+            <TableCell sx={{ border: "1px solid #ddd" }}>
+              {request.status}
+            </TableCell>
+            <TableCell sx={{ border: "1px solid #ddd" }}>
+              {request.leaseStatus}
+            </TableCell>
+            <TableCell sx={{ border: "1px solid #ddd" }}>
+              {new Date(request.leaseStartDate).toLocaleDateString()}
+            </TableCell>
+            <TableCell sx={{ border: "1px solid #ddd" }}>
+              {new Date(request.leaseEndDate).toLocaleDateString()}
+            </TableCell>
+            <TableCell sx={{ border: "1px solid #ddd" }}>
+              {new Date(request.createdAt).toLocaleDateString()}
+            </TableCell>
+            <TableCell sx={{ border: "1px solid #ddd" }}>
+              {new Date(request.createdAt).toLocaleTimeString()}
+            </TableCell>
+            <TableCell sx={{ border: "1px solid #ddd" }}>
+              {request.area}
+            </TableCell>
+            <TableCell sx={{ border: "1px solid #ddd" }}>
+              <Tooltip title="View Details">
+                <IconButton onClick={() => handleViewDetails(request)}>
+                  <Visibility sx={{ color: "green" }} />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="Delete Request">
+                <IconButton
+                  onClick={() => {
+                    setSelectedRequest(request);
+                    setOpenDeleteDialog(true);
+                  }}
+                >
+                  <Delete sx={{ color: "red" }} />
+                </IconButton>
+              </Tooltip>
+            </TableCell>
+          </TableRow>
+        ))
+      ) : (
+        <TableRow>
+          <TableCell colSpan={12} align="center" sx={{ border: "1px solid #ddd" }}>
+            No data available
+          </TableCell>
+        </TableRow>
+      )}
+    </TableBody>
+  </Table>
+</TableContainer>
 
-                  <TableCell>
-                    <strong>Lease End Date</strong>
-                  </TableCell>
-                  <TableCell>
-                    <strong>Date</strong>
-                  </TableCell>
-                  <TableCell>
-                    <strong>Time</strong>
-                  </TableCell>
-                  <TableCell>
-                    <strong>Area</strong>
-                  </TableCell>
-                  <TableCell>
-                    <strong>Actions</strong>
-                  </TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {filteredRequests.length > 0 ? (
-                  filteredRequests.map((request) => (
-                    <TableRow key={request._id}>
-                      <TableCell>{request.userId.fullname}</TableCell>
-                      <TableCell>{request.userId.email}</TableCell>
-                      <TableCell>
-                        {request.userId.contactNumber || "N/A"}
-                      </TableCell>
-                      <TableCell>{request.propertyId}</TableCell>
-                      <TableCell>{request.status}</TableCell>
-                      <TableCell>{request.leaseStatus}</TableCell>
-                      <TableCell>
-                        {new Date(request.leaseStartDate).toLocaleDateString()}
-                      </TableCell>
-                      <TableCell>
-                        {new Date(request.leaseEndDate).toLocaleDateString()}
-                      </TableCell>
-                      <TableCell>
-                        {new Date(request.createdAt).toLocaleDateString()}
-                      </TableCell>
-                      <TableCell>
-                        {new Date(request.createdAt).toLocaleTimeString()}
-                      </TableCell>
-                      <TableCell>{request.area}</TableCell>
-                      <TableCell className="d-flex">
-                        <Tooltip title="View Details">
-                          <IconButton
-                            onClick={() => handleViewDetails(request)}
-                          >
-                            <Visibility sx={{ color: "green" }} />
-                          </IconButton>
-                        </Tooltip>
-                        <Tooltip title="Delete Request">
-                          <IconButton
-                            onClick={() => {
-                              setSelectedRequest(request);
-                              setOpenDeleteDialog(true);
-                            }}
-                          >
-                            <Delete sx={{ color: "red" }} />
-                          </IconButton>
-                        </Tooltip>
-                      </TableCell>
-                    </TableRow>
-                  ))
-                ) : (
-                  <TableRow>
-                    <TableCell colSpan={9} align="center">
-                      No data available
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </TableContainer>
-
-          {/* Pagination */}
+     
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
-            count={totalItems} // Count the filtered data
+            count={totalItems} 
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}
@@ -331,76 +337,170 @@ const TenantRequests = () => {
         </Grid>
       </Grid>
 
-      <Dialog
-        open={openViewDialog}
-        onClose={handleCloseViewDialog}
-        maxWidth="md"
-        fullWidth
+<Dialog
+  open={openViewDialog}
+  onClose={handleCloseViewDialog}
+  maxWidth="md"
+  fullWidth
+>
+  <DialogTitle
+    style={{
+      textAlign: "center",
+      fontWeight: "bold",
+      fontSize: "1.5rem",
+    }}
+  >
+    Lease Information
+  </DialogTitle>
+  <DialogContent dividers>
+    {selectedRequest ? (
+      <Box
+        style={{
+          padding: "16px",
+          display: "flex",
+          flexDirection: "column",
+          gap: "10px",
+        }}
       >
-        <DialogTitle style={{ textAlign: "center", fontWeight: "bold" }}>
-          Tenant Request Details
-        </DialogTitle>
-        <DialogContent dividers>
-          {selectedRequest ? (
-            <Box
-              style={{
-                padding: "16px",
-                border: "1px solid #ddd",
-                borderRadius: "8px",
-                background: "#f9f9f9",
-              }}
-            >
-              <Typography variant="body1" style={{ marginBottom: "5px" }}>
-                <strong>Full Name:</strong>{" "}
-                {selectedRequest?.userId?.fullname || "N/A"}
-              </Typography>
-              <Typography variant="body1" style={{ marginBottom: "5px" }}>
-                <strong>Email:</strong>{" "}
-                {selectedRequest?.userId?.email || "N/A"}
-              </Typography>
-              <Typography variant="body1" style={{ marginBottom: "5px" }}>
-                <strong>Contact Number:</strong>{" "}
-                {selectedRequest?.userId?.contactNumber || "N/A"}
-              </Typography>
-              <Typography variant="body1" style={{ marginBottom: "5px" }}>
-                <strong>Property ID:</strong>{" "}
-                {selectedRequest?.propertyId || "N/A"}
-              </Typography>
-              <Typography variant="body1" style={{ marginBottom: "5px" }}>
-                <strong>Status:</strong> {selectedRequest?.status || "N/A"}
-              </Typography>
-              <Typography variant="body1" style={{ marginBottom: "5px" }}>
-                <strong>Lease Status:</strong>{" "}
-                {selectedRequest?.leaseStatus || "N/A"}
-              </Typography>
-              <Typography variant="body1" style={{ marginBottom: "5px" }}>
-                <strong>Lease Start Date:</strong>{" "}
-                {selectedRequest?.leaseStartDate
-                  ? new Date(
-                      selectedRequest.leaseStartDate
-                    ).toLocaleDateString()
-                  : "N/A"}
-              </Typography>
-              <Typography variant="body1" style={{ marginBottom: "5px" }}>
-                <strong>Lease End Date:</strong>{" "}
-                {selectedRequest?.leaseEndDate
-                  ? new Date(selectedRequest.leaseEndDate).toLocaleDateString()
-                  : "N/A"}
-              </Typography>
-              <Typography variant="body1" style={{ marginBottom: "5px" }}>
-                <strong>Area:</strong> {selectedRequest?.area || "N/A"}
-              </Typography>
-            </Box>
-          ) : (
-            <Typography>No data available.</Typography>
-          )}
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseViewDialog} color="primary">
-            Close
-          </Button>
-        </DialogActions>
-      </Dialog>
+        <Box
+          style={{
+            padding: "10px",
+            borderRadius: "8px",
+            background: "#fff",
+            boxShadow: "0px 2px 4px rgba(106, 105, 105, 0.1)",
+          }}
+        >
+          <Typography variant="body1">
+            <strong>Tenant Name:</strong> {selectedRequest?.userId?.fullname || "N/A"}
+          </Typography>
+        </Box>
+        <Box
+          style={{
+            padding: "10px",
+            borderRadius: "8px",
+            background: "#fff",
+            boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
+          }}
+        >
+          <Typography variant="body1">
+            <strong>Email:</strong> {selectedRequest?.userId?.email || "N/A"}
+          </Typography>
+        </Box>
+        <Box
+          style={{
+            padding: "10px",
+            borderRadius: "8px",
+            background: "#fff",
+            boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
+          }}
+        >
+          <Typography variant="body1">
+            <strong>Contact Number:</strong>{" "}
+            {selectedRequest?.userId?.contactNumber || "N/A"}
+          </Typography>
+        </Box>
+        <Box
+          style={{
+            padding: "10px",
+            borderRadius: "8px",
+            background: "#fff",
+            boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
+          }}
+        >
+          <Typography variant="body1">
+            <strong>Property Name:</strong> {selectedRequest?.propertyName || "N/A"}
+          </Typography>
+        </Box>
+        <Box
+          style={{
+            padding: "10px",
+            borderRadius: "8px",
+            background: "#fff",
+            boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
+          }}
+        >
+          <Typography variant="body1">
+            <strong>Property Address:</strong>{" "}
+            {selectedRequest?.propertyAddress || "N/A"}
+          </Typography>
+        </Box>
+        <Box
+          style={{
+            padding: "10px",
+            borderRadius: "8px",
+            background: "#fff",
+            boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
+          }}
+        >
+          <Typography variant="body1">
+            <strong>Square Footage:</strong> {selectedRequest?.squareFootage || "N/A"}
+          </Typography>
+        </Box>
+        <Box
+          style={{
+            padding: "10px",
+            borderRadius: "8px",
+            background: "#fff",
+            boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
+          }}
+        >
+          <Typography variant="body1">
+            <strong>Rent:</strong> {selectedRequest?.rent || "N/A"}
+          </Typography>
+        </Box>
+        <Box
+          style={{
+            padding: "10px",
+            borderRadius: "8px",
+            background: "#fff",
+            boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
+          }}
+        >
+          <Typography variant="body1">
+            <strong>Security Deposit:</strong> {selectedRequest?.securityDeposit || "N/A"}
+          </Typography>
+        </Box>
+        <Box
+          style={{
+            padding: "10px",
+            borderRadius: "8px",
+            background: "#fff",
+            boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
+          }}
+        >
+          <Typography variant="body1">
+            <strong>Payment Due Date:</strong>{" "}
+            {selectedRequest?.paymentDueDate
+              ? new Date(selectedRequest.paymentDueDate).toLocaleDateString()
+              : "N/A"}
+          </Typography>
+        </Box>
+        <Box
+          style={{
+            padding: "10px",
+            borderRadius: "8px",
+            background: "#fff",
+            boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
+          }}
+        >
+          <Typography variant="body1">
+            <strong>Landlord Contact:</strong>{" "}
+            {selectedRequest?.landlordContact || "N/A"}
+          </Typography>
+        </Box>
+      </Box>
+    ) : (
+      <Typography>No data available.</Typography>
+    )}
+  </DialogContent>
+  <DialogActions>
+    <Button onClick={handleCloseViewDialog} style={{ color: "#007bff" }}>
+      Close
+    </Button>
+  </DialogActions>
+</Dialog>
+
+
 
       <Dialog
         open={openDeleteDialog}
