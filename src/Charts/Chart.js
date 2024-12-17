@@ -27,9 +27,7 @@ import {
 } from 'chart.js';
 import moment from 'moment';
 import config from "../config/ServiceApi";
-import Loader from '../components/Loader/Loader'; // Import your loader component
-
-// Register ChartJS components
+import Loader from '../components/Loader/Loader'; 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
 
 const Chart = () => {
