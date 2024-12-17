@@ -19,5 +19,4 @@ module.exports = {
   sentMessages: "/messages/recipient",
   graphoccupancy:"/properties/occupancy/daily",
   graphsquarefootage:"/properties/squarefootage/daily"
-
 };
