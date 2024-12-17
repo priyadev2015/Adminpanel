@@ -5,7 +5,6 @@ import {
   CardContent,
   Typography,
   Grid,
-  Box,
   Table,
   TableBody,
   TableCell,
@@ -17,7 +16,6 @@ import {
   Select,
   FormControl,
   InputLabel,
-  Input,
 } from '@mui/material';
 import {
   Chart as ChartJS,
@@ -27,48 +25,80 @@ import {
   LinearScale,
   BarElement,
 } from 'chart.js';
-import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
-import 'react-circular-progressbar/dist/styles.css';
+import moment from 'moment';
+import config from "../config/ServiceApi";
+import Loader from '../components/Loader/Loader'; // Import your loader component
 
 // Register ChartJS components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
 
 const Chart = () => {
   const [chartData, setChartData] = useState({
-    totalIncome: 0,
-    totalSquareFeet: 0,
-    propertyOccupancy: 0,
-    monthlyData: [
-      { month: 'January', totalSquareFeet: 5000, occupiedSquareFeet: 4000 },
-      { month: 'February', totalSquareFeet: 6000, occupiedSquareFeet: 5000 },
-      { month: 'March', totalSquareFeet: 5500, occupiedSquareFeet: 4800 },
-      { month: 'April', totalSquareFeet: 7000, occupiedSquareFeet: 6000 },
-      { month: 'May', totalSquareFeet: 6500, occupiedSquareFeet: 5500 },
-    ],
-    weeklyData: [
-      // Example weekly data
-      { week: 'Week 1', totalSquareFeet: 1500, occupiedSquareFeet: 1200 },
-      { week: 'Week 2', totalSquareFeet: 1600, occupiedSquareFeet: 1400 },
-      { week: 'Week 3', totalSquareFeet: 1400, occupiedSquareFeet: 1300 },
-      { week: 'Week 4', totalSquareFeet: 1700, occupiedSquareFeet: 1600 },
-    ],
-    currentData: { totalSquareFeet: 5500, occupiedSquareFeet: 4800 }, // Current data
+    monthlyData: [],
   });
-  
-  const [timePeriod, setTimePeriod] = useState('monthly'); // Default time period: monthly
+
+  const [timePeriod, setTimePeriod] = useState('monthly');
+  const [loading, setLoading] = useState(true); // State to track loading
 
   useEffect(() => {
-    // Fetch the data (Replace with your API call or dynamic logic)
     const fetchData = async () => {
       try {
-        const data = {
-          totalIncome: 10000, // Example data
-          totalSquareFeet: 5000, // Example data
-          propertyOccupancy: 75, // Example data (in percentage)
-        };
-        setChartData((prevData) => ({ ...prevData, ...data }));
+        const token = localStorage.getItem('authToken');
+        if (!token) {
+          alert('No token found. Please log in again.');
+          return;
+        }
+
+        // Fetch occupancy data
+        const occupancyResponse = await fetch(
+           `${config.baseURL}${config.graphoccupancy}`,
+          {
+            method: 'GET',
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        const occupancyData = await occupancyResponse.json();
+
+        // Fetch square footage data
+        const squareFootageResponse = await fetch(
+          `${config.baseURL}${config.graphsquarefootage}`,
+          {
+            method: 'GET',
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        const squareFootageData = await squareFootageResponse.json();
+
+        // Normalize and merge data based on date
+        const mergedData = occupancyData
+          .filter((item) => item.date) // Exclude null dates
+          .map((occupancyItem) => {
+            const formattedDate = moment(occupancyItem.date, 'DD-MM-YY').format(
+              'YYYY-MM-DD'
+            );
+            const matchingSquareFootage = squareFootageData.find(
+              (squareFootageItem) =>
+                moment(squareFootageItem.date, 'DD-MM-YYYY').format(
+                  'YYYY-MM-DD'
+                ) === formattedDate
+            );
+            return {
+              date: formattedDate,
+              totalOccupancy: occupancyItem.totalOccupancy || 0,
+              totalSquareFootage:
+                matchingSquareFootage?.totalSquareFootage || 0,
+            };
+          });
+
+        setChartData({ monthlyData: mergedData });
+        setLoading(false); // Set loading to false when data is fetched
       } catch (error) {
         console.error('Error fetching chart data:', error);
+        setLoading(false); // Set loading to false in case of error
       }
     };
 
@@ -79,34 +109,33 @@ const Chart = () => {
     setTimePeriod(event.target.value);
   };
 
-  // Filter the data based on selected time period
   const getFilteredData = () => {
     if (timePeriod === 'weekly') {
-      return chartData.weeklyData;
+      return [];
     }
     if (timePeriod === 'current') {
-      return [chartData.currentData];
+      return [];
     }
-    return chartData.monthlyData; // Default to monthly
+    return chartData.monthlyData;
   };
 
   const filteredData = getFilteredData();
 
   // Bar chart data configuration
   const barData = {
-    labels: filteredData.map((item) => item.month || item.week),
+    labels: filteredData.map((item) => item.date),
     datasets: [
       {
-        label: 'Total Square Feet Created',
-        data: filteredData.map((item) => item.totalSquareFeet),
-        backgroundColor: '#FF9800',
-        borderWidth: 1,
+        label: 'Total Square Footage Created',
+        data: filteredData.map((item) => item.totalSquareFootage),
+        backgroundColor: '#FF9800', // Softer, contrasting color
+        yAxisID: 'y1',
       },
       {
         label: 'Square Footage Booked (Occupied)',
-        data: filteredData.map((item) => item.occupiedSquareFeet),
-        backgroundColor: '#2196F3',
-        borderWidth: 1,
+        data: filteredData.map((item) => item.totalOccupancy),
+        backgroundColor: '#2196F3', // Soft blue for contrast
+        yAxisID: 'y2',
       },
     ],
   };
@@ -116,6 +145,13 @@ const Chart = () => {
     plugins: {
       legend: {
         display: true,
+        position: 'top',
+        labels: {
+          font: {
+            size: 14,
+            weight: 'bold',
+          },
+        },
       },
       tooltip: {
         callbacks: {
@@ -130,22 +166,36 @@ const Chart = () => {
     scales: {
       x: {
         beginAtZero: true,
+        grid: {
+          display: false, // Hide gridlines for a cleaner look
+        },
       },
-      y: {
-        beginAtZero: true,
+      y1: {
+        type: 'linear',
+        position: 'left',
+        title: {
+          display: true,
+          text: 'Square Footage (Created)',
+        },
+      },
+      y2: {
+        type: 'linear',
+        position: 'right',
+        title: {
+          display: true,
+          text: 'Square Footage (Occupied)',
+        },
       },
     },
   };
 
-  const progressData = [
-    { label: 'Total Income', value: chartData.totalIncome, maxValue: 20000 },
-    { label: 'Total Square Feet', value: chartData.totalSquareFeet, maxValue: 10000 },
-    { label: 'Property Occupancy', value: chartData.propertyOccupancy, maxValue: 100 },
-  ];
+  // Show loader while data is being fetched
+  if (loading) {
+    return <Loader />;
+  }
 
   return (
     <Grid container spacing={4} alignItems="flex-start" sx={{ mt: 3 }}>
-      {/* Time Period Dropdown */}
       <Grid item xs={4}>
         <FormControl fullWidth>
           <InputLabel id="time-period-label">Select Time Period</InputLabel>
@@ -155,7 +205,6 @@ const Chart = () => {
             label="Select Time Period"
             onChange={handleTimePeriodChange}
           >
-            
             <MenuItem value="monthly">Monthly</MenuItem>
             <MenuItem value="weekly">Weekly</MenuItem>
             <MenuItem value="current">Current</MenuItem>
@@ -163,11 +212,10 @@ const Chart = () => {
         </FormControl>
       </Grid>
 
-      {/* Bar Chart Section */}
       <Grid item xs={12}>
         <Card sx={{ boxShadow: 3 }}>
           <CardContent>
-            <Typography variant="h6" sx={{ mb: 2 }}>
+            <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold' }}>
               Metrics Comparison (Bar Chart)
             </Typography>
             <Bar data={barData} options={barOptions} />
@@ -175,67 +223,66 @@ const Chart = () => {
         </Card>
       </Grid>
 
-      {/* Circular Progress Bars Below Bar Chart */}
-      <Grid item xs={12}>
-        <Card sx={{ boxShadow: 3 }}>
-          <CardContent>
-            <Typography variant="h6" sx={{ mb: 3 }}>
-              Circular Progress Overview
+      <Grid item xs={12} container spacing={2}>
+        <Grid item xs={6}>
+          <TableContainer component={Paper}>
+            <Typography variant="h6" sx={{ textAlign: 'center', mt: 2 }}>
+              Square Footage Created
             </Typography>
-
-            <Grid container spacing={3} justifyContent="center">
-              {progressData.map((item, index) => (
-                <Grid item xs={4} key={index}>
-                  <Box sx={{ textAlign: 'center' }}>
-                    <CircularProgressbar
-                      value={(item.value / item.maxValue) * 100}
-                      text={`${Math.round((item.value / item.maxValue) * 100)}%`}
-                      styles={buildStyles({
-                        textColor: '#000',
-                        pathColor: '#4CAF50',
-                        trailColor: '#f0f0f0',
-                      })}
-                    />
-                    <Typography sx={{ mt: 2, fontSize: 14, fontWeight: 'bold' }}>
-                      {item.label}
-                    </Typography>
-                  </Box>
-                </Grid>
-              ))}
-            </Grid>
-          </CardContent>
-        </Card>
-      </Grid>
-
-      {/* Table for Metrics Data Below Bar Graph */}
-      <Grid item xs={12}>
-        <Card sx={{ boxShadow: 3 }}>
-          <CardContent>
-            <Typography variant="h6" sx={{ mb: 2 }}>
-              Metrics Data (Table)
-            </Typography>
-            <TableContainer component={Paper}>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Time Period</TableCell>
-                    <TableCell align="right">Total Square Footage Created</TableCell>
-                    <TableCell align="right">Square Footage Booked (Occupied)</TableCell>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Date</TableCell>
+                  <TableCell>Total Square Footage</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {filteredData.map((row, index) => (
+                  <TableRow
+                    key={row.date}
+                    sx={{
+                      backgroundColor: index % 2 === 0 ? '#f9f9f9' : '#fff',
+                      '&:hover': { backgroundColor: '#eaeaea' }, // Hover effect
+                    }}
+                  >
+                    <TableCell>{row.date}</TableCell>
+                    <TableCell>{row.totalSquareFootage}</TableCell>
                   </TableRow>
-                </TableHead>
-                <TableBody>
-                  {filteredData.map((row, index) => (
-                    <TableRow key={index}>
-                      <TableCell>{row.month || row.week}</TableCell>
-                      <TableCell align="right">{row.totalSquareFeet}</TableCell>
-                      <TableCell align="right">{row.occupiedSquareFeet}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </CardContent>
-        </Card>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Grid>
+
+        <Grid item xs={6}>
+          <TableContainer component={Paper}>
+            <Typography variant="h6" sx={{ textAlign: 'center', mt: 2 }}>
+              Booked Square Footage
+            </Typography>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Date</TableCell>
+                  <TableCell>Total Occupancy</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {filteredData.map((row, index) => (
+                  <TableRow
+                    key={row.date}
+                    sx={{
+                      backgroundColor: index % 2 === 0 ? '#f9f9f9' : '#fff',
+                      '&:hover': { backgroundColor: '#eaeaea' }, // Hover effect
+                    }}
+                  >
+                    <TableCell>{row.date}</TableCell>
+                    <TableCell>{row.totalOccupancy}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Grid>
       </Grid>
     </Grid>
   );
