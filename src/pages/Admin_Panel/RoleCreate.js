@@ -383,13 +383,13 @@ const RoleCreate = () => {
         </div>
 
         <TablePagination
-          rowsPerPageOptions={[5, 10, 20]}  // Options for number of rows per page
+          rowsPerPageOptions={[5, 10, 20]}  
           component="div"
-          count={totalRoles}                  // Total number of rows
-          rowsPerPage={rowsPerPage}           // Current rows per page
-          page={page}                         // Current page (0-indexed)
-          onPageChange={handleChangePage}     // Handler for page change
-          onRowsPerPageChange={handleChangeRowsPerPage}  // Handler for rows per page change
+          count={totalRoles}                 
+          rowsPerPage={rowsPerPage}          
+          page={page}                     
+          onPageChange={handleChangePage}    
+          onRowsPerPageChange={handleChangeRowsPerPage}  
         />
       </div>
     </>
