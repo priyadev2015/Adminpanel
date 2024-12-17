@@ -13,11 +13,10 @@ module.exports = {
   tenantrequest: "/tenant-requests",
   users: "/auth/users", // Fetch users
   roles: "/roles", // Fetch roles
-  createUser: "/auth/register", 
-  messageList:"/tenant-requests/owners-and-tenants",
+  createUser: "/auth/register",
+  messageList: "/tenant-requests/owners-and-tenants",
   receivedMessages: "/messages/received", // Endpoint for received messages
   sentMessages: "/messages/recipient",
-  graphoccupancy:"/properties/occupancy/daily",
-  graphsquarefootage:"/properties/squarefootage/daily"
-
+  graphoccupancy: "/properties/occupancy/daily",
+  graphsquarefootage: "/properties/squarefootage/daily",
 };
