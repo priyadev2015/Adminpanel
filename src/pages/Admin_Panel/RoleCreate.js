@@ -342,8 +342,6 @@ const RoleCreate = () => {
             </div>
           </ModalContent>
         </MUI_Modal>
-
-        
           <TableContainer component={Paper} elevation={3}>
             <Table>
               <TableHead>
@@ -432,7 +430,6 @@ const RoleCreate = () => {
     </>
   );
 };
-
 const ModalContent = styled("div")({
   position: "absolute",
   top: "50%",
