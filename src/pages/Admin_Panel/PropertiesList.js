@@ -21,6 +21,7 @@ import {
   TextField,
   InputAdornment,
   Typography,
+  Box,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -409,124 +410,126 @@ const PropertiesList = () => {
           ),
         }}
       />
-     
-     <TableContainer component={Paper} elevation={3}>
-  <Table>
-    <TableHead>
-      <TableRow>
-        {[
-          "Property ID",
-          "Property Name",
-          "Address",
-          "Occupancy",
-          "Total Income",
-          "Owner Name",
-          "Owner Email",
-          "Owner Role",
-          "Date",
-          "Time",
-          "Actions",
-        ].map((header) => (
-          <TableCell
-            key={header}
-            sx={{
-              fontWeight: "bold",
-              textAlign: "center",
-              backgroundColor: "#f9f9f9",
-              border: "1px solid #e0e0e0",
-              whiteSpace: 'nowrap', 
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-            }}
-          >
-            {header}
-          </TableCell>
-        ))}
-      </TableRow>
-    </TableHead>
-    <TableBody>
-      {filteredProperties.length > 0 ? (
-        filteredProperties.map((property) => (
-          <TableRow
-            key={property._id}
-            sx={{
-              "&:hover": {
-                backgroundColor: "rgba(0, 0, 0, 0.05)",
-                boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-              },
-            }}
-          >
-            <TableCell sx={{ border: "1px solid #e0e0e0" }}>
-              {property.propertyId}
-            </TableCell>
-            <TableCell sx={{ border: "1px solid #e0e0e0" }}>
-              {property.name}
-            </TableCell>
-            <TableCell sx={{ border: "1px solid #e0e0e0" }}>
-              {property.propertyAddress}
-            </TableCell>
-            <TableCell sx={{ border: "1px solid #e0e0e0" }}>
-              {property.occupancy}
-            </TableCell>
-            <TableCell sx={{ border: "1px solid #e0e0e0" }}>
-              {property.totalIncome}
-            </TableCell>
-            <TableCell sx={{ border: "1px solid #e0e0e0" }}>
-              {property.owner?.fullname || "N/A"}
-            </TableCell>
-            <TableCell sx={{ border: "1px solid #e0e0e0" }}>
-              {property.owner?.email || "N/A"}
-            </TableCell>
-            <TableCell sx={{ border: "1px solid #e0e0e0" }}>
-              {property.owner?.role || "N/A"}
-            </TableCell>
-            <TableCell sx={{ border: "1px solid #e0e0e0" }}>
-              {new Date(property.createdAt).toLocaleDateString()}
-            </TableCell>
-            <TableCell sx={{ border: "1px solid #e0e0e0" }}>
-              {new Date(property.createdAt).toLocaleTimeString()}
-            </TableCell>
-            <TableCell
-              sx={{
-                display: "flex",
-                justifyContent: "center",
-                gap: "8px",
-                border: "1px solid #e0e0e0",
-              }}
-            >
-              <IconButton
-                onClick={() => handleViewOpen(property)}
-                sx={{ color: "green" }}
-              >
-                <VisibilityIcon />
-              </IconButton>
-              <IconButton
-                onClick={() => handleEditOpen(property)}
-                color="primary"
-              >
-                <EditIcon />
-              </IconButton>
-              <IconButton
-                onClick={() => handleDeleteOpen(property._id)}
-                color="error"
-              >
-                <DeleteIcon />
-              </IconButton>
-            </TableCell>
-          </TableRow>
-        ))
-      ) : (
-        <TableRow>
-          <TableCell colSpan={11} align="center" sx={{ border: "1px solid #e0e0e0" }}>
-            No properties found.
-          </TableCell>
-        </TableRow>
-      )}
-    </TableBody>
-  </Table>
-</TableContainer>
 
-
+      <TableContainer component={Paper} elevation={3}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              {[
+                "Property ID",
+                "Property Name",
+                "Address",
+                "Occupancy",
+                "Total Income",
+                "Owner Name",
+                "Owner Email",
+                "Owner Role",
+                "Date",
+                "Time",
+                "Actions",
+              ].map((header) => (
+                <TableCell
+                  key={header}
+                  sx={{
+                    fontWeight: "bold",
+                    textAlign: "center",
+                    backgroundColor: "#f9f9f9",
+                    border: "1px solid #e0e0e0",
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                  }}
+                >
+                  {header}
+                </TableCell>
+              ))}
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {filteredProperties.length > 0 ? (
+              filteredProperties.map((property) => (
+                <TableRow
+                  key={property._id}
+                  sx={{
+                    "&:hover": {
+                      backgroundColor: "rgba(0, 0, 0, 0.05)",
+                      boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+                    },
+                  }}
+                >
+                  <TableCell sx={{ border: "1px solid #e0e0e0" }}>
+                    {property.propertyId}
+                  </TableCell>
+                  <TableCell sx={{ border: "1px solid #e0e0e0" }}>
+                    {property.name}
+                  </TableCell>
+                  <TableCell sx={{ border: "1px solid #e0e0e0" }}>
+                    {property.propertyAddress}
+                  </TableCell>
+                  <TableCell sx={{ border: "1px solid #e0e0e0" }}>
+                    {property.occupancy}
+                  </TableCell>
+                  <TableCell sx={{ border: "1px solid #e0e0e0" }}>
+                    {property.totalIncome}
+                  </TableCell>
+                  <TableCell sx={{ border: "1px solid #e0e0e0" }}>
+                    {property.owner?.fullname || "N/A"}
+                  </TableCell>
+                  <TableCell sx={{ border: "1px solid #e0e0e0" }}>
+                    {property.owner?.email || "N/A"}
+                  </TableCell>
+                  <TableCell sx={{ border: "1px solid #e0e0e0" }}>
+                    {property.owner?.role || "N/A"}
+                  </TableCell>
+                  <TableCell sx={{ border: "1px solid #e0e0e0" }}>
+                    {new Date(property.createdAt).toLocaleDateString()}
+                  </TableCell>
+                  <TableCell sx={{ border: "1px solid #e0e0e0" }}>
+                    {new Date(property.createdAt).toLocaleTimeString()}
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      display: "flex",
+                      justifyContent: "center",
+                      gap: "8px",
+                      border: "1px solid #e0e0e0",
+                    }}
+                  >
+                    <IconButton
+                      onClick={() => handleViewOpen(property)}
+                      sx={{ color: "green" }}
+                    >
+                      <VisibilityIcon />
+                    </IconButton>
+                    <IconButton
+                      onClick={() => handleEditOpen(property)}
+                      color="primary"
+                    >
+                      <EditIcon />
+                    </IconButton>
+                    <IconButton
+                      onClick={() => handleDeleteOpen(property._id)}
+                      color="error"
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell
+                  colSpan={11}
+                  align="center"
+                  sx={{ border: "1px solid #e0e0e0" }}
+                >
+                  No properties found.
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </TableContainer>
 
       <TablePagination
         rowsPerPageOptions={[5, 10, 25]}
@@ -537,492 +540,345 @@ const PropertiesList = () => {
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
-<Dialog open={openCreateModal} onClose={() => setOpenCreateModal(false)}>
-  <div
-    style={{
-      padding: "20px",
-      backgroundColor: "white",
-      margin: "auto",
-      marginTop: "0px",
-      maxWidth: "400px",
-      borderRadius: "8px",
-    }}
-  >
-    <Typography variant="h6" sx={{ display: "flex", justifyContent: "center" }}>
-      Create Property
-    </Typography>
-    <form onSubmit={handleCreateSubmit}>
-      <TextField
-        label="Property Name"
-        fullWidth
-        value={newProperty.name}
-        onChange={handleInputChange}
-        name="name"
-        margin="normal"
-        error={!!formErrors.name}
-        helperText={formErrors.name}
-      />
-      <TextField
-        label="Property Address"
-        fullWidth
-        value={newProperty.propertyAddress}
-        onChange={handleInputChange}
-        name="propertyAddress"
-        margin="normal"
-        error={!!formErrors.propertyAddress}
-        helperText={formErrors.propertyAddress}
-      />
-      <TextField
-        label="Rent"
-        type="number"
-        fullWidth
-        value={newProperty.rent}
-        onChange={handleInputChange}
-        name="rent"
-        margin="normal"
-        error={!!formErrors.rent}
-        helperText={formErrors.rent}
-      />
-      <TextField
-        label="Security Deposit"
-        type="number"
-        fullWidth
-        value={newProperty.securityDeposit}
-        onChange={handleInputChange}
-        name="securityDeposit"
-        margin="normal"
-        error={!!formErrors.securityDeposit}
-        helperText={formErrors.securityDeposit}
-      />
-      <TextField
-        label="Square Footage"
-        type="number"
-        fullWidth
-        value={newProperty.squareFootage}
-        onChange={handleInputChange}
-        name="squareFootage"
-        margin="normal"
-        error={!!formErrors.squareFootage}
-        helperText={formErrors.squareFootage}
-      />
-      <TextField
-        label="Total Income"
-        type="number"
-        fullWidth
-        value={newProperty.totalIncome}
-        onChange={handleInputChange}
-        name="totalIncome"
-        margin="normal"
-        error={!!formErrors.totalIncome}
-        helperText={formErrors.totalIncome}
-      />
-
-      <div style={{ marginTop: "10px" }}>
-        <input
-          type="file"
-          onChange={handleFileChange}
-          accept="image/*" // Restricting file type to images only
-        />
-      </div>
-
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          gap: "10px",
-          marginTop: "20px",
-        }}
-      >
-         <Button
-          variant="outlined"
-          fullWidth
-          onClick={() => setOpenCreateModal(false)}
+      <Dialog open={openCreateModal} onClose={() => setOpenCreateModal(false)}>
+        <div
+          style={{
+            padding: "20px",
+            backgroundColor: "white",
+            margin: "auto",
+            marginTop: "0px",
+            maxWidth: "400px",
+            borderRadius: "8px",
+          }}
         >
-          Cancel
-        </Button>
-        <Button
-          onClick={handleCreateSubmit}
-          variant="contained"
-          fullWidth
-          sx={{ padding: "10px" }}
+          <Typography
+            variant="h6"
+            sx={{ display: "flex", justifyContent: "center" }}
+          >
+            Create Property
+          </Typography>
+          <form onSubmit={handleCreateSubmit}>
+            <TextField
+              label="Property Name"
+              fullWidth
+              value={newProperty.name}
+              onChange={handleInputChange}
+              name="name"
+              margin="normal"
+              error={!!formErrors.name}
+              helperText={formErrors.name}
+            />
+            <TextField
+              label="Property Address"
+              fullWidth
+              value={newProperty.propertyAddress}
+              onChange={handleInputChange}
+              name="propertyAddress"
+              margin="normal"
+              error={!!formErrors.propertyAddress}
+              helperText={formErrors.propertyAddress}
+            />
+            <TextField
+              label="Rent"
+              type="number"
+              fullWidth
+              value={newProperty.rent}
+              onChange={handleInputChange}
+              name="rent"
+              margin="normal"
+              error={!!formErrors.rent}
+              helperText={formErrors.rent}
+            />
+            <TextField
+              label="Security Deposit"
+              type="number"
+              fullWidth
+              value={newProperty.securityDeposit}
+              onChange={handleInputChange}
+              name="securityDeposit"
+              margin="normal"
+              error={!!formErrors.securityDeposit}
+              helperText={formErrors.securityDeposit}
+            />
+            <TextField
+              label="Square Footage"
+              type="number"
+              fullWidth
+              value={newProperty.squareFootage}
+              onChange={handleInputChange}
+              name="squareFootage"
+              margin="normal"
+              error={!!formErrors.squareFootage}
+              helperText={formErrors.squareFootage}
+            />
+            <TextField
+              label="Total Income"
+              type="number"
+              fullWidth
+              value={newProperty.totalIncome}
+              onChange={handleInputChange}
+              name="totalIncome"
+              margin="normal"
+              error={!!formErrors.totalIncome}
+              helperText={formErrors.totalIncome}
+            />
+
+            <div style={{ marginTop: "10px" }}>
+              <input
+                type="file"
+                onChange={handleFileChange}
+                accept="image/*" // Restricting file type to images only
+              />
+            </div>
+
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                gap: "10px",
+                marginTop: "20px",
+              }}
+            >
+              <Button
+                variant="outlined"
+                fullWidth
+                onClick={() => setOpenCreateModal(false)}
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleCreateSubmit}
+                variant="contained"
+                fullWidth
+                sx={{ padding: "10px" }}
+              >
+                Create
+              </Button>
+            </div>
+          </form>
+        </div>
+      </Dialog>
+
+      <Dialog open={openViewModal} onClose={handleViewClose} fullWidth>
+        <DialogTitle
+          sx={{ textAlign: "center", fontWeight: "bold", fontSize: "1.5rem" }}
         >
-          Create
-        </Button>
-       
-      </div>
-    </form>
-  </div>
-</Dialog>
-
-      {/* <Dialog open={openViewModal} onClose={handleViewClose}>
-        <DialogTitle>View Property</DialogTitle>
-        <DialogContent>
-          <TextField
-            label="Property Name"
-            fullWidth
-            value={viewProperty?.name || ""}
-            InputProps={{ readOnly: true }}
-            margin="normal"
-          />
-
-          <TextField
-            label="Property Address"
-            fullWidth
-            value={viewProperty?.propertyAddress || ""}
-            InputProps={{ readOnly: true }}
-            margin="normal"
-          />
-
-          <TextField
-            label="Occupancy"
-            type="number"
-            fullWidth
-            value={viewProperty?.occupancy || ""}
-            InputProps={{ readOnly: true }}
-            margin="normal"
-          />
-
-          <TextField
-            label="Total Income"
-            type="number"
-            fullWidth
-            value={viewProperty?.totalIncome || ""}
-            InputProps={{ readOnly: true }}
-            margin="normal"
-          />
-
-          <TextField
-            label="Square Footage"
-            type="number"
-            fullWidth
-            value={viewProperty?.squareFootage || ""}
-            InputProps={{ readOnly: true }}
-            margin="normal"
-          />
-
-          <TextField
-            label="Rent"
-            type="number"
-            fullWidth
-            value={viewProperty?.rent || ""}
-            InputProps={{ readOnly: true }}
-            margin="normal"
-          />
-
-          <TextField
-            label="Security Deposit"
-            type="number"
-            fullWidth
-            value={viewProperty?.securityDeposit || ""}
-            InputProps={{ readOnly: true }}
-            margin="normal"
-          />
-
-          <TextField
-            label="Total Requests"
-            type="number"
-            fullWidth
-            value={viewProperty?.totalRequests || ""}
-            InputProps={{ readOnly: true }}
-            margin="normal"
-          />
-
-          <TextField
-            label="Owner Name"
-            fullWidth
-            value={viewProperty?.owner?.fullname || ""}
-            InputProps={{ readOnly: true }}
-            margin="normal"
-          />
-          <TextField
-            label="Owner Email"
-            fullWidth
-            value={viewProperty?.owner?.email || ""}
-            InputProps={{ readOnly: true }}
-            margin="normal"
-          />
-          <TextField
-            label="Owner Role"
-            fullWidth
-            value={viewProperty?.owner?.role || ""}
-            InputProps={{ readOnly: true }}
-            margin="normal"
-          />
-
-          <TextField
-            label="Property ID"
-            fullWidth
-            value={viewProperty?.propertyId || ""}
-            InputProps={{ readOnly: true }}
-            margin="normal"
-          />
-
-          <TextField
-            label="Created At"
-            fullWidth
-            value={
-              viewProperty?.createdAt
-                ? new Date(viewProperty?.createdAt).toLocaleString()
-                : ""
-            }
-            InputProps={{ readOnly: true }}
-            margin="normal"
-          />
+          Property Details
+        </DialogTitle>
+        <DialogContent dividers>
+          {viewProperty ? (
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+              {[
+                { label: "Property Name", value: viewProperty?.name || "N/A" },
+                {
+                  label: "Property Address",
+                  value: viewProperty?.propertyAddress || "N/A",
+                },
+                { label: "Occupancy", value: viewProperty?.occupancy || "N/A" },
+                {
+                  label: "Total Income",
+                  value: viewProperty?.totalIncome || "N/A",
+                },
+                {
+                  label: "Square Footage",
+                  value: viewProperty?.squareFootage || "N/A",
+                },
+                { label: "Rent", value: viewProperty?.rent || "N/A" },
+                {
+                  label: "Security Deposit",
+                  value: viewProperty?.securityDeposit || "N/A",
+                },
+                {
+                  label: "Total Requests",
+                  value: viewProperty?.totalRequests || "N/A",
+                },
+                {
+                  label: "Owner Name",
+                  value: viewProperty?.owner?.fullname || "N/A",
+                },
+                {
+                  label: "Owner Email",
+                  value: viewProperty?.owner?.email || "N/A",
+                },
+                {
+                  label: "Owner Role",
+                  value: viewProperty?.owner?.role || "N/A",
+                },
+                {
+                  label: "Property ID",
+                  value: viewProperty?.propertyId || "N/A",
+                },
+                {
+                  label: "Date",
+                  value: viewProperty?.createdAt
+                    ? new Date(viewProperty?.createdAt).toLocaleDateString()
+                    : "N/A",
+                },
+                {
+                  label: "Time",
+                  value: viewProperty?.createdAt
+                    ? new Date(viewProperty?.createdAt).toLocaleTimeString()
+                    : "N/A",
+                },
+              ].map(({ label, value }) => (
+                <Box
+                  key={label}
+                  sx={{
+                    padding: 1.5,
+                    borderRadius: 1,
+                    backgroundColor: "#f9f9f9",
+                  }}
+                >
+                  <Typography variant="body1" component="div">
+                    <strong>{label}:</strong> {value}
+                  </Typography>
+                </Box>
+              ))}
+            </Box>
+          ) : (
+            <Typography>No data available.</Typography>
+          )}
         </DialogContent>
-        <DialogActions>
-          <Button onClick={handleViewClose} color="primary">
+        <DialogActions sx={{ position: "relative", right: "40%" }}>
+          <Button
+            onClick={handleViewClose}
+            sx={{
+              color: "white",
+              border: "2px solid",
+              backgroundColor: "blue",
+              textTransform: "capitalize",
+              fontSize: "15px",
+              width: "120px",
+            }}
+          >
             Close
           </Button>
         </DialogActions>
-      </Dialog> */}
-
-<Dialog open={openViewModal} onClose={handleViewClose}>
-  <div
-    style={{
-      padding: "20px",
-      backgroundColor: "white",
-      margin: "auto",
-      maxWidth: "400px",
-      borderRadius: "8px",
-    }}
-  >
-    <Typography variant="h6" sx={{ display: "flex", justifyContent: "center" }}>
-       Property Details
-    </Typography>
-    <DialogContent>
-      <TextField
-        label="Property Name"
-        fullWidth
-        value={viewProperty?.name || ""}
-        InputProps={{ readOnly: true }}
-        margin="normal"
-      />
-      <TextField
-        label="Property Address"
-        fullWidth
-        value={viewProperty?.propertyAddress || ""}
-        InputProps={{ readOnly: true }}
-        margin="normal"
-      />
-      <TextField
-        label="Occupancy"
-        type="number"
-        fullWidth
-        value={viewProperty?.occupancy || ""}
-        InputProps={{ readOnly: true }}
-        margin="normal"
-      />
-      <TextField
-        label="Total Income"
-        type="number"
-        fullWidth
-        value={viewProperty?.totalIncome || ""}
-        InputProps={{ readOnly: true }}
-        margin="normal"
-      />
-      <TextField
-        label="Square Footage"
-        type="number"
-        fullWidth
-        value={viewProperty?.squareFootage || ""}
-        InputProps={{ readOnly: true }}
-        margin="normal"
-      />
-      <TextField
-        label="Rent"
-        type="number"
-        fullWidth
-        value={viewProperty?.rent || ""}
-        InputProps={{ readOnly: true }}
-        margin="normal"
-      />
-      <TextField
-        label="Security Deposit"
-        type="number"
-        fullWidth
-        value={viewProperty?.securityDeposit || ""}
-        InputProps={{ readOnly: true }}
-        margin="normal"
-      />
-      <TextField
-        label="Total Requests"
-        type="number"
-        fullWidth
-        value={viewProperty?.totalRequests || ""}
-        InputProps={{ readOnly: true }}
-        margin="normal"
-      />
-      <TextField
-        label="Owner Name"
-        fullWidth
-        value={viewProperty?.owner?.fullname || ""}
-        InputProps={{ readOnly: true }}
-        margin="normal"
-      />
-      <TextField
-        label="Owner Email"
-        fullWidth
-        value={viewProperty?.owner?.email || ""}
-        InputProps={{ readOnly: true }}
-        margin="normal"
-      />
-      <TextField
-        label="Owner Role"
-        fullWidth
-        value={viewProperty?.owner?.role || ""}
-        InputProps={{ readOnly: true }}
-        margin="normal"
-      />
-      <TextField
-        label="Property ID"
-        fullWidth
-        value={viewProperty?.propertyId || ""}
-        InputProps={{ readOnly: true }}
-        margin="normal"
-      />
-      <TextField
-        label="Created At"
-        fullWidth
-        value={
-          viewProperty?.createdAt
-            ? new Date(viewProperty?.createdAt).toLocaleString()
-            : ""
-        }
-        InputProps={{ readOnly: true }}
-        margin="normal"
-      />
-    </DialogContent>
-    <DialogActions>
-      <Button onClick={handleViewClose} color="primary" sx={{ width: "100%",border:"1px solid " }}>
-        Close
-      </Button>
-    </DialogActions>
-  </div>
-</Dialog>
-
+      </Dialog>
 
       <Dialog open={openEditModal} onClose={handleEditClose}>
-  <div
-    style={{
-      padding: "20px",
-      backgroundColor: "white",
-      margin: "auto",
-      maxWidth: "400px",
-      borderRadius: "8px",
-    }}
-  >
-    <Typography variant="h6" sx={{ display: "flex", justifyContent: "center" }}>
-      Edit Property
-    </Typography>
-    <form onSubmit={handleEditSubmit}>
-      <TextField
-        label="Property Name"
-        fullWidth
-        value={editProperty?.name || ""}
-        onChange={(e) =>
-          setEditProperty({ ...editProperty, name: e.target.value })
-        }
-        margin="normal"
-        error={!!formErrors.name}
-        helperText={formErrors.name}
-      />
-      <TextField
-        label="Property Address"
-        fullWidth
-        value={editProperty?.propertyAddress || ""}
-        onChange={(e) =>
-          setEditProperty({
-            ...editProperty,
-            propertyAddress: e.target.value,
-          })
-        }
-        margin="normal"
-        error={!!formErrors.propertyAddress}
-        helperText={formErrors.propertyAddress}
-      />
-      <TextField
-        label="Rent"
-        type="number"
-        fullWidth
-        value={editProperty?.rent || ""}
-        onChange={(e) =>
-          setEditProperty({ ...editProperty, rent: e.target.value })
-        }
-        margin="normal"
-        error={!!formErrors.rent}
-        helperText={formErrors.rent}
-      />
-      <TextField
-        label="Security Deposit"
-        type="number"
-        fullWidth
-        value={editProperty?.securityDeposit || ""}
-        onChange={(e) =>
-          setEditProperty({
-            ...editProperty,
-            securityDeposit: e.target.value,
-          })
-        }
-        margin="normal"
-        error={!!formErrors.securityDeposit}
-        helperText={formErrors.securityDeposit}
-      />
-      <TextField
-        label="Square Footage"
-        type="number"
-        fullWidth
-        value={editProperty?.squareFootage || ""}
-        onChange={(e) =>
-          setEditProperty({
-            ...editProperty,
-            squareFootage: e.target.value,
-          })
-        }
-        margin="normal"
-        error={!!formErrors.squareFootage}
-        helperText={formErrors.squareFootage}
-      />
-      <TextField
-        label="Total Income"
-        type="number"
-        fullWidth
-        value={editProperty?.totalIncome || ""}
-        onChange={(e) =>
-          setEditProperty({ ...editProperty, totalIncome: e.target.value })
-        }
-        margin="normal"
-        error={!!formErrors.totalIncome}
-        helperText={formErrors.totalIncome}
-      />
+        <div
+          style={{
+            padding: "20px",
+            backgroundColor: "white",
+            margin: "auto",
+            maxWidth: "400px",
+            borderRadius: "8px",
+          }}
+        >
+          <Typography
+            variant="h6"
+            sx={{ display: "flex", justifyContent: "center" }}
+          >
+            Edit Property
+          </Typography>
+          <form onSubmit={handleEditSubmit}>
+            <TextField
+              label="Property Name"
+              fullWidth
+              value={editProperty?.name || ""}
+              onChange={(e) =>
+                setEditProperty({ ...editProperty, name: e.target.value })
+              }
+              margin="normal"
+              error={!!formErrors.name}
+              helperText={formErrors.name}
+            />
+            <TextField
+              label="Property Address"
+              fullWidth
+              value={editProperty?.propertyAddress || ""}
+              onChange={(e) =>
+                setEditProperty({
+                  ...editProperty,
+                  propertyAddress: e.target.value,
+                })
+              }
+              margin="normal"
+              error={!!formErrors.propertyAddress}
+              helperText={formErrors.propertyAddress}
+            />
+            <TextField
+              label="Rent"
+              type="number"
+              fullWidth
+              value={editProperty?.rent || ""}
+              onChange={(e) =>
+                setEditProperty({ ...editProperty, rent: e.target.value })
+              }
+              margin="normal"
+              error={!!formErrors.rent}
+              helperText={formErrors.rent}
+            />
+            <TextField
+              label="Security Deposit"
+              type="number"
+              fullWidth
+              value={editProperty?.securityDeposit || ""}
+              onChange={(e) =>
+                setEditProperty({
+                  ...editProperty,
+                  securityDeposit: e.target.value,
+                })
+              }
+              margin="normal"
+              error={!!formErrors.securityDeposit}
+              helperText={formErrors.securityDeposit}
+            />
+            <TextField
+              label="Square Footage"
+              type="number"
+              fullWidth
+              value={editProperty?.squareFootage || ""}
+              onChange={(e) =>
+                setEditProperty({
+                  ...editProperty,
+                  squareFootage: e.target.value,
+                })
+              }
+              margin="normal"
+              error={!!formErrors.squareFootage}
+              helperText={formErrors.squareFootage}
+            />
+            <TextField
+              label="Total Income"
+              type="number"
+              fullWidth
+              value={editProperty?.totalIncome || ""}
+              onChange={(e) =>
+                setEditProperty({
+                  ...editProperty,
+                  totalIncome: e.target.value,
+                })
+              }
+              margin="normal"
+              error={!!formErrors.totalIncome}
+              helperText={formErrors.totalIncome}
+            />
 
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          gap: "10px",
-          marginTop: "20px",
-        }}
-      >
-        <Button
-          variant="outlined"
-          fullWidth
-          onClick={handleEditClose}
-        >
-          Cancel
-        </Button>
-        <Button
-           onClick={handleEditSubmit} 
-          variant="contained"
-          fullWidth
-          sx={{ padding: "10px" }}
-        >
-          Update
-        </Button>
-        
-      </div>
-    </form>
-  </div>
-</Dialog>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                gap: "10px",
+                marginTop: "20px",
+              }}
+            >
+              <Button variant="outlined" fullWidth onClick={handleEditClose}>
+                Cancel
+              </Button>
+              <Button
+                onClick={handleEditSubmit}
+                variant="contained"
+                fullWidth
+                sx={{ padding: "10px" }}
+              >
+                Update
+              </Button>
+            </div>
+          </form>
+        </div>
+      </Dialog>
 
       <Dialog open={openDeleteModal} onClose={handleDeleteClose}>
         <DialogTitle>Confirm Deletion</DialogTitle>

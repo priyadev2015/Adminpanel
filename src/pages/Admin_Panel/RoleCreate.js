@@ -35,7 +35,7 @@ const RoleCreate = () => {
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [roleToDelete, setRoleToDelete] = useState(null);
   const [roleNameError, setRoleNameError] = useState("");
-  const [page, setPage] = useState(0); // Page index starts from 1
+  const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [totalRoles, setTotalRoles] = useState(0);
 
@@ -73,8 +73,13 @@ const RoleCreate = () => {
 
   const handleOpen = (role) => {
     setOpen(true);
-    if (!role) {
+    if (role) {
+      setEditRole(role);
+      setRoleName(role.name);
+    } else {
       setEditRole(null);
+      setRoleName("");
+      setRoleNameError("");
     }
   };
 
@@ -171,8 +176,6 @@ const RoleCreate = () => {
   };
 
   const handleEditRole = (role) => {
-    setRoleName(role.name);
-    setEditRole(role);
     handleOpen(role);
   };
 
@@ -262,7 +265,11 @@ const RoleCreate = () => {
             }}
           />
         </div>
-        <Button variant="contained" onClick={handleOpen} sx={{position:"relative", bottom:"10px"}}>
+        <Button
+          variant="contained"
+          onClick={() => handleOpen(null)}
+          sx={{ position: "relative", bottom: "10px" }}
+        >
           Create
         </Button>
 
@@ -343,83 +350,81 @@ const RoleCreate = () => {
           </ModalContent>
         </MUI_Modal>
 
-        
-          <TableContainer component={Paper} elevation={3}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  {["Role Name", "Actions"].map((header) => (
+        <TableContainer component={Paper} elevation={3}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                {["Role Name", "Actions"].map((header) => (
+                  <TableCell
+                    key={header}
+                    sx={{
+                      fontWeight: "bold",
+                      textAlign: "center",
+                      backgroundColor: "#f9f9f9",
+                      border: "1px solid #e0e0e0",
+                    }}
+                  >
+                    {header}
+                  </TableCell>
+                ))}
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {filteredRoles.length > 0 ? (
+                filteredRoles.map((role) => (
+                  <TableRow
+                    key={role._id}
+                    sx={{
+                      "&:hover": {
+                        backgroundColor: "rgba(0, 0, 0, 0.05)",
+                        boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+                      },
+                    }}
+                  >
                     <TableCell
-                      key={header}
                       sx={{
-                        fontWeight: "bold",
                         textAlign: "center",
-                        backgroundColor: "#f9f9f9",
                         border: "1px solid #e0e0e0",
                       }}
                     >
-                      {header}
+                      {role.name}
                     </TableCell>
-                  ))}
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {filteredRoles.length > 0 ? (
-                  filteredRoles.map((role) => (
-                    <TableRow
-                      key={role._id}
+                    <TableCell
                       sx={{
-                        "&:hover": {
-                          backgroundColor: "rgba(0, 0, 0, 0.05)",
-                          boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-                        },
+                        display: "flex",
+                        justifyContent: "center",
+                        gap: "10px",
+                        border: "1px solid #e0e0e0",
                       }}
                     >
-                      <TableCell
-                        sx={{
-                          textAlign: "center",
-                          border: "1px solid #e0e0e0",
-                        }}
+                      <IconButton onClick={() => handleEditRole(role)}>
+                        <EditIcon sx={{ color: "blue" }} />
+                      </IconButton>
+                      <IconButton
+                        onClick={() => handleDeleteRole(role._id)}
+                        color="error"
                       >
-                        {role.name}
-                      </TableCell>
-                      <TableCell
-                        sx={{
-                          display: "flex",
-                          justifyContent: "center",
-                          gap: "10px",
-                          border: "1px solid #e0e0e0",
-                        }}
-                      >
-                        <IconButton onClick={() => handleEditRole(role)}>
-                          <EditIcon sx={{ color: "blue" }} />
-                        </IconButton>
-                        <IconButton
-                          onClick={() => handleDeleteRole(role._id)}
-                          color="error"
-                        >
-                          <DeleteIcon sx={{ color: "red" }} />
-                        </IconButton>
-                      </TableCell>
-                    </TableRow>
-                  ))
-                ) : (
-                  <TableRow>
-                    <TableCell
-                      colSpan={2}
-                      align="center"
-                      sx={{ border: "1px solid #e0e0e0" }}
-                    >
-                      No roles found.
+                        <DeleteIcon sx={{ color: "red" }} />
+                      </IconButton>
                     </TableCell>
                   </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </TableContainer>
-       
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell
+                    colSpan={2}
+                    align="center"
+                    sx={{ border: "1px solid #e0e0e0" }}
+                  >
+                    No roles found.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </TableContainer>
 
-          <TablePagination
+        <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
           count={totalRoles}
@@ -444,5 +449,3 @@ const ModalContent = styled("div")({
 });
 
 export default RoleCreate;
-          
-

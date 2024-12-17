@@ -172,8 +172,8 @@ const UserManagement = () => {
         .then((response) => {
           console.log("Response from server:", response);
           toast.success("User updated successfully");
-          fetchUsers(); // Refresh the users list
-          handleCloseModal(); // Close the modal
+          fetchUsers();
+          handleCloseModal();
         })
         .catch((error) => {
           console.error("Error updating user:", error);
@@ -234,14 +234,12 @@ const UserManagement = () => {
     console.log("Validating form...");
     const errors = {};
 
-    // Validate fullname (required)
+  
     if (!userData.fullname) {
       errors.fullname = "Full name is required.";
     } else if (userData.fullname.length < 4 || userData.fullname.length > 10) {
       errors.fullname = "Full name must be between 4 and 10 characters.";
     }
-
-    // Validate email (required and valid email format)
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if (!userData.email) {
       errors.email = "Email is required.";
@@ -249,7 +247,6 @@ const UserManagement = () => {
       errors.email = "Please enter a valid email address.";
     }
 
-    // Validate contact number (required and must be exactly 10 digits)
     const phoneRegex = /^[0-9]{10}$/;
     if (!userData.contactNumber) {
       errors.contactNumber = "Contact number is required.";
@@ -259,12 +256,9 @@ const UserManagement = () => {
       errors.contactNumber = "Contact number must only contain numbers.";
     }
 
-    // Validate role (required)
     if (!userData.role) {
       errors.role = "Role is required.";
     }
-
-    // Validate password only if provided (since you're updating without changing password)
     if (userData.password !== undefined && userData.password !== "") {
       if (!userData.password) {
         errors.password = "Password is required.";
@@ -285,6 +279,7 @@ const UserManagement = () => {
 
     return Object.keys(errors).length === 0;
   };
+  
 
   const handleCloseModal = () => {
     setOpenModal(false);
@@ -368,7 +363,10 @@ const UserManagement = () => {
             borderRadius: "8px",
           }}
         >
-          <Typography variant="h6" sx={{display:"flex",justifyContent:"center"}}>
+          <Typography
+            variant="h6"
+            sx={{ display: "flex", justifyContent: "center" }}
+          >
             {editUserId ? "Edit User" : "Create New User"}
           </Typography>
           <form onSubmit={editUserId ? handleUpdateUser : handleCreateUser}>
@@ -453,14 +451,11 @@ const UserManagement = () => {
                 display: "flex",
                 justifyContent: "space-between",
                 gap: "10px",
-                position:"relative",top:"10px"
+                position: "relative",
+                top: "10px",
               }}
             >
-              <Button
-                variant="outlined"
-                fullWidth
-                onClick={handleCloseModal}
-              >
+              <Button variant="outlined" fullWidth onClick={handleCloseModal}>
                 Cancel
               </Button>
               <Button
@@ -618,7 +613,6 @@ const UserManagement = () => {
           </Button>
         </DialogActions>
       </Dialog>
-
       <Modal open={openViewModal} onClose={() => setOpenViewModal(false)}>
         <div
           style={{
@@ -656,8 +650,8 @@ const UserManagement = () => {
                   style={{
                     marginBottom: "15px",
                     padding: "10px",
-                    border: "1px solid #ddd",
                     borderRadius: "8px",
+                    backgroundColor: "#f9f9f9",
                   }}
                 >
                   <Typography variant="body1">
@@ -669,9 +663,8 @@ const UserManagement = () => {
                   style={{
                     marginBottom: "15px",
                     padding: "10px",
-                    border: "1px solid #ddd",
                     borderRadius: "8px",
-                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+                    backgroundColor: "#f9f9f9",
                   }}
                 >
                   <Typography variant="body1">
@@ -683,9 +676,8 @@ const UserManagement = () => {
                   style={{
                     marginBottom: "15px",
                     padding: "10px",
-                    border: "1px solid #ddd",
                     borderRadius: "8px",
-                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+                    backgroundColor: "#f9f9f9",
                   }}
                 >
                   <Typography variant="body1">
@@ -698,9 +690,8 @@ const UserManagement = () => {
                   style={{
                     marginBottom: "15px",
                     padding: "10px",
-                    border: "1px solid #ddd",
                     borderRadius: "8px",
-                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+                    backgroundColor: "#f9f9f9",
                   }}
                 >
                   <Typography variant="body1">
@@ -712,9 +703,8 @@ const UserManagement = () => {
                   style={{
                     marginBottom: "15px",
                     padding: "10px",
-                    border: "1px solid #ddd",
                     borderRadius: "8px",
-                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+                    backgroundColor: "#f9f9f9",
                   }}
                 >
                   <Typography variant="body1">
@@ -727,9 +717,8 @@ const UserManagement = () => {
                   style={{
                     marginBottom: "15px",
                     padding: "10px",
-                    border: "1px solid #ddd",
                     borderRadius: "8px",
-                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+                    backgroundColor: "#f9f9f9",
                   }}
                 >
                   <Typography variant="body1">
@@ -742,9 +731,8 @@ const UserManagement = () => {
                   style={{
                     marginBottom: "20px",
                     padding: "10px",
-                    border: "1px solid #ddd",
                     borderRadius: "8px",
-                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+                    backgroundColor: "#f9f9f9",
                   }}
                 >
                   <Typography variant="body1">
@@ -759,14 +747,14 @@ const UserManagement = () => {
               variant="outlined"
               onClick={() => setOpenViewModal(false)}
               sx={{
-                width: "100%",
+                width: "30%",
                 padding: "10px",
                 borderRadius: "4px",
                 fontWeight: "bold",
-                backgroundColor: "#f5f5f5",
-                "&:hover": {
-                  backgroundColor: "#e0e0e0",
-                },
+                backgroundColor: "blue",
+                color: "white",
+                position: "relative",
+                left: "10rem",
               }}
             >
               Close

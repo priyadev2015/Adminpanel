@@ -216,91 +216,95 @@ const PropertyApprovedList = () => {
         </Table>
       </TableContainer> */}
 
-<TableContainer component={Paper} elevation={3}>
-  <Table>
-    <TableHead>
-      <TableRow>
-        {[
-          "Property Name",
-          "Address",
-          "Owner Name",
-          "Owner Email",
-          "Lease Start",
-          "Lease End",
-          "Tenant Name",
-          "Actions",
-        ].map((header) => (
-          <TableCell
-            key={header}
-            sx={{
-              fontWeight: "bold",
-              textAlign: "center",
-              border: "1px solid #ddd", // Adds borders
-              backgroundColor: "#f9f9f9", // Light background for header
-              whiteSpace: 'nowrap', 
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-            }}
-          >
-            {header}
-          </TableCell>
-        ))}
-      </TableRow>
-    </TableHead>
-    <TableBody>
-      {filteredList.length > 0 ? (
-        filteredList.map((property, index) => (
-          <TableRow
-            key={index}
-            sx={{
-              "&:hover": {
-                backgroundColor: "rgba(119, 119, 119, 0.1)",
-              },
-            }}
-          >
-            <TableCell sx={{ border: "1px solid #ddd" }}>
-              {property.propertyName}
-            </TableCell>
-            <TableCell sx={{ border: "1px solid #ddd" }}>
-              {property.propertyAddress}
-            </TableCell>
-            <TableCell sx={{ border: "1px solid #ddd" }}>
-              {property.ownerName}
-            </TableCell>
-            <TableCell sx={{ border: "1px solid #ddd" }}>
-              {property.ownerEmail}
-            </TableCell>
-            <TableCell sx={{ border: "1px solid #ddd" }}>
-              {property.leaseStart}
-            </TableCell>
-            <TableCell sx={{ border: "1px solid #ddd" }}>
-              {property.leaseEnd}
-            </TableCell>
-            <TableCell sx={{ border: "1px solid #ddd" }}>
-              {property.tenantName || "N/A"}
-            </TableCell>
-            <TableCell
-              sx={{
-                textAlign: "center",
-                border: "1px solid #ddd",
-              }}
-            >
-              <IconButton onClick={() => handleModalOpen(property)}>
-                <VisibilityIcon sx={{ color: "green" }} />
-              </IconButton>
-            </TableCell>
-          </TableRow>
-        ))
-      ) : (
-        <TableRow>
-          <TableCell colSpan={8} align="center" sx={{ border: "1px solid #ddd" }}>
-            No properties found
-          </TableCell>
-        </TableRow>
-      )}
-    </TableBody>
-  </Table>
-</TableContainer>
+      <TableContainer component={Paper} elevation={3}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              {[
+                "Property Name",
+                "Address",
+                "Owner Name",
+                "Owner Email",
+                "Lease Start",
+                "Lease End",
+                "Tenant Name",
+                "Actions",
+              ].map((header) => (
+                <TableCell
+                  key={header}
+                  sx={{
+                    fontWeight: "bold",
+                    textAlign: "center",
+                    border: "1px solid #ddd",
+                    backgroundColor: "#f9f9f9",
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                  }}
+                >
+                  {header}
+                </TableCell>
+              ))}
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {filteredList.length > 0 ? (
+              filteredList.map((property, index) => (
+                <TableRow
+                  key={index}
+                  sx={{
+                    "&:hover": {
+                      backgroundColor: "rgba(119, 119, 119, 0.1)",
+                    },
+                  }}
+                >
+                  <TableCell sx={{ border: "1px solid #ddd" }}>
+                    {property.propertyName}
+                  </TableCell>
+                  <TableCell sx={{ border: "1px solid #ddd" }}>
+                    {property.propertyAddress}
+                  </TableCell>
+                  <TableCell sx={{ border: "1px solid #ddd" }}>
+                    {property.ownerName}
+                  </TableCell>
+                  <TableCell sx={{ border: "1px solid #ddd" }}>
+                    {property.ownerEmail}
+                  </TableCell>
+                  <TableCell sx={{ border: "1px solid #ddd" }}>
+                    {property.leaseStart}
+                  </TableCell>
+                  <TableCell sx={{ border: "1px solid #ddd" }}>
+                    {property.leaseEnd}
+                  </TableCell>
+                  <TableCell sx={{ border: "1px solid #ddd" }}>
+                    {property.tenantName || "N/A"}
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      textAlign: "center",
+                      border: "1px solid #ddd",
+                    }}
+                  >
+                    <IconButton onClick={() => handleModalOpen(property)}>
+                      <VisibilityIcon sx={{ color: "green" }} />
+                    </IconButton>
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell
+                  colSpan={8}
+                  align="center"
+                  sx={{ border: "1px solid #ddd" }}
+                >
+                  No properties found
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </TableContainer>
 
       <TablePagination
         rowsPerPageOptions={[5, 10, 25]}
@@ -311,7 +315,6 @@ const PropertyApprovedList = () => {
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
-
       <Modal
         open={openModal}
         onClose={handleModalClose}
@@ -329,41 +332,74 @@ const PropertyApprovedList = () => {
               backgroundColor: "white",
               padding: 4,
               boxShadow: 24,
-              maxWidth: 500,
+              maxWidth: 600,
               width: "100%",
+              borderRadius: 2,
+              border: "1px solid #ddd",
             }}
           >
             {selectedProperty && (
               <Grid container spacing={2}>
                 <Grid item xs={12}>
-                  <Typography variant="h6">Property Details</Typography>
+                  <Typography
+                    variant="h6"
+                    sx={{
+                      textAlign: "center",
+                      fontWeight: "bold",
+                      fontSize: "1.5rem",
+                      marginBottom: 2,
+                    }}
+                  >
+                    Approved Property Details
+                  </Typography>
                 </Grid>
-                <Grid item xs={12}>
-                  <strong>Property Name:</strong>{" "}
-                  {selectedProperty.propertyName}
-                </Grid>
-                <Grid item xs={12}>
-                  <strong>Address:</strong> {selectedProperty.propertyAddress}
-                </Grid>
-                <Grid item xs={12}>
-                  <strong>Owner Name:</strong> {selectedProperty.ownerName}
-                </Grid>
-                <Grid item xs={12}>
-                  <strong>Owner Email:</strong> {selectedProperty.ownerEmail}
-                </Grid>
-                <Grid item xs={12}>
-                  <strong>Lease Start:</strong> {selectedProperty.leaseStart}
-                </Grid>
-                <Grid item xs={12}>
-                  <strong>Lease End:</strong> {selectedProperty.leaseEnd}
-                </Grid>
-                <Grid item xs={12}>
-                  <strong>Tenant Name:</strong>{" "}
-                  {selectedProperty.tenantName || "N/A"}
-                </Grid>
+                {[
+                  {
+                    label: "Property Name",
+                    value: selectedProperty.propertyName,
+                  },
+                  { label: "Address", value: selectedProperty.propertyAddress },
+                  { label: "Owner Name", value: selectedProperty.ownerName },
+                  { label: "Owner Email", value: selectedProperty.ownerEmail },
+                  { label: "Lease Start", value: selectedProperty.leaseStart },
+                  { label: "Lease End", value: selectedProperty.leaseEnd },
+                  {
+                    label: "Tenant Name",
+                    value: selectedProperty.tenantName || "N/A",
+                  },
+                ].map(({ label, value }) => (
+                  <Grid
+                    item
+                    xs={12}
+                    key={label}
+                    sx={{
+                      padding: 1.5,
+                      borderRadius: 1,
+                      backgroundColor: "#f9f9f9",
+                      border: "1px solid #ddd",
+                      marginBottom: 1,
+                    }}
+                  >
+                    <Typography variant="body1">
+                      <strong>{label}:</strong> {value}
+                    </Typography>
+                  </Grid>
+                ))}
                 <Grid item xs={12} mt={2}>
-                  <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-                    <button style={{ color: "red" }} onClick={handleModalClose}>
+                  <Box sx={{ display: "flex", justifyContent: "center" }}>
+                    <button
+                      style={{
+                        color: "white",
+                        backgroundColor: "blue",
+                        border: "none",
+                        fontSize: "15px",
+                        width: "120px",
+                        padding: "8px 16px",
+                        borderRadius: "4px",
+                        cursor: "pointer",
+                      }}
+                      onClick={handleModalClose}
+                    >
                       Close
                     </button>
                   </Box>
