@@ -419,13 +419,13 @@ const RoleCreate = () => {
           </TableContainer>
        
 
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 20]}
+          <TablePagination
+          rowsPerPageOptions={[5, 10, 25]}
           component="div"
-          count={totalRoles} 
-          rowsPerPage={rowsPerPage} 
-          page={page} 
-          onPageChange={handleChangePage} 
+          count={totalRoles}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </div>
@@ -433,15 +433,16 @@ const RoleCreate = () => {
   );
 };
 
-const ModalContent = styled("div")(css`
-  background-color: white;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  height: auto;
-  width: 500px;
-  margin: auto;
-`);
+const ModalContent = styled("div")({
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  backgroundColor: "white",
+  padding: "20px",
+  borderRadius: "8px",
+});
 
 export default RoleCreate;
+          
+
