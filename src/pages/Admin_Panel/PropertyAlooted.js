@@ -49,7 +49,7 @@ const PropertyApprovedList = () => {
         }
 
         const response = await axios.get(
-          `https://propertymanagement-nf5c.onrender.com/api${api.tenantpropertyapprovedbyowner}`,
+          `${api.baseURL}${api.tenantpropertyapprovedbyowner}`,
           {
             params: {
               page: page + 1,
@@ -149,73 +149,6 @@ const PropertyApprovedList = () => {
           sx={{ width: "450px" }}
         />
       </div>
-
-      {/* <TableContainer component={Paper} elevation={3}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>
-                <strong>Property Name</strong>
-              </TableCell>
-              <TableCell>
-                <strong>Address</strong>
-              </TableCell>
-              <TableCell>
-                <strong>Owner Name</strong>
-              </TableCell>
-              <TableCell>
-                <strong>Owner Email</strong>
-              </TableCell>
-              <TableCell>
-                <strong>Lease Start</strong>
-              </TableCell>
-              <TableCell>
-                <strong>Lease End</strong>
-              </TableCell>
-              <TableCell>
-                <strong>Tenant Name</strong>
-              </TableCell>
-              <TableCell>
-                <strong>Actions</strong>
-              </TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {filteredList.length > 0 ? (
-              filteredList.map((property, index) => (
-                <TableRow key={index}
-                sx={{
-                  "&:hover": {
-                    backgroundColor: "rgba(119, 119, 119, 0.1)",
-                    boxShadow: "0px 0px 0px rgba(0, 0, 0, 0.2)",
-                  },
-                }}>
-                  <TableCell>{property.propertyName}</TableCell>
-                  <TableCell>{property.propertyAddress}</TableCell>
-                  <TableCell>{property.ownerName}</TableCell>
-                  <TableCell>{property.ownerEmail}</TableCell>
-                  <TableCell>{property.leaseStart}</TableCell>
-                  <TableCell>{property.leaseEnd}</TableCell>
-                
-                  <TableCell>{property.tenantName || "N/A"}</TableCell>
-                  <TableCell>
-                    <IconButton onClick={() => handleModalOpen(property)}>
-                      <VisibilityIcon sx={{ color: "green" }} />
-                    </IconButton>
-                  </TableCell>
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell colSpan={8} align="center">
-                  No properties found
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </TableContainer> */}
-
       <TableContainer component={Paper} elevation={3}>
         <Table>
           <TableHead>

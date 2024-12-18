@@ -31,7 +31,7 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
+import api from "../../config/ServiceApi"
 const UserManagement = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -70,7 +70,7 @@ const UserManagement = () => {
   const fetchUsers = () => {
     const token = localStorage.getItem("authToken");
     axios
-      .get("https://propertymanagement-nf5c.onrender.com/api/auth/users", {
+      .get(`${api.baseURL}${api.users}`, {
         headers: { Authorization: `Bearer ${token}` },
         params: {
           page: page + 1,
@@ -96,7 +96,7 @@ const UserManagement = () => {
       return;
     }
     axios
-      .get("https://propertymanagement-nf5c.onrender.com/api/roles", {
+      .get(`${api.baseURL}${api.roles}`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((response) => {
@@ -113,13 +113,9 @@ const UserManagement = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setUserData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+    setUserData((prevData) => ({ ...prevData, [name]: value }));
     validateForm();
   };
-
   const handleCreateUser = (e) => {
     e.preventDefault();
 
@@ -127,7 +123,7 @@ const UserManagement = () => {
       const token = localStorage.getItem("authToken");
       axios
         .post(
-          "https://propertymanagement-nf5c.onrender.com/api/auth/register",
+          `${api.baseURL}${api.createUser}`,
           userData,
           { headers: { Authorization: `Bearer ${token}` } }
         )
@@ -144,10 +140,6 @@ const UserManagement = () => {
 
   const handleUpdateUser = (e) => {
     e.preventDefault();
-
-    console.log("handleUpdateUser called");
-    console.log("User Data before validation:", userData);
-
     if (validateForm()) {
       const updatedUser = {
         fullname: userData.fullname,
@@ -166,7 +158,7 @@ const UserManagement = () => {
 
       axios
         .put(
-          `https://propertymanagement-nf5c.onrender.com/api/auth/users/${editUserId}`,
+          `${api.baseURL}${api.users}/${editUserId}`,
           updatedUser,
           { headers: { Authorization: `Bearer ${token}` } }
         )
@@ -189,7 +181,7 @@ const UserManagement = () => {
     const token = localStorage.getItem("authToken");
     axios
       .delete(
-        `https://propertymanagement-nf5c.onrender.com/api/auth/users/${userId}`,
+         `${api.baseURL}${api.users}/${userId}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -247,15 +239,17 @@ const UserManagement = () => {
       errors.email = "Please enter a valid email address.";
     }
 
-    const phoneRegex = /^[0-9]{10}$/;
     if (!userData.contactNumber) {
       errors.contactNumber = "Contact number is required.";
-    } else if (userData.contactNumber.length !== 10) {
-      errors.contactNumber = "Contact number must be exactly 10 digits.";
-    } else if (!phoneRegex.test(userData.contactNumber)) {
-      errors.contactNumber = "Contact number must only contain numbers.";
+    } else {
+      const contactNumber = userData.contactNumber.toString().trim(); // Ensure it's a string for easy length checking
+      if (contactNumber.length !== 10) {
+        errors.contactNumber = "Contact number must be exactly 10 digits.";
+      } else if (isNaN(contactNumber)) {
+        errors.contactNumber = "Contact number must only contain numbers.";
+      }
     }
-
+  
     if (!userData.role) {
       errors.role = "Role is required.";
     }
@@ -290,12 +284,36 @@ const UserManagement = () => {
     });
     setFormErrors({});
   };
+
+
   const handleRoleChange = (e) => {
+    const selectedRole = e.target.value;
+    
+    
     setUserData({
       ...userData,
-      role: e.target.value,
+      role: selectedRole,
     });
+  
+    if (selectedRole) {
+     
+      setFormErrors((prevErrors) => ({
+        ...prevErrors,
+        role: "",
+      }));
+    } else {
+      
+      setFormErrors((prevErrors) => ({
+        ...prevErrors,
+        role: "Role is required.",
+      }));
+    }
   };
+  
+
+
+
+
   const handleViewUser = (user) => {
     setSelectedUser(user);
     setOpenViewModal(true);
@@ -419,6 +437,14 @@ const UserManagement = () => {
               error={!!formErrors.contactNumber}
               helperText={formErrors.contactNumber}
               name="contactNumber"
+              type="number"
+              inputProps={{
+                maxLength: 10, // This will restrict the input length to 10 digits
+              }}
+              onInput={(e) => {
+                // Ensure only numbers are entered (optional, for better UX)
+                e.target.value = e.target.value.replace(/\D/g, '').slice(0, 10);
+              }}
             />
 
             <FormControl fullWidth margin="normal" error={!!formErrors.role}>

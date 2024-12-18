@@ -48,7 +48,7 @@ const RoleCreate = () => {
     setLoading(true);
     axios
       .get(
-        `https://propertymanagement-nf5c.onrender.com/api${config.roleCreate}`,
+        `${config.baseURL}${config.roleCreate}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -186,7 +186,7 @@ const RoleCreate = () => {
 
   const confirmDelete = () => {
     const token = localStorage.getItem("authToken");
-    const url = `https://propertymanagement-nf5c.onrender.com/api/roles/${roleToDelete}`;
+    const url = `${config.baseURL}${config.roles}/${roleToDelete}`;
 
     axios
       .delete(url, {

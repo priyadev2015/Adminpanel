@@ -125,119 +125,10 @@ const LeaseTable = () => {
           <CircularProgress />
         </div>
       ) : (
-        // <TableContainer component={Paper}>
-        //   <Table>
-        //     <TableHead>
-        //       <TableRow   sx={{
-        //               backgroundColor:  '#f9f9f9'
-
-        //             }}>
-        //         <TableCell>
-        //           <b>Tenant Name</b>
-        //         </TableCell>
-        //         <TableCell>
-        //           <b>Email</b>
-        //         </TableCell>
-        //         <TableCell>
-        //           <b>Contact Number</b>
-        //         </TableCell>
-        //         <TableCell>
-        //           <b>Property Name</b>
-        //         </TableCell>
-        //         <TableCell>
-        //           <b>Property Address</b>
-        //         </TableCell>
-        //         <TableCell>
-        //           <b>Square Footage</b>
-        //         </TableCell>
-        //         <TableCell>
-        //           <b>Rent</b>
-        //         </TableCell>
-        //         <TableCell>
-        //           <b>Security Deposit</b>
-        //         </TableCell>
-        //         <TableCell>
-        //           <b>Payment Due Date</b>
-        //         </TableCell>
-        //         <TableCell>
-        //           <b>Landlord Contact</b>
-        //         </TableCell>
-        //         <TableCell>
-        //           <b>Lease Start Date</b>
-        //         </TableCell>
-        //         <TableCell>
-        //           <b>Lease End Date</b>
-        //         </TableCell>
-        //         <TableCell>
-        //           <b>Action</b>
-        //         </TableCell>
-        //       </TableRow>
-        //     </TableHead>
-        //     <TableBody>
-        //       {filteredLeases.length > 0 ? (
-        //         filteredLeases.map((lease, index) => (
-        //           <TableRow key={index}   sx={{
-        //             backgroundColor: index % 0 === 0 ? '#f9f9f9' : '#fff',
-        //             '&:hover': { backgroundColor: '#eaeaea' },
-        //           }}>
-        //             <TableCell>
-        //               {lease.tenantInformation?.fullname || "N/A"}
-        //             </TableCell>
-        //             <TableCell>
-        //               {lease.tenantInformation?.email || "N/A"}
-        //             </TableCell>
-        //             <TableCell>
-        //               {lease.tenantInformation?.contactNumber || "N/A"}
-        //             </TableCell>
-
-        //             <TableCell>
-        //               {lease.propertyDetails?.name || "N/A"}
-        //             </TableCell>
-        //             <TableCell>
-        //               {lease.propertyDetails?.address || "N/A"}
-        //             </TableCell>
-        //             <TableCell>
-        //               {lease.propertyDetails?.squareFootage || "N/A"}
-        //             </TableCell>
-        //             <TableCell>
-        //               {lease.propertyDetails?.rent || "N/A"}
-        //             </TableCell>
-        //             <TableCell>
-        //               {lease.propertyDetails?.securityDeposit || "N/A"}
-        //             </TableCell>
-        //             <TableCell>
-        //               {new Date(lease.paymentDueDate).toLocaleDateString()}
-        //             </TableCell>
-        //             <TableCell>
-        //               {lease.landlordContactInformation || "N/A"}
-        //             </TableCell>
-        //             <TableCell>
-        //               {new Date(lease.leaseStartDate).toLocaleDateString()}
-        //             </TableCell>
-        //             <TableCell>
-        //               {new Date(lease.leaseEndDate).toLocaleDateString()}
-        //             </TableCell>
-        //             <TableCell>
-        //               <IconButton onClick={() => handleOpenModal(lease)}>
-        //                 <VisibilityIcon sx={{ color: "green" }} />
-        //               </IconButton>
-        //             </TableCell>
-        //           </TableRow>
-        //         ))
-        //       ) : (
-        //         <TableRow>
-        //           <TableCell colSpan={13} align="center">
-        //             No data available
-        //           </TableCell>
-        //         </TableRow>
-        //       )}
-        //     </TableBody>
-        //   </Table>
-        // </TableContainer>
         <TableContainer component={Paper}>
           <Table
             sx={{
-              border: "1px solid #ddd", // Outer border for the table
+              border: "1px solid #ddd",
             }}
           >
             <TableHead>
@@ -376,118 +267,129 @@ const LeaseTable = () => {
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Box>
-<Dialog open={openModal} onClose={handleCloseModal} fullWidth>
-  <DialogTitle style={{ fontWeight: "bold", textAlign: "center" }}>
-    Lease Information
-  </DialogTitle>
-  <DialogContent dividers>
-    {selectedLease ? (
-      <div style={{ marginBottom: "20px" }}>
-        {[
-          {
-            label: "Tenant Name",
-            value: selectedLease.tenantInformation?.fullname || "N/A",
-          },
-          {
-            label: "Email",
-            value: selectedLease.tenantInformation?.email || "N/A",
-          },
-          {
-            label: "Contact Number",
-            value: selectedLease.tenantInformation?.contactNumber || "N/A",
-          },
-          {
-            label: "Property Name",
-            value: selectedLease.propertyDetails?.name || "N/A",
-          },
-          {
-            label: "Property Address",
-            value: selectedLease.propertyDetails?.address || "N/A",
-          },
-          {
-            label: "Square Footage",
-            value: selectedLease.propertyDetails?.squareFootage || "N/A",
-          },
-          {
-            label: "Rent",
-            value: selectedLease.propertyDetails?.rent || "N/A",
-          },
-          {
-            label: "Security Deposit",
-            value: selectedLease.propertyDetails?.securityDeposit || "N/A",
-          },
-          {
-            label: "Payment Due Date",
-            value: selectedLease.paymentDueDate
-              ? new Date(selectedLease.paymentDueDate).toLocaleDateString()
-              : "N/A",
-          },
-          {
-            label: "Landlord Contact",
-            value: selectedLease.landlordContactInformation || "N/A",
-          },
-          {
-            label: "Lease Start Date",
-            value: selectedLease.leaseStartDate
-              ? new Date(selectedLease.leaseStartDate).toLocaleDateString()
-              : "N/A",
-          },
-          {
-            label: "Lease End Date",
-            value: selectedLease.leaseEndDate
-              ? new Date(selectedLease.leaseEndDate).toLocaleDateString()
-              : "N/A",
-          },
-        ].map((item, index) => (
-          <div
-            key={index}
+      <Dialog open={openModal} onClose={handleCloseModal} fullWidth>
+        <DialogTitle style={{ fontWeight: "bold", textAlign: "center" }}>
+          Lease Information
+        </DialogTitle>
+        <DialogContent dividers>
+          {selectedLease ? (
+            <div style={{ marginBottom: "20px" }}>
+              {[
+                {
+                  label: "Tenant Name",
+                  value: selectedLease.tenantInformation?.fullname || "N/A",
+                },
+                {
+                  label: "Email",
+                  value: selectedLease.tenantInformation?.email || "N/A",
+                },
+                {
+                  label: "Contact Number",
+                  value:
+                    selectedLease.tenantInformation?.contactNumber || "N/A",
+                },
+                {
+                  label: "Property Name",
+                  value: selectedLease.propertyDetails?.name || "N/A",
+                },
+                {
+                  label: "Property Address",
+                  value: selectedLease.propertyDetails?.address || "N/A",
+                },
+                {
+                  label: "Square Footage",
+                  value: selectedLease.propertyDetails?.squareFootage || "N/A",
+                },
+                {
+                  label: "Rent",
+                  value: selectedLease.propertyDetails?.rent || "N/A",
+                },
+                {
+                  label: "Security Deposit",
+                  value:
+                    selectedLease.propertyDetails?.securityDeposit || "N/A",
+                },
+                {
+                  label: "Payment Due Date",
+                  value: selectedLease.paymentDueDate
+                    ? new Date(
+                        selectedLease.paymentDueDate
+                      ).toLocaleDateString()
+                    : "N/A",
+                },
+                {
+                  label: "Landlord Contact",
+                  value: selectedLease.landlordContactInformation || "N/A",
+                },
+                {
+                  label: "Lease Start Date",
+                  value: selectedLease.leaseStartDate
+                    ? new Date(
+                        selectedLease.leaseStartDate
+                      ).toLocaleDateString()
+                    : "N/A",
+                },
+                {
+                  label: "Lease End Date",
+                  value: selectedLease.leaseEndDate
+                    ? new Date(selectedLease.leaseEndDate).toLocaleDateString()
+                    : "N/A",
+                },
+              ].map((item, index) => (
+                <div
+                  key={index}
+                  style={{
+                    display: "flex",
+                    justifyContent: "start",
+                    alignItems: "center",
+                    padding: "10px 15px",
+                    backgroundColor: index % 0 === 0 ? "#f9f9f9" : "#f9f9f9",
+                    borderRadius: "4px",
+                    marginBottom: "8px",
+                  }}
+                >
+                  <Typography
+                    variant="body1"
+                    style={{ fontWeight: "bold", color: "#000" }}
+                  >
+                    {item.label}:
+                  </Typography>
+                  <Typography
+                    variant="body1"
+                    style={{
+                      color: "#333",
+                      textAlign: "right",
+                      fontWeight: "500",
+                    }}
+                  >
+                    {item.value}
+                  </Typography>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <Typography>No lease details available</Typography>
+          )}
+        </DialogContent>
+        <DialogActions
+          style={{ justifyContent: "center", paddingBottom: "16px" }}
+        >
+          <Button
+            onClick={handleCloseModal}
+            variant="contained"
+            color="primary"
+            size="small"
             style={{
-              display: "flex",
-              justifyContent: "start",
-              alignItems: "center",
-              padding: "10px 15px",
-              backgroundColor: index % 0=== 0 ? "#f9f9f9":"#f9f9f9",
-              borderRadius: "4px",
-              marginBottom: "8px", 
+              textTransform: "capitalize",
+              padding: "6px 20px",
+              fontSize: "15px",
+              width: "120px",
             }}
           >
-            <Typography
-              variant="body1"
-              style={{ fontWeight: "bold", color: "#000" }}
-            >
-              {item.label}:
-            </Typography>
-            <Typography
-              variant="body1"
-              style={{
-                color: "#333",
-                textAlign: "right",
-                fontWeight: "500",
-              }}
-            >
-              {item.value}
-            </Typography>
-          </div>
-        ))}
-      </div>
-    ) : (
-      <Typography>No lease details available</Typography>
-    )}
-  </DialogContent>
-  <DialogActions style={{ justifyContent: "center", paddingBottom: "16px" }}>
-    <Button
-      onClick={handleCloseModal}
-      variant="contained"
-      color="primary"
-      size="small"
-      style={{ textTransform: "capitalize", padding: "6px 20px", fontSize:"15px", width:"120px"}}
-    >
-      Close
-    </Button>
-  </DialogActions>
-</Dialog>
-
-
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };

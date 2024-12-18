@@ -27,7 +27,6 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import SearchIcon from "@mui/icons-material/Search";
-
 const PropertiesList = () => {
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -41,6 +40,7 @@ const PropertiesList = () => {
   const [deletePropertyId, setDeletePropertyId] = useState(null);
   const [viewProperty, setViewProperty] = useState(null);
   const [totalProperties, setTotalProperties] = useState(0);
+  
   const [newProperty, setNewProperty] = useState({
     name: "",
     image: null,
@@ -71,7 +71,7 @@ const PropertiesList = () => {
         }
 
         const response = await axios.get(
-          `https://propertymanagement-nf5c.onrender.com/api/properties`,
+         `${config.baseURL}${config.propertiesList}`,
           {
             params: {
               page: page + 1,
@@ -128,18 +128,18 @@ const PropertiesList = () => {
 
     if (!property.name) {
       errors.name = "Property name is required";
-    } else if (property.name.length < 4 || property.name.length > 10) {
-      errors.name = "Property name must be between 4 and 10 characters";
+    } else if (property.name.length < 4 || property.name.length > 15) {
+      errors.name = "Property name must be between 4 and 15 characters";
     }
 
     if (!property.propertyAddress) {
       errors.propertyAddress = "Property address is required";
     } else if (
       property.propertyAddress.length < 5 ||
-      property.propertyAddress.length > 15
+      property.propertyAddress.length > 50
     ) {
       errors.propertyAddress =
-        "Property address must be between 5 and 15 characters";
+        "Property address must be between 5 and 50 characters";
     }
 
     if (!property.rent) {
@@ -152,7 +152,7 @@ const PropertiesList = () => {
       errors.rent = "Rent must be between 100 and 100000";
     }
 
-    // Security Deposit validation: must be between 100 and 1000
+   
     if (!property.securityDeposit) {
       errors.securityDeposit = "Security deposit is required";
     } else if (
@@ -164,7 +164,7 @@ const PropertiesList = () => {
         "Security deposit must be between 100 and 100000";
     }
 
-    // Square Footage validation: must be between 100 and 1000
+  
     if (!property.squareFootage) {
       errors.squareFootage = "Square footage is required";
     } else if (
@@ -175,7 +175,6 @@ const PropertiesList = () => {
       errors.squareFootage = "Square footage must be between 100 and 100000";
     }
 
-    // Total Income validation: must be between 100 and 10000
     if (!property.totalIncome) {
       errors.totalIncome = "Total income is required";
     } else if (
@@ -234,7 +233,7 @@ const PropertiesList = () => {
       };
 
       const response = await axios.put(
-        `${config.baseURL}/properties/${editProperty._id}`,
+        `${config.baseURL}${config.propertiesList}${editProperty._id}`,
         updatedProperty,
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -277,7 +276,7 @@ const PropertiesList = () => {
       }
 
       const response = await axios.delete(
-        `https://propertymanagement-nf5c.onrender.com/api/properties/${deletePropertyId}`,
+        `${config.baseURL}${config.propertiesList}${deletePropertyId}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -326,7 +325,7 @@ const PropertiesList = () => {
       formData.append("totalIncome", newProperty.totalIncome);
 
       const response = await axios.post(
-        `https://propertymanagement-nf5c.onrender.com/api/properties`,
+`${config.baseURL}${config.propertiesList}`,
         formData,
         {
           headers: {
@@ -384,8 +383,10 @@ const PropertiesList = () => {
   }
 
   return (
-    <div style={{ paddingTop: "80px" }}>
-      <h2 style={{ display: "flex", justifyContent: "center" }}>Properties</h2>
+    <div >
+<Typography variant="h4" sx={{ textAlign: "center", marginTop: 10 }}>
+Properties
+      </Typography>
 
       <Button
         variant="contained"
@@ -399,7 +400,7 @@ const PropertiesList = () => {
       <TextField
         label="Search by PropertyName,Address"
         variant="outlined"
-        sx={{ width: "300px", position: "relative", left: "600px" }}
+        sx={{ width: "300px", position: "relative", left: "650px", bottom:"20px" }}
         value={searchQuery}
         onChange={handleSearch}
         InputProps={{
@@ -627,7 +628,7 @@ const PropertiesList = () => {
               <input
                 type="file"
                 onChange={handleFileChange}
-                accept="image/*" // Restricting file type to images only
+                accept="image/*"
               />
             </div>
 

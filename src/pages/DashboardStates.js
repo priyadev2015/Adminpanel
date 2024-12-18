@@ -17,23 +17,16 @@ const DashboardStates = () => {
     { title: 'Total Expired lease', value: 0 },
     { title: 'Total Active lease', value: 0 },
   ]);
-
-  // State to control loading state
   const [loading, setLoading] = useState(true);
-
-  // Fetch data from multiple API endpoints
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Get token from localStorage
         const token = localStorage.getItem('authToken');
         
         if (!token) {
           toast.error('No token found. Please log in again.');
           return;
         }
-
-        // Fetch data from endpoints
         const [
           propertiesResponse,
           tenantsResponse,
@@ -53,8 +46,6 @@ const DashboardStates = () => {
             headers: { Authorization: `Bearer ${token}` },
           }),
         ]);
-
-        // Update metrics state with fetched data
         setMetrics([
           { title: 'Total Properties', value: propertiesResponse.data.totalProperties },
           { title: 'Total Tenants', value: tenantsResponse.data.totalTenants },

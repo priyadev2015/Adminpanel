@@ -138,21 +138,6 @@ export default function Sidebar() {
           <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
             Property Management
           </Typography>
-
-          {/* Add Search Box */}
-          <TextField
-            variant="outlined"
-            size="small"
-            sx={{
-              backgroundColor: "white",
-              borderRadius: 1,
-              width: 200,
-              marginLeft: 2,
-              display: open ? "block" : "none", // Hide search box when sidebar is closed
-            }}
-            placeholder="Search..."
-          />
-
           <Profile />
         </Toolbar>
       </AppBar>

@@ -50,7 +50,7 @@ const TenantRequests = () => {
           toast.error("No token found. Please log in again.");
           return;
         }
-        let url = `https://propertymanagement-nf5c.onrender.com/api${config.tenantrequest}`;
+        let url = `${config.baseURL}${config.tenantrequest}`;
         const params = {
           page: page + 1,
           limit: rowsPerPage,
@@ -186,7 +186,6 @@ const TenantRequests = () => {
         Tenant Requests
       </Typography>
 
-      {/* Search Bar */}
       <div
         style={{ display: "flex", justifyContent: "end", marginBottom: "20px" }}
       >

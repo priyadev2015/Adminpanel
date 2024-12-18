@@ -15,7 +15,7 @@ module.exports = {
   roles: "/roles",
   createUser: "/auth/register",
   messageList: "/tenant-requests/owners-and-tenants",
-  receivedMessages: "/messages/received", // Endpoint for received messages
+  receivedMessages: "/messages/received",
   sentMessages: "/messages/recipient",
   graphoccupancy: "/properties/occupancy/daily",
   graphsquarefootage: "/properties/squarefootage/daily",
