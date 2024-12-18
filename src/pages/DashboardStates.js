@@ -1,49 +1,39 @@
-import React, { useEffect, useState } from 'react';
-import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import Typography from '@mui/material/Typography';
-import Grid from '@mui/material/Grid'; 
-import axios from 'axios'; 
-import config from '../config/ServiceApi';
-import { toast } from 'react-toastify'; 
-import Loader from './../components/Loader/Loader'; 
+import React, { useEffect, useState } from "react";
+import Box from "@mui/material/Box";
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
+import Typography from "@mui/material/Typography";
+import Grid from "@mui/material/Grid"; // To manage grid layout
+import axios from "axios"; // For API calls
+import config from "../config/ServiceApi";
+import { toast } from "react-toastify"; // Assuming you're using react-toastify for toasts
+import Loader from "./../components/Loader/Loader"; // Import your custom Loader component
 
 const DashboardStates = () => {
-
+  // State to store fetched data
   const [metrics, setMetrics] = useState([
-    { title: 'Total Properties', value: 0 },
-    { title: 'Total Tenants', value: 0 },
-    { title: 'Total Expired lease', value: 0 },
-    { title: 'Total Active lease', value: 0 },
+    { title: "Total Properties", value: 0 },
+    { title: "Total Tenants", value: 0 },
+    { title: "Total Expired lease", value: 0 },
+    { title: "Total Active lease", value: 0 },
   ]);
-<<<<<<< HEAD
+
+  // State to control loading state
   const [loading, setLoading] = useState(true);
+
+  // Fetch data from multiple API endpoints
   useEffect(() => {
     const fetchData = async () => {
       try {
-=======
+        // Get token from localStorage
+        const token = localStorage.getItem("authToken");
 
-
-  const [loading, setLoading] = useState(true);
-
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-    
->>>>>>> 29f169d43448e5c13ab3a4eae8688a2d077404a7
-        const token = localStorage.getItem('authToken');
-        
         if (!token) {
-          toast.error('No token found. Please log in again.');
+          toast.error("No token found. Please log in again.");
           return;
         }
-<<<<<<< HEAD
-=======
 
-    
->>>>>>> 29f169d43448e5c13ab3a4eae8688a2d077404a7
+        // Fetch data from endpoints
         const [
           propertiesResponse,
           tenantsResponse,
@@ -63,29 +53,35 @@ const DashboardStates = () => {
             headers: { Authorization: `Bearer ${token}` },
           }),
         ]);
-<<<<<<< HEAD
-=======
 
->>>>>>> 29f169d43448e5c13ab3a4eae8688a2d077404a7
         setMetrics([
-          { title: 'Total Properties', value: propertiesResponse.data.totalProperties },
-          { title: 'Total Tenants', value: tenantsResponse.data.totalTenants },
-          { title: 'Total Expired Lease', value: expiredLeasesResponse.data.expiredLeasesCount },
-          { title: 'Total Active Lease', value: nonexpiredLeasesResponse.data.nonExpiredLeasesCount },
+          {
+            title: "Total Properties",
+            value: propertiesResponse.data.totalProperties,
+          },
+          { title: "Total Tenants", value: tenantsResponse.data.totalTenants },
+          {
+            title: "Total Expired Lease",
+            value: expiredLeasesResponse.data.expiredLeasesCount,
+          },
+          {
+            title: "Total Active Lease",
+            value: nonexpiredLeasesResponse.data.nonExpiredLeasesCount,
+          },
         ]);
 
-        setLoading(false);
+        setLoading(false); // Set loading to false
       } catch (error) {
-        console.error('Error fetching data:', error);
-        toast.error('Error fetching data: ' + error.message);
+        console.error("Error fetching data:", error);
+        toast.error("Error fetching data: " + error.message);
         setLoading(false); // Set loading to false in case of error
       }
     };
 
     fetchData();
-  }, []); 
+  }, []); // Run only once when the component mounts
 
-
+  // Render Loader if loading
   if (loading) {
     return <Loader />;
   }
@@ -100,30 +96,30 @@ const DashboardStates = () => {
               sx={{
                 boxShadow: 3,
                 borderRadius: 2,
-                border: '1px solid rgba(0, 0, 0, 0.12)',
-                transition: 'all 0.3s ease',
-                '&:hover': {
+                border: "1px solid rgba(0, 0, 0, 0.12)",
+                transition: "all 0.3s ease",
+                "&:hover": {
                   boxShadow: 6,
-                  borderColor: 'primary.main',
+                  borderColor: "primary.main",
                 },
               }}
             >
               <CardContent
                 sx={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  textAlign: 'center',
-                  height: '100%',
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  textAlign: "center",
+                  height: "100%",
                 }}
               >
                 <Typography
                   gutterBottom
                   sx={{
-                    color: 'text.secondary',
+                    color: "text.secondary",
                     fontSize: 14,
-                    fontWeight: 'bold',
+                    fontWeight: "bold",
                   }}
                 >
                   {metric.title}
@@ -133,14 +129,14 @@ const DashboardStates = () => {
                   sx={{
                     width: 80,
                     height: 80,
-                    borderRadius: '50%',
-                    backgroundColor: 'success.main',
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    color: 'white',
+                    borderRadius: "50%",
+                    backgroundColor: "success.main",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    color: "white",
                     fontSize: 24,
-                    fontWeight: '600',
+                    fontWeight: "600",
                     marginBottom: 2,
                   }}
                 >

@@ -125,17 +125,11 @@ const LeaseTable = () => {
           <CircularProgress />
         </div>
       ) : (
-<<<<<<< HEAD
+
         <TableContainer component={Paper}>
           <Table
             sx={{
               border: "1px solid #ddd",
-=======
-    <TableContainer component={Paper}>
-          <Table
-            sx={{
-              border: "1px solid #ddd", 
->>>>>>> 29f169d43448e5c13ab3a4eae8688a2d077404a7
             }}
           >
             <TableHead>
