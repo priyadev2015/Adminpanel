@@ -22,9 +22,9 @@ const AllUserList = () => {
         const userData = response.data;
         setUsers(userData);
 
-        // Automatically select the first user if available
+        // Automatically select the first tenant if available, else maintenance, then owners
         const firstUser =
-          userData.maintenance[0] || userData.tenants[0] || userData.owners[0] || null;
+          userData.tenants[0] || userData.maintenance[0] || userData.owners[0] || null;
         if (firstUser) {
           setSelectedUser(firstUser);
         }
@@ -61,8 +61,8 @@ const AllUserList = () => {
           Users
         </Typography>
         <List style={{ maxHeight: "80vh", overflowY: "auto" }}>
-          {/* Displaying Maintenance first, followed by Tenants and Owners */}
-          {["maintenance", "tenants", "owners"].map((role) => (
+          {/* Displaying Tenants first, followed by Maintenance and Owners */}
+          {["tenants", "maintenance", "owners"].map((role) => (
             <React.Fragment key={role}>
               <Typography variant="subtitle1" style={{ marginTop: 10, fontWeight: "bold" }}>
                 {role.charAt(0).toUpperCase() + role.slice(1)}
@@ -92,7 +92,6 @@ const AllUserList = () => {
         </List>
       </Grid>
 
-      
       <Grid item xs={8}>
         {selectedUser ? (
           <MessageApp selectedUser={selectedUser} />
