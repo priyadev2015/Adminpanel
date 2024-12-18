@@ -166,17 +166,17 @@ export default function Sidebar() {
               transition: "gap 0.3s",
             }}
           >
-            {/* Logo 1 */}
+        
             <img
               src={logo2}
               alt="Logo 1"
               style={{
-                width: open ? "40%" : "0", // Hide logo2 when sidebar is closed
+                width: open ? "40%" : "0", 
                 transition: "width 0.3s",
                 opacity: open ? 1 : 0,
               }}
             />
-            {/* Logo 2 */}
+          
             <img
               src={logo1}
               alt="Logo 2"
@@ -249,7 +249,7 @@ export default function Sidebar() {
                       : defaultStyle),
                     "&:hover": {
                       backgroundColor:
-                        location.pathname === path ? "black" : "#f5f5f5", // Change hover color to black for active item
+                        location.pathname === path ? "black" : "#f5f5f5", 
                       color:
                         location.pathname === path
                           ? "white"
@@ -283,7 +283,7 @@ export default function Sidebar() {
           marginTop: "64px",
         }}
       >
-        {/* Main content goes here */}
+      
       </Box>
     </Box>
   );
