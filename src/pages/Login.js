@@ -96,7 +96,7 @@ const LoginPage = () => {
       
         <div className="login-right-section">
           <div className="login-form-container">
-            <h2 className="login-title">Log In  RentGuard</h2>
+            <h2 className="login-title">Log In </h2>
             <form onSubmit={handleSubmit} noValidate>
               <div className="form-group">
                 <TextField

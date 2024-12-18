@@ -22,6 +22,7 @@ const AllUserList = () => {
         const userData = response.data;
         setUsers(userData);
 
+        // Automatically select the first tenant if available, else maintenance, then owners
         const firstUser =
           userData.tenants[0] || userData.maintenance[0] || userData.owners[0] || null;
         if (firstUser) {
@@ -44,7 +45,7 @@ const AllUserList = () => {
 
   return (
     <Grid container spacing={2} style={{ height: "100vh" }}>
-      {/ User List Section /}
+      {/* User List Section */}
       <Grid
         item
         xs={4}
@@ -60,9 +61,8 @@ const AllUserList = () => {
           Users
         </Typography>
         <List style={{ maxHeight: "80vh", overflowY: "auto" }}>
+          {/* Displaying Tenants first, followed by Maintenance and Owners */}
           {["tenants", "maintenance", "owners"].map((role) => (
-
-
             <React.Fragment key={role}>
               <Typography variant="subtitle1" style={{ marginTop: 10, fontWeight: "bold" }}>
                 {role.charAt(0).toUpperCase() + role.slice(1)}
@@ -106,3 +106,10 @@ const AllUserList = () => {
 };
 
 export default AllUserList;
+
+
+
+
+
+
+
