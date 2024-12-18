@@ -70,7 +70,6 @@ const RoleCreate = () => {
         setLoading(false);
       });
   };
-
   const handleOpen = (role) => {
     setOpen(true);
     if (role) {
