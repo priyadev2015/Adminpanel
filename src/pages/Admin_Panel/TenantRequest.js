@@ -297,23 +297,18 @@ const TenantRequests = () => {
                         {request.area}
                       </TableCell>
                       <TableCell sx={{ border: "1px solid #ddd" }}>
-                        <Tooltip title="View Details">
-                          <IconButton
-                            onClick={() => handleViewDetails(request)}
-                          >
-                            <Visibility sx={{ color: "green" }} />
-                          </IconButton>
-                        </Tooltip>
-                        <Tooltip title="Delete Request">
-                          <IconButton
-                            onClick={() => {
-                              setSelectedRequest(request);
-                              setOpenDeleteDialog(true);
-                            }}
-                          >
-                            <Delete sx={{ color: "red" }} />
-                          </IconButton>
-                        </Tooltip>
+                        <IconButton onClick={() => handleViewDetails(request)}>
+                          <Visibility sx={{ color: "green" }} />
+                        </IconButton>
+
+                        <IconButton
+                          onClick={() => {
+                            setSelectedRequest(request);
+                            setOpenDeleteDialog(true);
+                          }}
+                        >
+                          <Delete sx={{ color: "red" }} />
+                        </IconButton>
                       </TableCell>
                     </TableRow>
                   ))
@@ -420,8 +415,18 @@ const TenantRequests = () => {
             <Typography>No data available.</Typography>
           )}
         </DialogContent>
-        <DialogActions sx={{position:"relative",right:"40%"}}>
-          <Button onClick={handleCloseViewDialog} sx={{ color: "white", border:"2px solid ", backgroundColor:"blue" , textTransform: "capitalize", fontSize:"15px", width:"120px"}} >
+        <DialogActions sx={{ position: "relative", right: "40%" }}>
+          <Button
+            onClick={handleCloseViewDialog}
+            sx={{
+              color: "white",
+              border: "2px solid ",
+              backgroundColor: "blue",
+              textTransform: "capitalize",
+              fontSize: "15px",
+              width: "120px",
+            }}
+          >
             Close
           </Button>
         </DialogActions>

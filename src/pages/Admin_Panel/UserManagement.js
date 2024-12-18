@@ -122,6 +122,7 @@ const UserManagement = () => {
 
   const handleCreateUser = (e) => {
     e.preventDefault();
+
     if (validateForm()) {
       const token = localStorage.getItem("authToken");
       axios
@@ -234,7 +235,6 @@ const UserManagement = () => {
     console.log("Validating form...");
     const errors = {};
 
-  
     if (!userData.fullname) {
       errors.fullname = "Full name is required.";
     } else if (userData.fullname.length < 4 || userData.fullname.length > 10) {
@@ -259,7 +259,8 @@ const UserManagement = () => {
     if (!userData.role) {
       errors.role = "Role is required.";
     }
-    if (userData.password !== undefined && userData.password !== "") {
+
+    if (!editUserId) {
       if (!userData.password) {
         errors.password = "Password is required.";
       } else if (userData.password.length < 8) {
@@ -279,7 +280,6 @@ const UserManagement = () => {
 
     return Object.keys(errors).length === 0;
   };
-  
 
   const handleCloseModal = () => {
     setOpenModal(false);
@@ -328,7 +328,10 @@ const UserManagement = () => {
         <Button
           variant="contained"
           sx={{ marginBottom: 2 }}
-          onClick={() => setOpenModal(true)}
+          onClick={() => {
+            setEditUserId(null);
+            setOpenModal(true);
+          }}
         >
           Create
         </Button>
