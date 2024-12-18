@@ -274,13 +274,11 @@ const UserManagement = () => {
         }
       }
     }
-
     setFormErrors(errors);
     console.log("Form errors:", errors);
 
     return Object.keys(errors).length === 0;
   };
-
   const handleCloseModal = () => {
     setOpenModal(false);
     setUserData({
