@@ -388,6 +388,7 @@ const RoleCreate = () => {
                         justifyContent: "center",
                         gap: "10px",
                         textAlign: "center",
+                        border: "1px solid #e0e0e0",
                       }}
                     >
                       <IconButton onClick={() => handleEditRole(role)}>

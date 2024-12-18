@@ -297,10 +297,10 @@ const TenantRequests = () => {
                         {request.area}
                       </TableCell>
                       <TableCell sx={{ border: "1px solid #ddd" }}>
-                        <IconButton onClick={() => handleViewDetails(request)}>
+                        <div style={{display:"flex"}}>
+                        <IconButton onClick={() => handleViewDetails(request)} >
                           <Visibility sx={{ color: "green" }} />
                         </IconButton>
-
                         <IconButton
                           onClick={() => {
                             setSelectedRequest(request);
@@ -309,6 +309,7 @@ const TenantRequests = () => {
                         >
                           <Delete sx={{ color: "red" }} />
                         </IconButton>
+                        </div>
                       </TableCell>
                     </TableRow>
                   ))
