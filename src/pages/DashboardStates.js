@@ -3,14 +3,14 @@ import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
-import Grid from '@mui/material/Grid'; // To manage grid layout
-import axios from 'axios'; // For API calls
+import Grid from '@mui/material/Grid'; 
+import axios from 'axios'; 
 import config from '../config/ServiceApi';
-import { toast } from 'react-toastify'; // Assuming you're using react-toastify for toasts
-import Loader from './../components/Loader/Loader'; // Import your custom Loader component
+import { toast } from 'react-toastify'; 
+import Loader from './../components/Loader/Loader'; 
 
 const DashboardStates = () => {
-  // State to store fetched data
+
   const [metrics, setMetrics] = useState([
     { title: 'Total Properties', value: 0 },
     { title: 'Total Tenants', value: 0 },
@@ -18,14 +18,14 @@ const DashboardStates = () => {
     { title: 'Total Active lease', value: 0 },
   ]);
 
-  // State to control loading state
+
   const [loading, setLoading] = useState(true);
 
-  // Fetch data from multiple API endpoints
+
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Get token from localStorage
+    
         const token = localStorage.getItem('authToken');
         
         if (!token) {
@@ -33,7 +33,7 @@ const DashboardStates = () => {
           return;
         }
 
-        // Fetch data from endpoints
+    
         const [
           propertiesResponse,
           tenantsResponse,
@@ -54,7 +54,6 @@ const DashboardStates = () => {
           }),
         ]);
 
-        // Update metrics state with fetched data
         setMetrics([
           { title: 'Total Properties', value: propertiesResponse.data.totalProperties },
           { title: 'Total Tenants', value: tenantsResponse.data.totalTenants },
@@ -62,7 +61,7 @@ const DashboardStates = () => {
           { title: 'Total Active Lease', value: nonexpiredLeasesResponse.data.nonExpiredLeasesCount },
         ]);
 
-        setLoading(false); // Set loading to false
+        setLoading(false);
       } catch (error) {
         console.error('Error fetching data:', error);
         toast.error('Error fetching data: ' + error.message);
@@ -71,9 +70,9 @@ const DashboardStates = () => {
     };
 
     fetchData();
-  }, []); // Run only once when the component mounts
+  }, []); 
 
-  // Render Loader if loading
+
   if (loading) {
     return <Loader />;
   }
