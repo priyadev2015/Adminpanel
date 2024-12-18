@@ -36,7 +36,7 @@ const Chart = () => {
   });
 
   const [timePeriod, setTimePeriod] = useState('monthly');
-  const [loading, setLoading] = useState(true); // State to track loading
+  const [loading, setLoading] = useState(true); 
 
   useEffect(() => {
     const fetchData = async () => {
@@ -47,7 +47,7 @@ const Chart = () => {
           return;
         }
 
-        // Fetch occupancy data
+
         const occupancyResponse = await fetch(
            `${config.baseURL}${config.graphoccupancy}`,
           {
@@ -59,7 +59,7 @@ const Chart = () => {
         );
         const occupancyData = await occupancyResponse.json();
 
-        // Fetch square footage data
+      
         const squareFootageResponse = await fetch(
           `${config.baseURL}${config.graphsquarefootage}`,
           {
@@ -93,10 +93,10 @@ const Chart = () => {
           });
 
         setChartData({ monthlyData: mergedData });
-        setLoading(false); // Set loading to false when data is fetched
+        setLoading(false); 
       } catch (error) {
         console.error('Error fetching chart data:', error);
-        setLoading(false); // Set loading to false in case of error
+        setLoading(false); 
       }
     };
 
@@ -165,7 +165,7 @@ const Chart = () => {
       x: {
         beginAtZero: true,
         grid: {
-          display: false, // Hide gridlines for a cleaner look
+          display: false, 
         },
       },
       y1: {
@@ -187,7 +187,7 @@ const Chart = () => {
     },
   };
 
-  // Show loader while data is being fetched
+
   if (loading) {
     return <Loader />;
   }

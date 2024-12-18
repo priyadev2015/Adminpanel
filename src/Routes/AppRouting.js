@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import {
   BrowserRouter as Router,
@@ -15,19 +16,23 @@ import PropertyApprovedList from "../pages/Admin_Panel/PropertyAlooted";
 import TenantRequests from "../pages/Admin_Panel/TenantRequest";
 import MessageApp from "../pages/Admin_Panel/Message/AllUser";
 import UserManagement from "../pages/Admin_Panel/UserManagement";
-import PrivateRoute from "../components/PrivateRoute";
+import PrivateRoute from "../components/PrivateRoute"; 
+
 
 const AppRouting = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem("authToken");
-    setIsAuthenticated(!!token);
+
+    setIsAuthenticated(!!token); 
+
   }, []);
 
   return (
     <Router>
       <Routes>
+
         <Route
           path="/"
           element={
@@ -119,7 +124,7 @@ const AppRouting = () => {
             </PrivateRoute>
           }
         />
-        {/* 404 Route */}
+      
         <Route path="*" element={<div>404 Page Not Found</div>} />
       </Routes>
     </Router>

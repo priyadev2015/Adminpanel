@@ -151,8 +151,6 @@ const PropertiesList = () => {
     ) {
       errors.rent = "Rent must be between 100 and 100000";
     }
-
-   
     if (!property.securityDeposit) {
       errors.securityDeposit = "Security deposit is required";
     } else if (
@@ -163,8 +161,6 @@ const PropertiesList = () => {
       errors.securityDeposit =
         "Security deposit must be between 100 and 100000";
     }
-
-  
     if (!property.squareFootage) {
       errors.squareFootage = "Square footage is required";
     } else if (
@@ -174,6 +170,7 @@ const PropertiesList = () => {
     ) {
       errors.squareFootage = "Square footage must be between 100 and 100000";
     }
+
 
     if (!property.totalIncome) {
       errors.totalIncome = "Total income is required";

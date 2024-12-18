@@ -31,7 +31,7 @@ const LoginPage = () => {
     let valid = true;
     const newErrors = { userEmail: '', userPass: '' };
 
-    // Email validation
+  
     if (!userData.userEmail) {
       newErrors.userEmail = 'Email is required';
       valid = false;
@@ -40,7 +40,7 @@ const LoginPage = () => {
       valid = false;
     }
 
-    // Password validation
+  
     if (!userData.userPass) {
       newErrors.userPass = 'Password is required';
       valid = false;
@@ -84,7 +84,7 @@ const LoginPage = () => {
   return (
     <div className='body1'>
       <div className="login-page-container">
-        {/* Left Section */}
+     
         <div className="login-left-section">
           <div className="logo-container">
             <img src={side} alt="side" className="side" />
@@ -93,7 +93,7 @@ const LoginPage = () => {
           </div>
         </div>
 
-        {/* Right Section */}
+      
         <div className="login-right-section">
           <div className="login-form-container">
             <h2 className="login-title">Log In  RentGuard</h2>

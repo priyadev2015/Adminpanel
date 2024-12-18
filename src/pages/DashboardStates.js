@@ -3,30 +3,47 @@ import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
-import Grid from '@mui/material/Grid'; // To manage grid layout
-import axios from 'axios'; // For API calls
+import Grid from '@mui/material/Grid'; 
+import axios from 'axios'; 
 import config from '../config/ServiceApi';
-import { toast } from 'react-toastify'; // Assuming you're using react-toastify for toasts
-import Loader from './../components/Loader/Loader'; // Import your custom Loader component
+import { toast } from 'react-toastify'; 
+import Loader from './../components/Loader/Loader'; 
 
 const DashboardStates = () => {
-  // State to store fetched data
+
   const [metrics, setMetrics] = useState([
     { title: 'Total Properties', value: 0 },
     { title: 'Total Tenants', value: 0 },
     { title: 'Total Expired lease', value: 0 },
     { title: 'Total Active lease', value: 0 },
   ]);
+<<<<<<< HEAD
   const [loading, setLoading] = useState(true);
   useEffect(() => {
     const fetchData = async () => {
       try {
+=======
+
+
+  const [loading, setLoading] = useState(true);
+
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+    
+>>>>>>> 29f169d43448e5c13ab3a4eae8688a2d077404a7
         const token = localStorage.getItem('authToken');
         
         if (!token) {
           toast.error('No token found. Please log in again.');
           return;
         }
+<<<<<<< HEAD
+=======
+
+    
+>>>>>>> 29f169d43448e5c13ab3a4eae8688a2d077404a7
         const [
           propertiesResponse,
           tenantsResponse,
@@ -46,6 +63,10 @@ const DashboardStates = () => {
             headers: { Authorization: `Bearer ${token}` },
           }),
         ]);
+<<<<<<< HEAD
+=======
+
+>>>>>>> 29f169d43448e5c13ab3a4eae8688a2d077404a7
         setMetrics([
           { title: 'Total Properties', value: propertiesResponse.data.totalProperties },
           { title: 'Total Tenants', value: tenantsResponse.data.totalTenants },
@@ -53,7 +74,7 @@ const DashboardStates = () => {
           { title: 'Total Active Lease', value: nonexpiredLeasesResponse.data.nonExpiredLeasesCount },
         ]);
 
-        setLoading(false); // Set loading to false
+        setLoading(false);
       } catch (error) {
         console.error('Error fetching data:', error);
         toast.error('Error fetching data: ' + error.message);
@@ -62,9 +83,9 @@ const DashboardStates = () => {
     };
 
     fetchData();
-  }, []); // Run only once when the component mounts
+  }, []); 
 
-  // Render Loader if loading
+
   if (loading) {
     return <Loader />;
   }

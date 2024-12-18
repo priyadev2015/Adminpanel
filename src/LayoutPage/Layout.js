@@ -3,7 +3,7 @@ import React from 'react';
 import { Box } from '@mui/material';
 import Sidebar from '../components/dashbaord/Sidebar';
 
-const Layout = ({ children, setIsAuthenticated }) => { // Add setIsAuthenticated as a prop
+const Layout = ({ children, setIsAuthenticated }) => 
   return (
     <Box sx={{ display: 'flex' }}>
       <Sidebar />
