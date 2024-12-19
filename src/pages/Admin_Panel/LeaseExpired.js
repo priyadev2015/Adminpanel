@@ -418,5 +418,4 @@ const LeaseTable = () => {
     </div>
   );
 };
-
 export default LeaseTable;
