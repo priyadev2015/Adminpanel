@@ -8,24 +8,21 @@ import axios from "axios"; // For API calls
 import config from "../config/ServiceApi";
 import { toast } from "react-toastify"; // Assuming you're using react-toastify for toasts
 import Loader from "./../components/Loader/Loader"; // Import your custom Loader component
+import { House, People, Archive, CheckCircle } from "@mui/icons-material"; // Icons from Material-UI
 
 const DashboardStates = () => {
-  // State to store fetched data
   const [metrics, setMetrics] = useState([
-    { title: "Total Properties", value: 0 },
-    { title: "Total Tenants", value: 0 },
-    { title: "Total Expired lease", value: 0 },
-    { title: "Total Active lease", value: 0 },
+    { title: "Total Properties", value: 0, icon: <House />, bgColor: "#118cb3" },
+    { title: "Total Tenants", value: 0, icon: <People />, bgColor: "#417841" },
+    { title: "Total Expired Lease", value: 0, icon: <Archive />, bgColor: "#777756" },
+    { title: "Total Active Lease", value: 0, icon: <CheckCircle />, bgColor: "#c1737f" },
   ]);
 
-  // State to control loading state
   const [loading, setLoading] = useState(true);
 
-  // Fetch data from multiple API endpoints
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Get token from localStorage
         const token = localStorage.getItem("authToken");
 
         if (!token) {
@@ -33,7 +30,6 @@ const DashboardStates = () => {
           return;
         }
 
-        // Fetch data from endpoints
         const [
           propertiesResponse,
           tenantsResponse,
@@ -58,96 +54,138 @@ const DashboardStates = () => {
           {
             title: "Total Properties",
             value: propertiesResponse.data.totalProperties,
+            icon: <House />,
+            bgColor: "#118cb3",
           },
-          { title: "Total Tenants", value: tenantsResponse.data.totalTenants },
+          {
+            title: "Total Tenants",
+            value: tenantsResponse.data.totalTenants,
+            icon: <People />,
+            bgColor: "#417841",
+          },
           {
             title: "Total Expired Lease",
             value: expiredLeasesResponse.data.expiredLeasesCount,
+            icon: <Archive />,
+            bgColor: "#777756",
           },
           {
             title: "Total Active Lease",
             value: nonexpiredLeasesResponse.data.nonExpiredLeasesCount,
+            icon: <CheckCircle />,
+            bgColor: "#c1737f",
           },
         ]);
 
-        setLoading(false); // Set loading to false
+        setLoading(false);
       } catch (error) {
         console.error("Error fetching data:", error);
         toast.error("Error fetching data: " + error.message);
-        setLoading(false); // Set loading to false in case of error
+        setLoading(false);
       }
     };
 
     fetchData();
-  }, []); // Run only once when the component mounts
+  }, []);
 
-  // Render Loader if loading
   if (loading) {
     return <Loader />;
   }
 
   return (
     <Box sx={{ flexGrow: 1, mt: 8, px: 3 }}>
-      <Grid container spacing={3}>
-        {metrics.map((metric, index) => (
-          <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
-            <Card
-              variant="outlined"
-              sx={{
-                boxShadow: 3,
-                borderRadius: 2,
-                border: "1px solid rgba(0, 0, 0, 0.12)",
-                transition: "all 0.3s ease",
-                "&:hover": {
-                  boxShadow: 6,
-                  borderColor: "primary.main",
-                },
-              }}
-            >
-              <CardContent
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  textAlign: "center",
-                  height: "100%",
-                }}
-              >
-                <Typography
-                  gutterBottom
-                  sx={{
-                    color: "text.secondary",
-                    fontSize: 14,
-                    fontWeight: "bold",
-                  }}
-                >
-                  {metric.title}
-                </Typography>
+    <Grid container spacing={3}>
+      {metrics.map((metric, index) => (
+        <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
+          <Card
+            variant="outlined"
+            sx={{
+              boxShadow: 3,
+              borderRadius: 2,
+              border: `1px solid rgba(0, 0, 0, 0.12)`,
+              backgroundColor: metric.bgColor, // Set background color
+              transition: "all 0.3s ease",
+             "&:hover": {
+      boxShadow: 10, // Increased shadow on hover
+      borderColor: "success.main", // Green border on hover
+      backgroundColor: "black", // Change background to white on hover
+      color: "black", // Ensure text becomes visible on white background
+    },
+              width: "100%", // Ensure the card takes up full width available in grid
+            }}
+          >
+           <CardContent
+  sx={{
+    display: "flex",
+    flexDirection: "column", // Stack content vertically
+    alignItems: "center", // Center content horizontally
+    justifyContent: "center",
+    padding: 1, // Reduce padding
+    height: "150px", // Set a fixed, smaller height
+  }}
+>
+  {/* Icon centered above text */}
+  <Box
+    sx={{
+      borderRadius: "50%",
+      padding: 1, // Smaller padding around the icon
+      color: "white",
+      fontSize: "80px", // Smaller icon size
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      marginBottom: 1, // Space between icon and text
+    }}
+  >
+    {React.cloneElement(metric.icon, { sx: { fontSize: "60px" } })} {/* Smaller font size for the icon */}
+  </Box>
 
-                <Box
-                  sx={{
-                    width: 80,
-                    height: 80,
-                    borderRadius: "50%",
-                    backgroundColor: "success.main",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    color: "white",
-                    fontSize: 24,
-                    fontWeight: "600",
-                    marginBottom: 2,
-                  }}
-                >
-                  {metric.value}
-                </Box>
-              </CardContent>
-            </Card>
-          </Grid>
-        ))}
-      </Grid>
+  {/* Text and Value in one row */}
+  <Box
+    sx={{
+      display: "flex",
+      justifyContent: "space-between",
+      width: "100%",
+      alignItems: "center",
+    }}
+  >
+    <Typography
+      sx={{
+        color: "white", // White text color
+        fontSize: 14, // Smaller font size for title
+        fontWeight: "bold",
+        textAlign: "left",
+        flex: 1, // Take up available space
+      }}
+    >
+      {metric.title}
+    </Typography>
+
+    <Box
+      sx={{
+        width: 40, // Smaller circle
+        height: 40, // Smaller circle
+        borderRadius: "50%",
+        backgroundColor: "white", // Circle background for value
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        color: "black", // Text color for value
+        fontSize: 16, // Smaller font size for value
+        fontWeight: "600",
+      }}
+    >
+      {metric.value}
     </Box>
+  </Box>
+</CardContent>
+
+          </Card>
+        </Grid>
+      ))}
+    </Grid>
+  </Box>
+  
   );
 };
 
