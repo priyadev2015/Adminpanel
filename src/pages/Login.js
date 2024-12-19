@@ -92,8 +92,6 @@ const LoginPage = () => {
             <h1 className="app-title">RentGuard</h1>
           </div>
         </div>
-
-      
         <div className="login-right-section">
           <div className="login-form-container">
             <h2 className="login-title">Log In </h2>
@@ -153,5 +151,4 @@ const LoginPage = () => {
     </div>
   );
 };
-
 export default LoginPage;
