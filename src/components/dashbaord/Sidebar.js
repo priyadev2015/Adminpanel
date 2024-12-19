@@ -13,7 +13,6 @@ import {
   CssBaseline,
   Toolbar,
   Tooltip,
-  TextField,
 } from "@mui/material";
 import MuiDrawer from "@mui/material/Drawer";
 import MuiAppBar from "@mui/material/AppBar";
@@ -61,7 +60,7 @@ const DrawerHeader = styled("div")(({ theme }) => ({
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== "open",
 })(({ theme, open }) => ({
-  backgroundColor: "black",
+ 
   zIndex: theme.zIndex.drawer + 1,
   transition: theme.transitions.create(["width", "margin"], {
     easing: theme.transitions.easing.sharp,
@@ -122,7 +121,7 @@ export default function Sidebar() {
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
       <AppBar position="fixed" open={open}>
-        <Toolbar>
+        <Toolbar >
           <IconButton
             color="inherit"
             aria-label="open drawer"
@@ -136,7 +135,7 @@ export default function Sidebar() {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
-            Property Management
+           
           </Typography>
           <Profile />
         </Toolbar>
@@ -158,7 +157,7 @@ export default function Sidebar() {
               justifyContent: "center",
               alignItems: "center",
               width: "100%",
-              gap: open ? 1 : 0, // Adjust spacing between logos
+              gap: open ? 1 : 0, 
               transition: "gap 0.3s",
             }}
           >

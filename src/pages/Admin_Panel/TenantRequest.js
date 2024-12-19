@@ -21,8 +21,8 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  Tooltip,
   Box,
+  TableSortLabel,
 } from "@mui/material";
 import { Alert } from "@mui/lab";
 import { Delete, Visibility } from "@mui/icons-material";
@@ -40,6 +40,8 @@ const TenantRequests = () => {
   const [openViewDialog, setOpenViewDialog] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [selectedRequest, setSelectedRequest] = useState(null);
+  const [order, setOrder] = useState("asc");
+  const [orderBy, setOrderBy] = useState("fullname");
 
   useEffect(() => {
     const fetchTenantRequests = async () => {
@@ -102,6 +104,37 @@ const TenantRequests = () => {
     const searchTerm = searchQuery.toLowerCase();
     return tenantName.includes(searchTerm) || tenantEmail.includes(searchTerm);
   });
+
+  const handleSortRequest = (property) => {
+    const isAsc = orderBy === property && order === "asc";
+    setOrder(isAsc ? "desc" : "asc");
+    setOrderBy(property);
+  };
+
+  const sortData = (array) => {
+    const comparator = (a, b) => {
+      if (orderBy === "fullname") {
+        return (
+          (a.userId.fullname > b.userId.fullname ? 1 : -1) *
+          (order === "asc" ? 1 : -1)
+        );
+      }
+      if (orderBy === "email") {
+        return (
+          (a.userId.email > b.userId.email ? 1 : -1) *
+          (order === "asc" ? 1 : -1)
+        );
+      }
+      if (orderBy === "createdAt") {
+        return (
+          (new Date(a.createdAt) > new Date(b.createdAt) ? 1 : -1) *
+          (order === "asc" ? 1 : -1)
+        );
+      }
+      return 0;
+    };
+    return array.sort(comparator);
+  };
 
   const handleViewDetails = (request) => {
     setSelectedRequest(request);
@@ -176,6 +209,8 @@ const TenantRequests = () => {
     );
   }
 
+  const sortedRequests = sortData(filteredRequests);
+
   return (
     <div style={{ marginTop: "90px", alignItems: "center", display: "flow" }}>
       <Typography
@@ -222,21 +257,20 @@ const TenantRequests = () => {
               <TableHead>
                 <TableRow>
                   {[
-                    "Tenant Name",
-                    "Email",
-                    "Contact No",
-                    "Property ID",
-                    "Status",
-                    "Lease Status",
-                    "Lease Start Date",
-                    "Lease End Date",
-                    "Date",
-                    "Time",
-                    "Area",
-                    "Actions",
-                  ].map((header) => (
+                    { label: "Tenant Name", field: "fullname" },
+                    { label: "Email", field: "email" },
+                    { label: "Contact No", field: "contactNumber" },
+                    { label: "Property ID", field: "propertyId" },
+                    { label: "Status", field: "status" },
+                    { label: "Lease Status", field: "leaseStatus" },
+                    { label: "Lease Start Date", field: "leaseStartDate" },
+                    { label: "Lease End Date", field: "leaseEndDate" },
+                    { label: "Date", field: "createdAt" },
+                    { label: "Time", field: "createdAt" },
+                    { label: "Area", field: "area" },
+                  ].map(({ label, field }) => (
                     <TableCell
-                      key={header}
+                      key={label}
                       sx={{
                         fontWeight: "bold",
                         whiteSpace: "nowrap",
@@ -245,14 +279,31 @@ const TenantRequests = () => {
                         backgroundColor: "#f9f9f9",
                       }}
                     >
-                      {header}
+                      <TableSortLabel
+                        active={orderBy === field}
+                        direction={orderBy === field ? order : "asc"}
+                        onClick={() => handleSortRequest(field)}
+                      >
+                        {label}
+                      </TableSortLabel>
                     </TableCell>
                   ))}
+                  <TableCell
+                    sx={{
+                      fontWeight: "bold",
+                      whiteSpace: "nowrap",
+                      textAlign: "center",
+                      border: "1px solid #ddd",
+                      backgroundColor: "#f9f9f9",
+                    }}
+                  >
+                    Actions
+                  </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {filteredRequests.length > 0 ? (
-                  filteredRequests.map((request) => (
+                {sortedRequests.length > 0 ? (
+                  sortedRequests.map((request) => (
                     <TableRow
                       key={request._id}
                       sx={{
@@ -296,18 +347,20 @@ const TenantRequests = () => {
                         {request.area}
                       </TableCell>
                       <TableCell sx={{ border: "1px solid #ddd" }}>
-                        <div style={{display:"flex"}}>
-                        <IconButton onClick={() => handleViewDetails(request)} >
-                          <Visibility sx={{ color: "green" }} />
-                        </IconButton>
-                        <IconButton
-                          onClick={() => {
-                            setSelectedRequest(request);
-                            setOpenDeleteDialog(true);
-                          }}
-                        >
-                          <Delete sx={{ color: "red" }} />
-                        </IconButton>
+                        <div style={{ display: "flex" }}>
+                          <IconButton
+                            onClick={() => handleViewDetails(request)}
+                          >
+                            <Visibility sx={{ color: "green" }} />
+                          </IconButton>
+                          <IconButton
+                            onClick={() => {
+                              setSelectedRequest(request);
+                              setOpenDeleteDialog(true);
+                            }}
+                          >
+                            <Delete sx={{ color: "red" }} />
+                          </IconButton>
                         </div>
                       </TableCell>
                     </TableRow>
@@ -338,7 +391,6 @@ const TenantRequests = () => {
           />
         </Grid>
       </Grid>
-
       <Dialog open={openViewDialog} onClose={handleCloseViewDialog} fullWidth>
         <DialogTitle
           sx={{ textAlign: "center", fontWeight: "bold", fontSize: "1.5rem" }}

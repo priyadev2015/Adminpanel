@@ -38,28 +38,40 @@ const RoleCreate = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [totalRoles, setTotalRoles] = useState(0);
+  const [sortBy, setSortBy] = useState("name");
+  const [sortOrder, setSortOrder] = useState("asc");
 
   useEffect(() => {
     fetchRoles();
-  }, [page, rowsPerPage]);
+  }, [page, rowsPerPage, sortBy, sortOrder]);
 
   const fetchRoles = () => {
     const token = localStorage.getItem("authToken");
     setLoading(true);
     axios
-      .get(
-        `${config.baseURL}${config.roleCreate}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          params: {
-            page: page + 1, // +1 because page is zero-indexed
-            limit: rowsPerPage,
-          },
-        }
-      )
+      .get(`${config.baseURL}${config.roleCreate}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        params: {
+          page: page + 1, 
+          limit: rowsPerPage,
+        },
+      })
       .then((response) => {
+        const sortedRoles = response.data.roles.sort((a, b) => {
+          const valueA = a[sortBy].toLowerCase();
+          const valueB = b[sortBy].toLowerCase();
+
+          if (valueA < valueB) {
+            return sortOrder === "asc" ? -1 : 1;
+          }
+          if (valueA > valueB) {
+            return sortOrder === "asc" ? 1 : -1;
+          }
+          return 0;
+        });
+
         setRoles(response.data.roles);
         setTotalRoles(response.data.pagination.totalRoles);
         setLoading(false);
@@ -69,6 +81,11 @@ const RoleCreate = () => {
         toast.error("Error fetching roles: " + error.message);
         setLoading(false);
       });
+  };
+  const handleSort = (column) => {
+    const isAsc = sortBy === column && sortOrder === "asc";
+    setSortBy(column);
+    setSortOrder(isAsc ? "desc" : "asc");
   };
   const handleOpen = (role) => {
     setOpen(true);
@@ -362,6 +379,7 @@ const RoleCreate = () => {
                       backgroundColor: "#f9f9f9",
                       border: "1px solid #e0e0e0",
                     }}
+                    onClick={() => handleSort("name")}
                   >
                     {header}
                   </TableCell>
@@ -380,7 +398,9 @@ const RoleCreate = () => {
                       },
                     }}
                   >
-                    <TableCell sx={{ textAlign: "center" }}>{role.name}</TableCell>
+                    <TableCell sx={{ textAlign: "center" }}>
+                      {role.name}
+                    </TableCell>
                     <TableCell
                       sx={{
                         display: "flex",

@@ -24,6 +24,7 @@ import {
   IconButton,
   TableContainer,
   Paper,
+  TableSortLabel,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import BorderColorIcon from "@mui/icons-material/BorderColor";
@@ -31,7 +32,7 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import api from "../../config/ServiceApi"
+import api from "../../config/ServiceApi";
 const UserManagement = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -47,6 +48,8 @@ const UserManagement = () => {
   const [totalUsers, setTotalUsers] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [isRolesLoading, setIsRolesLoading] = useState(true);
+  const [order, setOrder] = useState("asc");
+  const [orderBy, setOrderBy] = useState("fullname");
   const [userData, setUserData] = useState({
     fullname: "",
     email: "",
@@ -88,7 +91,31 @@ const UserManagement = () => {
         setLoading(false);
       });
   };
+  const handleSortRequest = (property) => {
+    const isAsc = orderBy === property && order === "asc";
+    setOrder(isAsc ? "desc" : "asc");
+    setOrderBy(property);
+  };
 
+  const sortData = (array) => {
+    const comparator = (a, b) => {
+      if (orderBy === "fullname") {
+        return (a.fullname > b.fullname ? 1 : -1) * (order === "asc" ? 1 : -1);
+      }
+      if (orderBy === "email") {
+        return (a.email > b.email ? 1 : -1) * (order === "asc" ? 1 : -1);
+      }
+      if (orderBy === "createdAt") {
+        return (
+          (new Date(a.createdAt) > new Date(b.createdAt) ? 1 : -1) *
+          (order === "asc" ? 1 : -1)
+        );
+      }
+      return 0;
+    };
+
+    return array.sort(comparator);
+  };
   const fetchRoles = () => {
     const token = localStorage.getItem("authToken");
     if (!token) {
@@ -122,11 +149,9 @@ const UserManagement = () => {
     if (validateForm()) {
       const token = localStorage.getItem("authToken");
       axios
-        .post(
-          `${api.baseURL}${api.createUser}`,
-          userData,
-          { headers: { Authorization: `Bearer ${token}` } }
-        )
+        .post(`${api.baseURL}${api.createUser}`, userData, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
         .then((response) => {
           toast.success("User created successfully");
           fetchUsers();
@@ -157,11 +182,9 @@ const UserManagement = () => {
       }
 
       axios
-        .put(
-          `${api.baseURL}${api.users}/${editUserId}`,
-          updatedUser,
-          { headers: { Authorization: `Bearer ${token}` } }
-        )
+        .put(`${api.baseURL}${api.users}/${editUserId}`, updatedUser, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
         .then((response) => {
           console.log("Response from server:", response);
           toast.success("User updated successfully");
@@ -180,12 +203,9 @@ const UserManagement = () => {
   const handleDeleteUser = (userId) => {
     const token = localStorage.getItem("authToken");
     axios
-      .delete(
-         `${api.baseURL}${api.users}/${userId}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      )
+      .delete(`${api.baseURL}${api.users}/${userId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
       .then((response) => {
         toast.success("User deleted successfully");
         fetchUsers();
@@ -249,7 +269,7 @@ const UserManagement = () => {
         errors.contactNumber = "Contact number must only contain numbers.";
       }
     }
-  
+
     if (!userData.role) {
       errors.role = "Role is required.";
     }
@@ -285,34 +305,26 @@ const UserManagement = () => {
     setFormErrors({});
   };
 
-
   const handleRoleChange = (e) => {
     const selectedRole = e.target.value;
-    
-    
+
     setUserData({
       ...userData,
       role: selectedRole,
     });
-  
+
     if (selectedRole) {
-     
       setFormErrors((prevErrors) => ({
         ...prevErrors,
         role: "",
       }));
     } else {
-      
       setFormErrors((prevErrors) => ({
         ...prevErrors,
         role: "Role is required.",
       }));
     }
   };
-  
-
-
-
 
   const handleViewUser = (user) => {
     setSelectedUser(user);
@@ -439,11 +451,10 @@ const UserManagement = () => {
               name="contactNumber"
               type="number"
               inputProps={{
-                maxLength: 10, // This will restrict the input length to 10 digits
+                maxLength: 10,
               }}
               onInput={(e) => {
-                // Ensure only numbers are entered (optional, for better UX)
-                e.target.value = e.target.value.replace(/\D/g, '').slice(0, 10);
+                e.target.value = e.target.value.replace(/\D/g, "").slice(0, 10);
               }}
             />
 
@@ -510,7 +521,7 @@ const UserManagement = () => {
                 "Date",
                 "Time",
                 "Actions",
-              ].map((header) => (
+              ].map((header, index) => (
                 <TableCell
                   key={header}
                   sx={{
@@ -520,7 +531,19 @@ const UserManagement = () => {
                     border: "1px solid #e0e0e0",
                   }}
                 >
-                  {header}
+                  <TableSortLabel
+                    active={orderBy === header.toLowerCase().replace(" ", "")}
+                    direction={
+                      orderBy === header.toLowerCase().replace(" ", "")
+                        ? order
+                        : "asc"
+                    }
+                    onClick={() =>
+                      handleSortRequest(header.toLowerCase().replace(" ", ""))
+                    }
+                  >
+                    {header}
+                  </TableSortLabel>
                 </TableCell>
               ))}
             </TableRow>
@@ -538,66 +561,68 @@ const UserManagement = () => {
               </TableRow>
             ) : (filteredUsers.length > 0 ? filteredUsers : users).length >
               0 ? (
-              (filteredUsers.length > 0 ? filteredUsers : users).map((user) => (
-                <TableRow
-                  key={user._id}
-                  sx={{
-                    "&:hover": {
-                      backgroundColor: "rgba(0, 0, 0, 0.05)",
-                      boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-                    },
-                  }}
-                >
-                  <TableCell
-                    sx={{ textAlign: "center", border: "1px solid #e0e0e0" }}
-                  >
-                    {user.fullname}
-                  </TableCell>
-                  <TableCell
-                    sx={{ textAlign: "center", border: "1px solid #e0e0e0" }}
-                  >
-                    {user.email}
-                  </TableCell>
-                  <TableCell
-                    sx={{ textAlign: "center", border: "1px solid #e0e0e0" }}
-                  >
-                    {user.role}
-                  </TableCell>
-                  <TableCell
-                    sx={{ textAlign: "center", border: "1px solid #e0e0e0" }}
-                  >
-                    {user.contactNumber || "N/A"}
-                  </TableCell>
-                  <TableCell
-                    sx={{ textAlign: "center", border: "1px solid #e0e0e0" }}
-                  >
-                    {new Date(user.createdAt).toLocaleDateString()}
-                  </TableCell>
-                  <TableCell
-                    sx={{ textAlign: "center", border: "1px solid #e0e0e0" }}
-                  >
-                    {new Date(user.createdAt).toLocaleTimeString()}
-                  </TableCell>
-                  <TableCell
+              sortData(filteredUsers.length > 0 ? filteredUsers : users).map(
+                (user) => (
+                  <TableRow
+                    key={user._id}
                     sx={{
-                      display: "flex",
-                      justifyContent: "center",
-                      gap: "10px",
-                      border: "1px solid #e0e0e0",
+                      "&:hover": {
+                        backgroundColor: "rgba(0, 0, 0, 0.05)",
+                        boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+                      },
                     }}
                   >
-                    <IconButton onClick={() => handleViewUser(user)}>
-                      <VisibilityIcon sx={{ color: "green" }} />
-                    </IconButton>
-                    <IconButton onClick={() => handleEditUser(user)}>
-                      <BorderColorIcon sx={{ color: "blue" }} />
-                    </IconButton>
-                    <IconButton onClick={() => handleDeleteDialogOpen(user)}>
-                      <DeleteIcon sx={{ color: "red" }} />
-                    </IconButton>
-                  </TableCell>
-                </TableRow>
-              ))
+                    <TableCell
+                      sx={{ textAlign: "center", border: "1px solid #e0e0e0" }}
+                    >
+                      {user.fullname}
+                    </TableCell>
+                    <TableCell
+                      sx={{ textAlign: "center", border: "1px solid #e0e0e0" }}
+                    >
+                      {user.email}
+                    </TableCell>
+                    <TableCell
+                      sx={{ textAlign: "center", border: "1px solid #e0e0e0" }}
+                    >
+                      {user.role}
+                    </TableCell>
+                    <TableCell
+                      sx={{ textAlign: "center", border: "1px solid #e0e0e0" }}
+                    >
+                      {user.contactNumber || "N/A"}
+                    </TableCell>
+                    <TableCell
+                      sx={{ textAlign: "center", border: "1px solid #e0e0e0" }}
+                    >
+                      {new Date(user.createdAt).toLocaleDateString()}
+                    </TableCell>
+                    <TableCell
+                      sx={{ textAlign: "center", border: "1px solid #e0e0e0" }}
+                    >
+                      {new Date(user.createdAt).toLocaleTimeString()}
+                    </TableCell>
+                    <TableCell
+                      sx={{
+                        display: "flex",
+                        justifyContent: "center",
+                        gap: "10px",
+                        border: "1px solid #e0e0e0",
+                      }}
+                    >
+                      <IconButton onClick={() => handleViewUser(user)}>
+                        <VisibilityIcon sx={{ color: "green" }} />
+                      </IconButton>
+                      <IconButton onClick={() => handleEditUser(user)}>
+                        <BorderColorIcon sx={{ color: "blue" }} />
+                      </IconButton>
+                      <IconButton onClick={() => handleDeleteDialogOpen(user)}>
+                        <DeleteIcon sx={{ color: "red" }} />
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
+                )
+              )
             ) : (
               <TableRow>
                 <TableCell

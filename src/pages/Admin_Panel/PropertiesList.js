@@ -22,6 +22,7 @@ import {
   InputAdornment,
   Typography,
   Box,
+  TableSortLabel,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -40,6 +41,8 @@ const PropertiesList = () => {
   const [deletePropertyId, setDeletePropertyId] = useState(null);
   const [viewProperty, setViewProperty] = useState(null);
   const [totalProperties, setTotalProperties] = useState(0);
+    const [order, setOrder] = useState("asc");
+    const [orderBy, setOrderBy] = useState("name");
   
   const [newProperty, setNewProperty] = useState({
     name: "",
@@ -100,6 +103,34 @@ const PropertiesList = () => {
 
     fetchPropertiesList();
   }, [page, rowsPerPage]);
+
+ 
+  const handleSortRequest = (property) => {
+    const isAsc = orderBy === property && order === "asc";
+    setOrder(isAsc ? "desc" : "asc");
+    setOrderBy(property);
+  };
+  
+  const sortData = (array) => {
+    const comparator = (a, b) => {
+      if (orderBy === "name") {
+        const nameA = a.name.toLowerCase();
+        const nameB = b.name.toLowerCase();
+        return (nameA > nameB ? 1 : -1) * (order === "asc" ? 1 : -1);
+      }
+      if (orderBy === "propertyAddress") {
+        const addressA = a.propertyAddress.toLowerCase();
+        const addressB = b.propertyAddress.toLowerCase();
+        return (addressA > addressB ? 1 : -1) * (order === "asc" ? 1 : -1);
+      }
+      if (orderBy === "totalIncome") {
+        return (Number(a.totalIncome) > Number(b.totalIncome) ? 1 : -1) * (order === "asc" ? 1 : -1);
+      }
+      return 0;
+    };
+    return array.sort(comparator);
+  };
+  
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -273,7 +304,7 @@ const PropertiesList = () => {
       }
 
       const response = await axios.delete(
-        `${config.baseURL}${config.propertiesList}${deletePropertyId}`,
+        `${config.baseURL}${config.propertiesList}/${deletePropertyId}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -378,7 +409,7 @@ const PropertiesList = () => {
   if (loading) {
     return <Loader />;
   }
-
+  const sortedProperties = sortData(filteredProperties);
   return (
     <div >
 <Typography variant="h4" sx={{ textAlign: "center", marginTop: 10 }}>
@@ -411,23 +442,24 @@ Properties
 
       <TableContainer component={Paper} elevation={3}>
         <Table>
+
           <TableHead>
             <TableRow>
               {[
-                "Property ID",
-                "Property Name",
-                "Address",
-                "Occupancy",
-                "Total Income",
-                "Owner Name",
-                "Owner Email",
-                "Owner Role",
-                "Date",
-                "Time",
-                "Actions",
+                { label: "Property ID", field: "propertyId" },
+                { label: "Property Name", field: "name" },
+                { label: "Address", field: "propertyAddress" },
+                { label: "Occupancy", field: "occupancy" },
+                { label: "Total Income", field: "totalIncome" },
+                { label: "Owner Name", field: "owner.fullname" },
+                { label: "Owner Email", field: "owner.email" },
+                { label: "Owner Role", field: "owner.role" },
+                { label: "Date", field: "createdAt" },
+                { label: "Time", field: "createdAt" },
+                { label: "Actions", field: "actions" },
               ].map((header) => (
                 <TableCell
-                  key={header}
+                  key={header.field}
                   sx={{
                     fontWeight: "bold",
                     textAlign: "center",
@@ -438,14 +470,20 @@ Properties
                     textOverflow: "ellipsis",
                   }}
                 >
-                  {header}
+                  <TableSortLabel
+                    active={orderBy === header.field}
+                    direction={orderBy === header.field ? order : "asc"}
+                    onClick={() => handleSortRequest(header.field)}
+                  >
+                    {header.label}
+                  </TableSortLabel>
                 </TableCell>
               ))}
             </TableRow>
           </TableHead>
           <TableBody>
-            {filteredProperties.length > 0 ? (
-              filteredProperties.map((property) => (
+            {sortedProperties.length > 0 ? (
+              sortedProperties.map((property) => (
                 <TableRow
                   key={property._id}
                   sx={{
@@ -455,60 +493,24 @@ Properties
                     },
                   }}
                 >
-                  <TableCell sx={{ border: "1px solid #e0e0e0" }}>
-                    {property.propertyId}
-                  </TableCell>
-                  <TableCell sx={{ border: "1px solid #e0e0e0" }}>
-                    {property.name}
-                  </TableCell>
-                  <TableCell sx={{ border: "1px solid #e0e0e0" }}>
-                    {property.propertyAddress}
-                  </TableCell>
-                  <TableCell sx={{ border: "1px solid #e0e0e0" }}>
-                    {property.occupancy}
-                  </TableCell>
-                  <TableCell sx={{ border: "1px solid #e0e0e0" }}>
-                    {property.totalIncome}
-                  </TableCell>
-                  <TableCell sx={{ border: "1px solid #e0e0e0" }}>
-                    {property.owner?.fullname || "N/A"}
-                  </TableCell>
-                  <TableCell sx={{ border: "1px solid #e0e0e0" }}>
-                    {property.owner?.email || "N/A"}
-                  </TableCell>
-                  <TableCell sx={{ border: "1px solid #e0e0e0" }}>
-                    {property.owner?.role || "N/A"}
-                  </TableCell>
-                  <TableCell sx={{ border: "1px solid #e0e0e0" }}>
-                    {new Date(property.createdAt).toLocaleDateString()}
-                  </TableCell>
-                  <TableCell sx={{ border: "1px solid #e0e0e0" }}>
-                    {new Date(property.createdAt).toLocaleTimeString()}
-                  </TableCell>
-                  <TableCell
-                    sx={{
-                      display: "flex",
-                      justifyContent: "center",
-                      gap: "8px",
-                      border: "1px solid #e0e0e0",
-                    }}
-                  >
-                    <IconButton
-                      onClick={() => handleViewOpen(property)}
-                      sx={{ color: "green" }}
-                    >
+                  <TableCell>{property.propertyId}</TableCell>
+                  <TableCell>{property.name}</TableCell>
+                  <TableCell>{property.propertyAddress}</TableCell>
+                  <TableCell>{property.occupancy}</TableCell>
+                  <TableCell>{property.totalIncome}</TableCell>
+                  <TableCell>{property.owner?.fullname || "N/A"}</TableCell>
+                  <TableCell>{property.owner?.email || "N/A"}</TableCell>
+                  <TableCell>{property.owner?.role || "N/A"}</TableCell>
+                  <TableCell>{new Date(property.createdAt).toLocaleDateString()}</TableCell>
+                  <TableCell>{new Date(property.createdAt).toLocaleTimeString()}</TableCell>
+                  <TableCell sx={{ display: "flex", justifyContent: "center", gap: "8px" }}>
+                    <IconButton onClick={() => handleViewOpen(property)} sx={{ color: "green" }}>
                       <VisibilityIcon />
                     </IconButton>
-                    <IconButton
-                      onClick={() => handleEditOpen(property)}
-                      color="primary"
-                    >
+                    <IconButton onClick={() => handleEditOpen(property)} color="primary">
                       <EditIcon />
                     </IconButton>
-                    <IconButton
-                      onClick={() => handleDeleteOpen(property._id)}
-                      color="error"
-                    >
+                    <IconButton onClick={() => handleDeleteOpen(property._id)} color="error">
                       <DeleteIcon />
                     </IconButton>
                   </TableCell>
@@ -516,11 +518,7 @@ Properties
               ))
             ) : (
               <TableRow>
-                <TableCell
-                  colSpan={11}
-                  align="center"
-                  sx={{ border: "1px solid #e0e0e0" }}
-                >
+                <TableCell colSpan={11} align="center">
                   No properties found.
                 </TableCell>
               </TableRow>

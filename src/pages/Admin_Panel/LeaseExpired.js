@@ -23,6 +23,7 @@ import {
 import { toast } from "react-toastify";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import api from "../../config/ServiceApi";
+
 const LeaseTable = () => {
   const [leases, setLeases] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -32,6 +33,8 @@ const LeaseTable = () => {
   const [openModal, setOpenModal] = useState(false);
   const [selectedLease, setSelectedLease] = useState(null);
   const [totalLeases, setTotalLeases] = useState(0);
+  const [order, setOrder] = useState("asc");
+  const [orderBy, setOrderBy] = useState("fullname");
 
   useEffect(() => {
     const fetchLeases = async () => {
@@ -73,6 +76,38 @@ const LeaseTable = () => {
     return tenantName.includes(searchTerm) || propertyName.includes(searchTerm);
   });
 
+  const handleSortRequest = (property) => {
+    const isAsc = orderBy === property && order === "asc";
+    setOrder(isAsc ? "desc" : "asc");
+    setOrderBy(property);
+  };
+
+  const sortData = (array) => {
+    const comparator = (a, b) => {
+      if (orderBy === "fullname") {
+        return (
+          (a.tenantInformation?.fullname > b.tenantInformation?.fullname
+            ? 1
+            : -1) * (order === "asc" ? 1 : -1)
+        );
+      }
+      if (orderBy === "email") {
+        return (
+          (a.tenantInformation?.email > b.tenantInformation?.email ? 1 : -1) *
+          (order === "asc" ? 1 : -1)
+        );
+      }
+      if (orderBy === "createdAt") {
+        return (
+          (new Date(a.createdAt) > new Date(b.createdAt) ? 1 : -1) *
+          (order === "asc" ? 1 : -1)
+        );
+      }
+      return 0;
+    };
+    return array.sort(comparator);
+  };
+
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -96,6 +131,8 @@ const LeaseTable = () => {
     setOpenModal(false);
     setSelectedLease(null);
   };
+
+  const sortedLeases = sortData(filteredLeases);
 
   return (
     <div style={{ padding: "40px" }}>
@@ -125,29 +162,17 @@ const LeaseTable = () => {
           <CircularProgress />
         </div>
       ) : (
-
         <TableContainer component={Paper}>
-          <Table
-            sx={{
-              border: "1px solid #ddd",
-            }}
-          >
+          <Table sx={{ border: "1px solid #ddd" }}>
             <TableHead>
-              <TableRow
-                sx={{
-                  backgroundColor: "#f9f9f9",
-                  textTransform: "capitalize",
-                  whiteSpace: "nowrap",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                }}
-              >
+              <TableRow sx={{ backgroundColor: "#f9f9f9" }}>
                 <TableCell
-                  sx={{
-                    border: "1px solid #ddd",
-                  }}
+                  sx={{ border: "1px solid #ddd" }}
+                  active={orderBy === "fullname"}
+                  direction={orderBy === "fullname" ? order : "asc"}
+                  onClick={() => handleSortRequest("fullname")}
                 >
-                  <b>Tenant Name</b>
+                  <b> Tenant Name</b>
                 </TableCell>
                 <TableCell
                   sx={{ border: "1px solid #ddd", textAlign: "center" }}
@@ -190,13 +215,11 @@ const LeaseTable = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {filteredLeases.length > 0 ? (
-                filteredLeases.map((lease, index) => (
+              {sortedLeases.length > 0 ? (
+                sortedLeases.map((lease, index) => (
                   <TableRow
                     key={index}
-                    sx={{
-                      "&:hover": { backgroundColor: "#eaeaea" },
-                    }}
+                    sx={{ "&:hover": { backgroundColor: "#eaeaea" } }}
                   >
                     <TableCell sx={{ border: "1px solid #ddd" }}>
                       {lease.tenantInformation?.fullname || "N/A"}
@@ -268,6 +291,7 @@ const LeaseTable = () => {
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Box>
+
       <Dialog open={openModal} onClose={handleCloseModal} fullWidth>
         <DialogTitle style={{ fontWeight: "bold", textAlign: "center" }}>
           Lease Information
@@ -344,7 +368,7 @@ const LeaseTable = () => {
                     justifyContent: "start",
                     alignItems: "center",
                     padding: "10px 15px",
-                    backgroundColor: index % 0 === 0 ? "#f9f9f9" : "#f9f9f9",
+                    backgroundColor: index % 2 === 0 ? "#f9f9f9" : "#f9f9f9",
                     borderRadius: "4px",
                     marginBottom: "8px",
                   }}
@@ -394,4 +418,5 @@ const LeaseTable = () => {
     </div>
   );
 };
+
 export default LeaseTable;

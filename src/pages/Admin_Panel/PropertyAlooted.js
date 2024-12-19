@@ -19,6 +19,7 @@ import {
   Fade,
   Backdrop,
   Grid,
+  TableSortLabel,
 } from "@mui/material";
 import { Visibility as VisibilityIcon } from "@mui/icons-material";
 import axios from "axios";
@@ -34,9 +35,11 @@ const PropertyApprovedList = () => {
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
   const [searchTerm, setSearchTerm] = useState("");
-
+  const [order, setOrder] = useState("asc");
+  const [orderBy, setOrderBy] = useState("propertyName");
   const [openModal, setOpenModal] = useState(false);
   const [selectedProperty, setSelectedProperty] = useState(null);
+
   useEffect(() => {
     const fetchApprovedList = async () => {
       setLoading(true);
@@ -80,6 +83,35 @@ const PropertyApprovedList = () => {
     setPage(newPage);
   };
 
+  const handleSortRequest = (property) => {
+    const isAsc = orderBy === property && order === "asc";
+    setOrder(isAsc ? "desc" : "asc");
+    setOrderBy(property);
+  };
+
+  const sortData = (array) => {
+    const comparator = (a, b) => {
+      if (orderBy === "propertyName") {
+        const nameA = a.propertyName.toLowerCase(); // Convert to lowercase
+        const nameB = b.propertyName.toLowerCase(); // Convert to lowercase
+        return (nameA > nameB ? 1 : -1) * (order === "asc" ? 1 : -1);
+      }
+      if (orderBy === "ownerName") {
+        const nameA = a.ownerName.toLowerCase(); // Convert to lowercase
+        const nameB = b.ownerName.toLowerCase(); // Convert to lowercase
+        return (nameA > nameB ? 1 : -1) * (order === "asc" ? 1 : -1);
+      }
+      if (orderBy === "createdAt") {
+        return (
+          (new Date(a.createdAt) > new Date(b.createdAt) ? 1 : -1) *
+          (order === "asc" ? 1 : -1)
+        );
+      }
+      return 0;
+    };
+    return array.sort(comparator);
+  };
+
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
@@ -110,8 +142,6 @@ const PropertyApprovedList = () => {
     setOpenModal(false);
     setSelectedProperty(null);
   };
-  console.log("Current page:", page);
-  console.log("Rows per page:", rowsPerPage);
 
   if (loading) {
     return (
@@ -130,6 +160,8 @@ const PropertyApprovedList = () => {
       </Box>
     );
   }
+
+  const sortedList = sortData(filteredList);
 
   return (
     <Box sx={{ padding: 6 }}>
@@ -154,17 +186,16 @@ const PropertyApprovedList = () => {
           <TableHead>
             <TableRow>
               {[
-                "Property Name",
-                "Address",
-                "Owner Name",
-                "Owner Email",
-                "Lease Start",
-                "Lease End",
-                "Tenant Name",
-                "Actions",
-              ].map((header) => (
+                { label: "Property Name", field: "propertyName" },
+                { label: "Address", field: "propertyAddress" },
+                { label: "Owner Name", field: "ownerName" },
+                { label: "Owner Email", field: "ownerEmail" },
+                { label: "Lease Start", field: "leaseStart" },
+                { label: "Lease End", field: "leaseEnd" },
+                { label: "Tenant Name", field: "tenantName" },
+              ].map(({ label, field }) => (
                 <TableCell
-                  key={header}
+                  key={field}
                   sx={{
                     fontWeight: "bold",
                     textAlign: "center",
@@ -175,14 +206,23 @@ const PropertyApprovedList = () => {
                     textOverflow: "ellipsis",
                   }}
                 >
-                  {header}
+                  <TableSortLabel
+                    active={orderBy === field}
+                    direction={orderBy === field ? order : "asc"}
+                    onClick={() => handleSortRequest(field)}
+                  >
+                    {label}
+                  </TableSortLabel>
                 </TableCell>
               ))}
+              <TableCell sx={{ textAlign: "center", border: "1px solid #ddd" }}>
+                Actions
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {filteredList.length > 0 ? (
-              filteredList.map((property, index) => (
+            {sortedList.length > 0 ? (
+              sortedList.map((property, index) => (
                 <TableRow
                   key={index}
                   sx={{
