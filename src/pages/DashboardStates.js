@@ -1,14 +1,15 @@
+
 import React, { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
-import Grid from "@mui/material/Grid"; // To manage grid layout
-import axios from "axios"; // For API calls
+import Grid from "@mui/material/Grid"; 
+import axios from "axios"; 
 import config from "../config/ServiceApi";
-import { toast } from "react-toastify"; // Assuming you're using react-toastify for toasts
-import Loader from "./../components/Loader/Loader"; // Import your custom Loader component
-import { House, People, Archive, CheckCircle } from "@mui/icons-material"; // Icons from Material-UI
+import { toast } from "react-toastify"; 
+import Loader from "./../components/Loader/Loader"; 
+import { House, People, Archive, CheckCircle } from "@mui/icons-material";
 
 const DashboardStates = () => {
   const [metrics, setMetrics] = useState([
@@ -103,44 +104,42 @@ const DashboardStates = () => {
               boxShadow: 3,
               borderRadius: 2,
               border: `1px solid rgba(0, 0, 0, 0.12)`,
-              backgroundColor: metric.bgColor, // Set background color
+              backgroundColor: metric.bgColor, 
               transition: "all 0.3s ease",
              "&:hover": {
-      boxShadow: 10, // Increased shadow on hover
-      borderColor: "success.main", // Green border on hover
-      backgroundColor: "black", // Change background to white on hover
-      color: "black", // Ensure text becomes visible on white background
+      boxShadow: 10, 
+      borderColor: "#118cb3bd.main", 
+      backgroundColor: "#118cb3bd", 
+      color: "black", 
     },
-              width: "100%", // Ensure the card takes up full width available in grid
+              width: "100%",
             }}
           >
            <CardContent
   sx={{
     display: "flex",
-    flexDirection: "column", // Stack content vertically
-    alignItems: "center", // Center content horizontally
+    flexDirection: "column", 
+    alignItems: "center", 
     justifyContent: "center",
-    padding: 1, // Reduce padding
-    height: "150px", // Set a fixed, smaller height
+    padding: 1, 
+    height: "150px", 
   }}
 >
-  {/* Icon centered above text */}
   <Box
     sx={{
       borderRadius: "50%",
-      padding: 1, // Smaller padding around the icon
+      padding: 1, 
       color: "white",
-      fontSize: "80px", // Smaller icon size
+      fontSize: "80px", 
       display: "flex",
       justifyContent: "center",
       alignItems: "center",
-      marginBottom: 1, // Space between icon and text
+      marginBottom: 1, 
     }}
   >
-    {React.cloneElement(metric.icon, { sx: { fontSize: "60px" } })} {/* Smaller font size for the icon */}
+    {React.cloneElement(metric.icon, { sx: { fontSize: "60px" } })} 
   </Box>
 
-  {/* Text and Value in one row */}
   <Box
     sx={{
       display: "flex",
@@ -151,11 +150,11 @@ const DashboardStates = () => {
   >
     <Typography
       sx={{
-        color: "white", // White text color
-        fontSize: 14, // Smaller font size for title
+        color: "white", 
+        fontSize: 14, 
         fontWeight: "bold",
         textAlign: "left",
-        flex: 1, // Take up available space
+        flex: 1, 
       }}
     >
       {metric.title}
@@ -163,15 +162,15 @@ const DashboardStates = () => {
 
     <Box
       sx={{
-        width: 40, // Smaller circle
-        height: 40, // Smaller circle
+        width: 40, 
+        height: 40, 
         borderRadius: "50%",
-        backgroundColor: "white", // Circle background for value
+        backgroundColor: "white", 
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        color: "black", // Text color for value
-        fontSize: 16, // Smaller font size for value
+        color: "black", 
+        fontSize: 16, 
         fontWeight: "600",
       }}
     >
