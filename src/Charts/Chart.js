@@ -119,6 +119,13 @@ const Chart = () => {
 
   const filteredData = getFilteredData();
 
+
+//   var a = 5.678948;
+// let b = 10.257683;
+
+// let result2 = b.toFixed(2);
+// console.log(result1);
+// console.log(result2);
   // Bar chart data configuration
   const barData = {
     labels: filteredData.map((item) => item.date),
@@ -131,9 +138,13 @@ const Chart = () => {
       },
       {
         label: 'Square Footage Booked (Occupied)',
-        data: filteredData.map((item) => item.totalOccupancy),
+        // data: filteredData.map((item) => item.totalOccupancy),
+        data: filteredData.map((item) =>
+          item.totalOccupancy ? item.totalOccupancy.toFixed(2) : '0.00'
+        ),
         backgroundColor: '#2196F3', // Soft blue for contrast
         yAxisID: 'y2',
+      
       },
     ],
   };
@@ -192,6 +203,7 @@ const Chart = () => {
     return <Loader />;
   }
 
+
   return (
     <Grid container spacing={4} alignItems="flex-start" sx={{ mt: 3 }}>
       <Grid item xs={4}>
@@ -244,7 +256,7 @@ const Chart = () => {
                     }}
                   >
                     <TableCell>{row.date}</TableCell>
-                    <TableCell>{row.totalSquareFootage}</TableCell>
+                    <TableCell>{row.totalSquareFootage}  sqft</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -274,7 +286,7 @@ const Chart = () => {
                     }}
                   >
                     <TableCell>{row.date}</TableCell>
-                    <TableCell>{row.totalOccupancy}</TableCell>
+                    <TableCell>{row.totalOccupancy ? row.totalOccupancy.toFixed(2) : '0.00'} %</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
