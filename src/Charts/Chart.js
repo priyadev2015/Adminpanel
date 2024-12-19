@@ -1,5 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { Bar } from 'react-chartjs-2';
+
+
+
+
+
+import React, { useEffect, useState } from "react";
+import { Bar } from "react-chartjs-2";
 import {
   Card,
   CardContent,
@@ -16,7 +21,8 @@ import {
   Select,
   FormControl,
   InputLabel,
-} from '@mui/material';
+  Box,
+} from "@mui/material";
 import {
   Chart as ChartJS,
   Tooltip,
@@ -24,34 +30,34 @@ import {
   CategoryScale,
   LinearScale,
   BarElement,
-} from 'chart.js';
-import moment from 'moment';
+} from "chart.js";
+import moment from "moment";
 import config from "../config/ServiceApi";
-import Loader from '../components/Loader/Loader'; 
+import Loader from "../components/Loader/Loader";
+import ConstructionIcon from '@mui/icons-material/Construction';
+import HomeIcon from '@mui/icons-material/Home';
+import PersonIcon from '@mui/icons-material/Person';
+
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
 
 const Chart = () => {
-  const [chartData, setChartData] = useState({
-    monthlyData: [],
-  });
-
-  const [timePeriod, setTimePeriod] = useState('monthly');
-  const [loading, setLoading] = useState(true); 
+  const [chartData, setChartData] = useState({ monthlyData: [] });
+  const [timePeriod, setTimePeriod] = useState("monthly");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const token = localStorage.getItem('authToken');
+        const token = localStorage.getItem("authToken");
         if (!token) {
-          alert('No token found. Please log in again.');
+          alert("No token found. Please log in again.");
           return;
         }
 
-
         const occupancyResponse = await fetch(
-           `${config.baseURL}${config.graphoccupancy}`,
+          `${config.baseURL}${config.graphoccupancy}`,
           {
-            method: 'GET',
+            method: "GET",
             headers: {
               Authorization: `Bearer ${token}`,
             },
@@ -59,11 +65,10 @@ const Chart = () => {
         );
         const occupancyData = await occupancyResponse.json();
 
-      
         const squareFootageResponse = await fetch(
           `${config.baseURL}${config.graphsquarefootage}`,
           {
-            method: 'GET',
+            method: "GET",
             headers: {
               Authorization: `Bearer ${token}`,
             },
@@ -71,17 +76,16 @@ const Chart = () => {
         );
         const squareFootageData = await squareFootageResponse.json();
 
-        // Normalize and merge data based on date
         const mergedData = occupancyData
-          .filter((item) => item.date) // Exclude null dates
+          .filter((item) => item.date)
           .map((occupancyItem) => {
-            const formattedDate = moment(occupancyItem.date, 'DD-MM-YY').format(
-              'YYYY-MM-DD'
+            const formattedDate = moment(occupancyItem.date, "DD-MM-YY").format(
+              "YYYY-MM-DD"
             );
             const matchingSquareFootage = squareFootageData.find(
               (squareFootageItem) =>
-                moment(squareFootageItem.date, 'DD-MM-YYYY').format(
-                  'YYYY-MM-DD'
+                moment(squareFootageItem.date, "DD-MM-YYYY").format(
+                  "YYYY-MM-DD"
                 ) === formattedDate
             );
             return {
@@ -93,10 +97,10 @@ const Chart = () => {
           });
 
         setChartData({ monthlyData: mergedData });
-        setLoading(false); 
+        setLoading(false);
       } catch (error) {
-        console.error('Error fetching chart data:', error);
-        setLoading(false); 
+        console.error("Error fetching chart data:", error);
+        setLoading(false);
       }
     };
 
@@ -108,43 +112,39 @@ const Chart = () => {
   };
 
   const getFilteredData = () => {
-    if (timePeriod === 'weekly') {
-      return [];
-    }
-    if (timePeriod === 'current') {
-      return [];
-    }
+    if (timePeriod === "weekly") return [];
+    if (timePeriod === "current") return [];
     return chartData.monthlyData;
   };
 
   const filteredData = getFilteredData();
 
+  // Calculate sum of occupancy and square footage
+  const totalOccupancy = filteredData.reduce(
+    (sum, item) => sum + item.totalOccupancy,
+    0
+  );
+  const totalSquareFootage = filteredData.reduce(
+    (sum, item) => sum + item.totalSquareFootage,
+    0
+  );
 
-//   var a = 5.678948;
-// let b = 10.257683;
-
-// let result2 = b.toFixed(2);
-// console.log(result1);
-// console.log(result2);
-  // Bar chart data configuration
   const barData = {
     labels: filteredData.map((item) => item.date),
     datasets: [
       {
-        label: 'Total Square Footage Created',
+        label: "Total Square Footage Created",
         data: filteredData.map((item) => item.totalSquareFootage),
-        backgroundColor: '#FF9800', // Softer, contrasting color
-        yAxisID: 'y1',
+        backgroundColor: "#FF9800",
+        yAxisID: "y1",
       },
       {
-        label: 'Square Footage Booked (Occupied)',
-        // data: filteredData.map((item) => item.totalOccupancy),
+        label: "Square Footage Booked (Occupied)",
         data: filteredData.map((item) =>
-          item.totalOccupancy ? item.totalOccupancy.toFixed(2) : '0.00'
+          item.totalOccupancy ? item.totalOccupancy.toFixed(2) : "0.00"
         ),
-        backgroundColor: '#2196F3', // Soft blue for contrast
-        yAxisID: 'y2',
-      
+        backgroundColor: "#2196F3",
+        yAxisID: "y2",
       },
     ],
   };
@@ -152,58 +152,22 @@ const Chart = () => {
   const barOptions = {
     responsive: true,
     plugins: {
-      legend: {
-        display: true,
-        position: 'top',
-        labels: {
-          font: {
-            size: 14,
-            weight: 'bold',
-          },
-        },
-      },
-      tooltip: {
-        callbacks: {
-          label: (tooltipItem) => {
-            const label = tooltipItem.dataset.label;
-            const value = tooltipItem.raw;
-            return `${label}: ${value} sq ft`;
-          },
-        },
-      },
+      legend: { display: false },
     },
     scales: {
-      x: {
-        beginAtZero: true,
-        grid: {
-          display: false, 
-        },
-      },
-      y1: {
-        type: 'linear',
-        position: 'left',
-        title: {
-          display: true,
-          text: 'Square Footage (Created)',
-        },
-      },
-      y2: {
-        type: 'linear',
-        position: 'right',
-        title: {
-          display: true,
-          text: 'Square Footage (Occupied)',
-        },
-      },
+      y1: { position: "left" },
+      y2: { position: "right" },
     },
   };
-
 
   if (loading) {
     return <Loader />;
   }
 
 
+
+
+ 
   return (
     <Grid container spacing={4} alignItems="flex-start" sx={{ mt: 3 }}>
       <Grid item xs={4}>
@@ -222,78 +186,129 @@ const Chart = () => {
         </FormControl>
       </Grid>
 
-      <Grid item xs={12}>
-        <Card sx={{ boxShadow: 3 }}>
-          <CardContent>
-            <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold' }}>
-              Metrics Comparison (Bar Chart)
-            </Typography>
-            <Bar data={barData} options={barOptions} />
-          </CardContent>
-        </Card>
+      <Grid container spacing={2} sx={{ mt: 2 }}>
+        <Grid item xs={6}>
+          <Card sx={{ boxShadow: 3, backgroundColor: "#fff", p: 1 }}>
+            <CardContent>
+              <Bar data={barData} options={barOptions} />
+            </CardContent>
+          </Card>
+        </Grid>
+        <Grid item xs={6}>
+          <Card sx={{ boxShadow: 3, backgroundColor: "#fff", p: 4 }}>
+            <CardContent>
+              <Typography
+                variant="subtitle1"
+                sx={{ textAlign: "center", color: "#757575", mb: 2 }}
+              >
+                The colors represent data categories displayed in the chart .
+              </Typography>
+              <Grid container spacing={4}>
+                {barData.datasets.map((dataset, index) => (
+                  <Grid item xs={4} key={index}>
+                    <Box
+                      sx={{
+                        backgroundColor: dataset.backgroundColor,
+                        height: 80,
+                        width: 100,
+                        borderRadius: "10%",
+                        margin: "0 auto",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+                      }}
+                    >
+                      {index === 0 && (
+                        <ConstructionIcon sx={{ color: "#fff", fontSize: 32 }} />
+                      )}
+                      {index === 1 && (
+                        <HomeIcon sx={{ color: "#fff", fontSize: 32 }} />
+                      )}
+                      {index === 2 && (
+                        <PersonIcon sx={{ color: "#fff", fontSize: 32 }} />
+                      )}
+                    </Box>
+                    <Typography
+                      variant="body1"
+                      sx={{
+                        textAlign: "center",
+                        mt: 1,
+                        fontWeight: "bold",
+                      }}
+                    >
+                    
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        textAlign: "center",
+                        color: "#757575",
+                        mt: 0.5,
+                      }}
+                    >
+                      {index === 0
+                        ? "Total Square Footage Created"
+                        : index === 1
+                        ? "Square Footage Booked (Occupied)"
+                        : "Other Data"}
+                    </Typography>
+                    
+                  </Grid>
+                ))}
+              </Grid>
+              {/* Display total occupancy and square footage */}
+              <Box sx={{ textAlign: "center", mt: 4 }}>
+                <Typography variant="h6">
+                  Total Square Footage Created: {totalSquareFootage.toFixed(2)}sqft
+                </Typography>
+                <Typography variant="h6" sx={{ mt: 1 }}>
+                  Total Occupancy (Booked): {totalOccupancy.toFixed(2)}%
+                </Typography>
+                
+              </Box>
+            </CardContent>
+          </Card>
+        </Grid>
       </Grid>
 
-      <Grid item xs={12} container spacing={2}>
-        <Grid item xs={6}>
-          <TableContainer component={Paper}>
-            <Typography variant="h6" sx={{ textAlign: 'center', mt: 2 }}>
-              Square Footage Created
-            </Typography>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Date</TableCell>
-                  <TableCell>Total Square Footage</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {filteredData.map((row, index) => (
-                  <TableRow
-                    key={row.date}
-                    sx={{
-                      backgroundColor: index % 2 === 0 ? '#f9f9f9' : '#fff',
-                      '&:hover': { backgroundColor: '#eaeaea' }, // Hover effect
-                    }}
-                  >
-                    <TableCell>{row.date}</TableCell>
-                    <TableCell>{row.totalSquareFootage}  sqft</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </Grid>
+      <Grid item xs={12} sx={{ mt: 3 }}>
+  <TableContainer component={Paper} sx={{ boxShadow: 3 }}>
+  
+    <Table>
+   
+      <TableHead>
+    
+        <TableRow>
+          <TableCell sx={{ borderRight: "1px solid #ddd" }}>Date</TableCell>
+          <TableCell sx={{ borderRight: "1px solid #ddd" }}>Total Occupancy</TableCell>
+          <TableCell>Total Square Footage Created</TableCell>
+        </TableRow>
+      </TableHead>
+      <TableBody>
+        {filteredData.map((row, index) => (
+          <TableRow
+            key={index}
+            sx={{
+              backgroundColor: index % 2 === 0 ? "#f9f9f9" : "#fff",
+              "&:hover": {
+                backgroundColor: "#f1f1f1", // Light gray hover color
+              },
+            }}
+          >
+            <TableCell sx={{ borderRight: "1px solid #ddd" }}>{row.date}</TableCell>
+            <TableCell sx={{ borderRight: "1px solid #ddd" }}>
+              {totalOccupancy.toFixed(2)} %
+            </TableCell>
+            <TableCell>{totalSquareFootage.toFixed(2)} sqft</TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
+  </TableContainer>
+</Grid>
 
-        <Grid item xs={6}>
-          <TableContainer component={Paper}>
-            <Typography variant="h6" sx={{ textAlign: 'center', mt: 2 }}>
-              Booked Square Footage
-            </Typography>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Date</TableCell>
-                  <TableCell>Total Occupancy</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {filteredData.map((row, index) => (
-                  <TableRow
-                    key={row.date}
-                    sx={{
-                      backgroundColor: index % 2 === 0 ? '#f9f9f9' : '#fff',
-                      '&:hover': { backgroundColor: '#eaeaea' }, 
-                    }}
-                  >
-                    <TableCell>{row.date}</TableCell>
-                    <TableCell>{row.totalOccupancy ? row.totalOccupancy.toFixed(2) : '0.00'} %</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </Grid>
-      </Grid>
+
     </Grid>
   );
 };
