@@ -206,13 +206,17 @@ const PropertyApprovedList = () => {
                     textOverflow: "ellipsis",
                   }}
                 >
-                  <TableSortLabel
-                    active={orderBy === field}
-                    direction={orderBy === field ? order : "asc"}
-                    onClick={() => handleSortRequest(field)}
-                  >
-                    {label}
-                  </TableSortLabel>
+                  {["propertyName"].includes(field) ? (
+                    <TableSortLabel
+                      active={orderBy === field}
+                      direction={orderBy === field ? order : "asc"}
+                      onClick={() => handleSortRequest(field)}
+                    >
+                      {label}
+                    </TableSortLabel>
+                  ) : (
+                    <b>{label}</b>
+                  )}
                 </TableCell>
               ))}
               <TableCell sx={{ textAlign: "center", border: "1px solid #ddd" }}>
@@ -220,6 +224,7 @@ const PropertyApprovedList = () => {
               </TableCell>
             </TableRow>
           </TableHead>
+
           <TableBody>
             {sortedList.length > 0 ? (
               sortedList.map((property, index) => (
