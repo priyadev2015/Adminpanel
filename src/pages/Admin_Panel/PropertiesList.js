@@ -41,9 +41,9 @@ const PropertiesList = () => {
   const [deletePropertyId, setDeletePropertyId] = useState(null);
   const [viewProperty, setViewProperty] = useState(null);
   const [totalProperties, setTotalProperties] = useState(0);
-    const [order, setOrder] = useState("asc");
-    const [orderBy, setOrderBy] = useState("name");
-  
+  const [order, setOrder] = useState("asc");
+  const [orderBy, setOrderBy] = useState("name");
+
   const [newProperty, setNewProperty] = useState({
     name: "",
     image: null,
@@ -74,7 +74,7 @@ const PropertiesList = () => {
         }
 
         const response = await axios.get(
-         `${config.baseURL}${config.propertiesList}`,
+          `${config.baseURL}${config.propertiesList}`,
           {
             params: {
               page: page + 1,
@@ -102,15 +102,14 @@ const PropertiesList = () => {
     };
 
     fetchPropertiesList();
-  }, [page, rowsPerPage]);
+  }, [page, rowsPerPage,]);
 
- 
   const handleSortRequest = (property) => {
     const isAsc = orderBy === property && order === "asc";
     setOrder(isAsc ? "desc" : "asc");
     setOrderBy(property);
   };
-  
+
   const sortData = (array) => {
     const comparator = (a, b) => {
       if (orderBy === "name") {
@@ -124,13 +123,15 @@ const PropertiesList = () => {
         return (addressA > addressB ? 1 : -1) * (order === "asc" ? 1 : -1);
       }
       if (orderBy === "totalIncome") {
-        return (Number(a.totalIncome) > Number(b.totalIncome) ? 1 : -1) * (order === "asc" ? 1 : -1);
+        return (
+          (Number(a.totalIncome) > Number(b.totalIncome) ? 1 : -1) *
+          (order === "asc" ? 1 : -1)
+        );
       }
       return 0;
     };
     return array.sort(comparator);
   };
-  
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -201,7 +202,6 @@ const PropertiesList = () => {
     ) {
       errors.squareFootage = "Square footage must be between 100 and 100000";
     }
-
 
     if (!property.totalIncome) {
       errors.totalIncome = "Total income is required";
@@ -353,7 +353,7 @@ const PropertiesList = () => {
       formData.append("totalIncome", newProperty.totalIncome);
 
       const response = await axios.post(
-`${config.baseURL}${config.propertiesList}`,
+        `${config.baseURL}${config.propertiesList}`,
         formData,
         {
           headers: {
@@ -411,9 +411,9 @@ const PropertiesList = () => {
   }
   const sortedProperties = sortData(filteredProperties);
   return (
-    <div >
-<Typography variant="h4" sx={{ textAlign: "center", marginTop: 10 }}>
-Properties
+    <div>
+      <Typography variant="h4" sx={{ textAlign: "center", marginTop: 10 }}>
+        Properties
       </Typography>
 
       <Button
@@ -428,7 +428,12 @@ Properties
       <TextField
         label="Search by PropertyName,Address"
         variant="outlined"
-        sx={{ width: "300px", position: "relative", left: "650px", bottom:"20px" }}
+        sx={{
+          width: "300px",
+          position: "relative",
+          left: "650px",
+          bottom: "20px",
+        }}
         value={searchQuery}
         onChange={handleSearch}
         InputProps={{
@@ -442,12 +447,11 @@ Properties
 
       <TableContainer component={Paper} elevation={3}>
         <Table>
-
           <TableHead>
             <TableRow>
               {[
-                { label: "Property ID", field: "propertyId" },
                 { label: "Property Name", field: "name" },
+                { label: "Property ID", field: "propertyId" },
                 { label: "Address", field: "propertyAddress" },
                 { label: "Occupancy", field: "occupancy" },
                 { label: "Total Income", field: "totalIncome" },
@@ -470,17 +474,22 @@ Properties
                     textOverflow: "ellipsis",
                   }}
                 >
-                  <TableSortLabel
-                    active={orderBy === header.field}
-                    direction={orderBy === header.field ? order : "asc"}
-                    onClick={() => handleSortRequest(header.field)}
-                  >
-                    {header.label}
-                  </TableSortLabel>
+                  {header.field === "name" ? (
+                    <TableSortLabel
+                      active={orderBy === header.field}
+                      direction={orderBy === header.field ? order : "asc"}
+                      onClick={() => handleSortRequest(header.field)}
+                    >
+                      {header.label}
+                    </TableSortLabel>
+                  ) : (
+                    header.label
+                  )}
                 </TableCell>
               ))}
             </TableRow>
           </TableHead>
+
           <TableBody>
             {sortedProperties.length > 0 ? (
               sortedProperties.map((property) => (
@@ -490,27 +499,64 @@ Properties
                     "&:hover": {
                       backgroundColor: "rgba(0, 0, 0, 0.05)",
                       boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+                      border: "1px solid #e0e0e0",
                     },
                   }}
                 >
-                  <TableCell>{property.propertyId}</TableCell>
-                  <TableCell>{property.name}</TableCell>
-                  <TableCell>{property.propertyAddress}</TableCell>
-                  <TableCell>{property.occupancy}</TableCell>
-                  <TableCell>{property.totalIncome}</TableCell>
-                  <TableCell>{property.owner?.fullname || "N/A"}</TableCell>
-                  <TableCell>{property.owner?.email || "N/A"}</TableCell>
-                  <TableCell>{property.owner?.role || "N/A"}</TableCell>
-                  <TableCell>{new Date(property.createdAt).toLocaleDateString()}</TableCell>
-                  <TableCell>{new Date(property.createdAt).toLocaleTimeString()}</TableCell>
-                  <TableCell sx={{ display: "flex", justifyContent: "center", gap: "8px" }}>
-                    <IconButton onClick={() => handleViewOpen(property)} sx={{ color: "green" }}>
+                  <TableCell sx={{ border: "1px solid #e0e0e0" }}>
+                    {property.propertyId}
+                  </TableCell>
+                  <TableCell sx={{ border: "1px solid #e0e0e0" }}>
+                    {property.name}
+                  </TableCell>
+                  <TableCell sx={{ border: "1px solid #e0e0e0" }}>
+                    {property.propertyAddress}
+                  </TableCell>
+                  <TableCell sx={{ border: "1px solid #e0e0e0" }}>
+                    {property.occupancy}
+                  </TableCell>
+                  <TableCell sx={{ border: "1px solid #e0e0e0" }}>
+                    {property.totalIncome}
+                  </TableCell>
+                  <TableCell sx={{ border: "1px solid #e0e0e0" }}>
+                    {property.owner?.fullname || "N/A"}
+                  </TableCell>
+                  <TableCell sx={{ border: "1px solid #e0e0e0" }}>
+                    {property.owner?.email || "N/A"}
+                  </TableCell>
+                  <TableCell sx={{ border: "1px solid #e0e0e0" }}>
+                    {property.owner?.role || "N/A"}
+                  </TableCell>
+                  <TableCell sx={{ border: "1px solid #e0e0e0" }}>
+                    {new Date(property.createdAt).toLocaleDateString()}
+                  </TableCell>
+                  <TableCell sx={{ border: "1px solid #e0e0e0" }}>
+                    {new Date(property.createdAt).toLocaleTimeString()}
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      display: "flex",
+                      justifyContent: "center",
+                      gap: "8px",
+                      border: "1px solid #e0e0e0", // Border for actions column as well
+                    }}
+                  >
+                    <IconButton
+                      onClick={() => handleViewOpen(property)}
+                      sx={{ color: "green" }}
+                    >
                       <VisibilityIcon />
                     </IconButton>
-                    <IconButton onClick={() => handleEditOpen(property)} color="primary">
+                    <IconButton
+                      onClick={() => handleEditOpen(property)}
+                      color="primary"
+                    >
                       <EditIcon />
                     </IconButton>
-                    <IconButton onClick={() => handleDeleteOpen(property._id)} color="error">
+                    <IconButton
+                      onClick={() => handleDeleteOpen(property._id)}
+                      color="error"
+                    >
                       <DeleteIcon />
                     </IconButton>
                   </TableCell>
@@ -518,7 +564,11 @@ Properties
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={11} align="center">
+                <TableCell
+                  colSpan={11}
+                  align="center"
+                  sx={{ border: "1px solid #e0e0e0" }}
+                >
                   No properties found.
                 </TableCell>
               </TableRow>
@@ -563,6 +613,9 @@ Properties
               margin="normal"
               error={!!formErrors.name}
               helperText={formErrors.name}
+              inputProps={{
+                maxLength: 20,
+              }}
             />
             <TextField
               label="Property Address"
@@ -573,13 +626,22 @@ Properties
               margin="normal"
               error={!!formErrors.propertyAddress}
               helperText={formErrors.propertyAddress}
+              inputProps={{
+                maxLength: 25,
+              }}
             />
             <TextField
               label="Rent"
               type="number"
               fullWidth
               value={newProperty.rent}
-              onChange={handleInputChange}
+              onChange={(e) => {
+                const value = e.target.value;
+
+                if (value.length <= 10) {
+                  handleInputChange(e);
+                }
+              }}
               name="rent"
               margin="normal"
               error={!!formErrors.rent}
@@ -590,7 +652,13 @@ Properties
               type="number"
               fullWidth
               value={newProperty.securityDeposit}
-              onChange={handleInputChange}
+              onChange={(e) => {
+                const value = e.target.value;
+
+                if (value.length <= 10) {
+                  handleInputChange(e);
+                }
+              }}
               name="securityDeposit"
               margin="normal"
               error={!!formErrors.securityDeposit}
@@ -601,7 +669,13 @@ Properties
               type="number"
               fullWidth
               value={newProperty.squareFootage}
-              onChange={handleInputChange}
+              onChange={(e) => {
+                const value = e.target.value;
+
+                if (value.length <= 10) {
+                  handleInputChange(e);
+                }
+              }}
               name="squareFootage"
               margin="normal"
               error={!!formErrors.squareFootage}
@@ -612,7 +686,13 @@ Properties
               type="number"
               fullWidth
               value={newProperty.totalIncome}
-              onChange={handleInputChange}
+              onChange={(e) => {
+                const value = e.target.value;
+
+                if (value.length <= 10) {
+                  handleInputChange(e);
+                }
+              }}
               name="totalIncome"
               margin="normal"
               error={!!formErrors.totalIncome}
@@ -620,11 +700,7 @@ Properties
             />
 
             <div style={{ marginTop: "10px" }}>
-              <input
-                type="file"
-                onChange={handleFileChange}
-                accept="image/*"
-              />
+              <input type="file" onChange={handleFileChange} accept="image/*" />
             </div>
 
             <div
