@@ -19,6 +19,7 @@ import {
   DialogTitle,
   Button,
   Box,
+  TableSortLabel,
 } from "@mui/material";
 import { toast } from "react-toastify";
 import VisibilityIcon from "@mui/icons-material/Visibility";
@@ -165,14 +166,23 @@ const LeaseTable = () => {
         <TableContainer component={Paper}>
           <Table sx={{ border: "1px solid #ddd" }}>
             <TableHead>
-              <TableRow sx={{ backgroundColor: "#f9f9f9" }}>
+              <TableRow
+                sx={{ backgroundColor: "#f9f9f9", whiteSpace: "nowrap" }}
+              >
                 <TableCell
-                  sx={{ border: "1px solid #ddd" }}
-                  active={orderBy === "fullname"}
-                  direction={orderBy === "fullname" ? order : "asc"}
-                  onClick={() => handleSortRequest("fullname")}
+                  sx={{
+                    border: "1px solid #ddd",
+                    padding: "8px 16px",
+                    textAlign: "center",
+                  }}
                 >
-                  <b> Tenant Name</b>
+                  <TableSortLabel
+                    active={orderBy === "fullname"}
+                    direction={orderBy === "fullname" ? order : "asc"}
+                    onClick={() => handleSortRequest("fullname")}
+                  >
+                    <b>Tenant Name</b>
+                  </TableSortLabel>
                 </TableCell>
                 <TableCell
                   sx={{ border: "1px solid #ddd", textAlign: "center" }}
@@ -418,4 +428,5 @@ const LeaseTable = () => {
     </div>
   );
 };
+
 export default LeaseTable;
