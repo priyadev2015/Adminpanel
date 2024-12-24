@@ -67,8 +67,13 @@ const UserManagement = () => {
 
   useEffect(() => {
     fetchUsers();
+    
+  }, [page, rowsPerPage, searchQuery]);
+
+  useEffect(() => {
     fetchRoles();
-  }, [page, rowsPerPage]);
+    
+  }, []);
 
   const fetchUsers = () => {
     const token = localStorage.getItem("authToken");
@@ -76,8 +81,9 @@ const UserManagement = () => {
       .get(`${api.baseURL}${api.users}`, {
         headers: { Authorization: `Bearer ${token}` },
         params: {
+          searchQuery: searchQuery,
           page: page + 1,
-          limit: rowsPerPage,
+          limit: rowsPerPage, 
         },
       })
       .then((response) => {
@@ -411,6 +417,9 @@ const UserManagement = () => {
               error={!!formErrors.fullname}
               helperText={formErrors.fullname}
               name="fullname"
+              inputProps={{
+                maxLength: 15,
+              }}
             />
             <TextField
               label="Email"
@@ -436,6 +445,9 @@ const UserManagement = () => {
                 error={!!formErrors.password}
                 helperText={formErrors.password}
                 name="password"
+                inputProps={{
+                  maxLength: 15,
+                }}
               />
             )}
 
@@ -531,23 +543,28 @@ const UserManagement = () => {
                     border: "1px solid #e0e0e0",
                   }}
                 >
-                  <TableSortLabel
-                    active={orderBy === header.toLowerCase().replace(" ", "")}
-                    direction={
-                      orderBy === header.toLowerCase().replace(" ", "")
-                        ? order
-                        : "asc"
-                    }
-                    onClick={() =>
-                      handleSortRequest(header.toLowerCase().replace(" ", ""))
-                    }
-                  >
-                    {header}
-                  </TableSortLabel>
+                  {header === "Full Name" ? (
+                    <TableSortLabel
+                      active={orderBy === header.toLowerCase().replace(" ", "")}
+                      direction={
+                        orderBy === header.toLowerCase().replace(" ", "")
+                          ? order
+                          : "asc"
+                      }
+                      onClick={() =>
+                        handleSortRequest(header.toLowerCase().replace(" ", ""))
+                      }
+                    >
+                      {header}
+                    </TableSortLabel>
+                  ) : (
+                    header
+                  )}
                 </TableCell>
               ))}
             </TableRow>
           </TableHead>
+
           <TableBody>
             {loading ? (
               <TableRow>
@@ -645,6 +662,7 @@ const UserManagement = () => {
         onPageChange={handlePageChange}
         rowsPerPage={rowsPerPage}
         onRowsPerPageChange={handleRowsPerPageChange}
+        rowsPerPageOptions={[5, 10, 25]} 
       />
 
       <Dialog
