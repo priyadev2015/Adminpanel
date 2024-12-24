@@ -14,6 +14,7 @@ import {
   TablePagination,
   TableContainer,
   Paper,
+  TableSortLabel,
 } from "@mui/material";
 import { styled } from "@mui/system";
 import axios from "axios";
@@ -43,7 +44,7 @@ const RoleCreate = () => {
 
   useEffect(() => {
     fetchRoles();
-  }, [page, rowsPerPage, sortBy, sortOrder]);
+  }, [page, rowsPerPage]);
 
   const fetchRoles = () => {
     const token = localStorage.getItem("authToken");
@@ -54,24 +55,11 @@ const RoleCreate = () => {
           Authorization: `Bearer ${token}`,
         },
         params: {
-          page: page + 1, 
+          page: page + 1,
           limit: rowsPerPage,
         },
       })
       .then((response) => {
-        const sortedRoles = response.data.roles.sort((a, b) => {
-          const valueA = a[sortBy].toLowerCase();
-          const valueB = b[sortBy].toLowerCase();
-
-          if (valueA < valueB) {
-            return sortOrder === "asc" ? -1 : 1;
-          }
-          if (valueA > valueB) {
-            return sortOrder === "asc" ? 1 : -1;
-          }
-          return 0;
-        });
-
         setRoles(response.data.roles);
         setTotalRoles(response.data.pagination.totalRoles);
         setLoading(false);
@@ -86,7 +74,22 @@ const RoleCreate = () => {
     const isAsc = sortBy === column && sortOrder === "asc";
     setSortBy(column);
     setSortOrder(isAsc ? "desc" : "asc");
-  };
+     };
+
+  const filteredRoles = roles
+    .filter((role) =>
+      role.name.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+    .sort((a, b) => {
+      if (sortBy === "name") {
+        if (sortOrder === "asc") {
+          return a.name.localeCompare(b.name);
+        } else {
+          return b.name.localeCompare(a.name);
+        }
+      }
+      return 0;
+    });
   const handleOpen = (role) => {
     setOpen(true);
     if (role) {
@@ -236,10 +239,6 @@ const RoleCreate = () => {
     setPage(0);
   };
 
-  const filteredRoles = roles.filter((role) =>
-    role.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
   if (loading) {
     return <Loader />;
   }
@@ -368,24 +367,39 @@ const RoleCreate = () => {
 
         <TableContainer component={Paper} elevation={3}>
           <Table>
-            <TableHead>
-              <TableRow>
-                {["Role Name", "Actions"].map((header) => (
-                  <TableCell
-                    key={header}
-                    sx={{
-                      fontWeight: "bold",
-                      textAlign: "center",
-                      backgroundColor: "#f9f9f9",
-                      border: "1px solid #e0e0e0",
-                    }}
-                    onClick={() => handleSort("name")}
-                  >
-                    {header}
-                  </TableCell>
-                ))}
-              </TableRow>
-            </TableHead>
+          <TableHead>
+  <TableRow>
+
+    <TableCell
+      sx={{
+        fontWeight: "bold",
+        textAlign: "center",
+        backgroundColor: "#f9f9f9",
+        border: "1px solid #e0e0e0",
+      }}
+    >
+      <TableSortLabel
+        active={sortBy === "name"}
+        direction={sortOrder === "asc" ? "asc" : "desc"}
+        onClick={() => handleSort("name")}
+      >
+        Role Name
+      </TableSortLabel>
+    </TableCell>
+      
+    <TableCell
+      sx={{
+        fontWeight: "bold",
+        textAlign: "center",
+        backgroundColor: "#f9f9f9",
+        border: "1px solid #e0e0e0",
+      }}
+    >
+      Actions
+    </TableCell>
+  </TableRow>
+</TableHead>
+
             <TableBody>
               {filteredRoles.length > 0 ? (
                 filteredRoles.map((role) => (
