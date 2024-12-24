@@ -203,7 +203,7 @@ const TenantRequests = () => {
           alignItems: "center",
           height: "100vh",
         }}
-      >
+      >  
         <CircularProgress />
       </div>
     );
@@ -254,53 +254,59 @@ const TenantRequests = () => {
         <Grid item xs={12} md={10}>
           <TableContainer component={Paper}>
             <Table aria-label="tenant requests table">
-              <TableHead>
-                <TableRow>
-                  {[
-                    { label: "Tenant Name", field: "fullname" },
-                    { label: "Email", field: "email" },
-                    { label: "Contact No", field: "contactNumber" },
-                    { label: "Property ID", field: "propertyId" },
-                    { label: "Status", field: "status" },
-                    { label: "Lease Status", field: "leaseStatus" },
-                    { label: "Lease Start Date", field: "leaseStartDate" },
-                    { label: "Lease End Date", field: "leaseEndDate" },
-                    { label: "Date", field: "createdAt" },
-                    { label: "Time", field: "createdAt" },
-                    { label: "Area", field: "area" },
-                  ].map(({ label, field }) => (
-                    <TableCell
-                      key={label}
-                      sx={{
-                        fontWeight: "bold",
-                        whiteSpace: "nowrap",
-                        textAlign: "center",
-                        border: "1px solid #ddd",
-                        backgroundColor: "#f9f9f9",
-                      }}
-                    >
-                      <TableSortLabel
-                        active={orderBy === field}
-                        direction={orderBy === field ? order : "asc"}
-                        onClick={() => handleSortRequest(field)}
-                      >
-                        {label}
-                      </TableSortLabel>
-                    </TableCell>
-                  ))}
-                  <TableCell
-                    sx={{
-                      fontWeight: "bold",
-                      whiteSpace: "nowrap",
-                      textAlign: "center",
-                      border: "1px solid #ddd",
-                      backgroundColor: "#f9f9f9",
-                    }}
-                  >
-                    Actions
-                  </TableCell>
-                </TableRow>
-              </TableHead>
+            <TableHead>
+  <TableRow>
+    {[
+      { label: "Tenant Name", field: "fullname" },
+      { label: "Email", field: "email" },
+      { label: "Contact No", field: "contactNumber" },
+      { label: "Property ID", field: "propertyId" },
+      { label: "Status", field: "status" },
+      { label: "Lease Status", field: "leaseStatus" },
+      { label: "Lease Start Date", field: "leaseStartDate" },
+      { label: "Lease End Date", field: "leaseEndDate" },
+      { label: "Date", field: "createdAt" },
+      { label: "Time", field: "createdAt" },
+      { label: "Area", field: "area" },
+    ].map(({ label, field }) => (
+      <TableCell
+        key={label}
+        sx={{
+          fontWeight: "bold",
+          whiteSpace: "nowrap",
+          textAlign: "center",
+          border: "1px solid #ddd",
+          backgroundColor: "#f9f9f9",
+        }}
+      >
+      
+        {["fullname"].includes(field) ? (
+          <TableSortLabel
+            active={orderBy === field}
+            direction={orderBy === field ? order : "asc"}
+            onClick={() => handleSortRequest(field)}
+          >
+            {label}
+          </TableSortLabel>
+        ) : (
+          label
+        )}
+      </TableCell>
+    ))}
+    <TableCell
+      sx={{
+        fontWeight: "bold",
+        whiteSpace: "nowrap",
+        textAlign: "center",
+        border: "1px solid #ddd",
+        backgroundColor: "#f9f9f9",
+      }}
+    >
+      Actions
+    </TableCell>
+  </TableRow>
+</TableHead>
+
               <TableBody>
                 {sortedRequests.length > 0 ? (
                   sortedRequests.map((request) => (
@@ -379,7 +385,6 @@ const TenantRequests = () => {
               </TableBody>
             </Table>
           </TableContainer>
-
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
