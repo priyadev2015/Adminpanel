@@ -64,7 +64,7 @@ const AllUserList = () => {
           {/* Displaying Tenants first, followed by Maintenance and Owners */}
           {["tenants", "maintenance", "owners"].map((role) => (
             <React.Fragment key={role}>
-              <Typography variant="subtitle1" style={{ marginTop: 10, fontWeight: "bold" }}>
+              <Typography variant="subtitle1" style={{ marginTop:10, fontWeight: "bold" }}>
                 {role.charAt(0).toUpperCase() + role.slice(1)}
               </Typography>
               <Divider style={{ margin: "10px 0" }} />
