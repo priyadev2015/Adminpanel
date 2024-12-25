@@ -45,7 +45,7 @@ const AllUserList = () => {
 
   return (
     <Grid container spacing={2} style={{ height: "100vh" }}>
-      {/* User List Section */}
+     
       <Grid
         item
         xs={4}
@@ -54,7 +54,7 @@ const AllUserList = () => {
           overflowY: "auto",
           maxHeight: "100vh",
           padding: "20px",
-          backgroundColor: "#fff", // Set background to white
+          backgroundColor: "#fff",
         }}
       >
         <Typography variant="h6" style={{ marginBottom: 10 }}>
@@ -78,8 +78,7 @@ const AllUserList = () => {
                       padding: "10px",
                       borderRadius: "5px",
                       marginBottom: "5px",
-                      transition: "background-color 0.3s", // Smooth transition
-                    }}
+                      transition: "background-color 0.3s", 
                   >
                     <ListItemText primary={user.name || user.tenantName || "No Name"} />
                   </ListItem>
