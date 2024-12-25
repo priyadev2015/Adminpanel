@@ -1,140 +1,194 @@
 
-
-
-
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Box, Button, TextField, Typography } from "@mui/material";
 import axios from "axios";
 import { toast } from "react-toastify";
-import apiconfig from "../../../config/ServiceApi"; // Import Service API configuration
-import Loader from "../../../components/Loader/Loader"; // Import Loader component
+import { jwtDecode } from "jwt-decode";
 
 const MessageApp = ({ selectedUser }) => {
   const [message, setMessage] = useState("");
-  const [allMessages, setAllMessages] = useState([]); // Combined messages state
+  const [allMessages, setAllMessages] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [socket, setSocket] = useState(null);
+  const messagesEndRef = useRef(null); 
 
-  const fetchMessages = async () => {
-    if (!selectedUser) return;
-
-    setLoading(true);
-
-    try {
-      const token = localStorage.getItem("authToken");
-
-      // Fetch sent messages
-      const sentMessagesResponse = await axios.get(
-        `${apiconfig.baseURL}${apiconfig.sentMessages}/${selectedUser.id}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-      const sentMessages = sentMessagesResponse.data.data || [];
-
-      // Fetch received messages
-      const receivedMessagesResponse = await axios.get(
-        `${apiconfig.baseURL}/messages/received/${selectedUser.id}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-      const receivedMessages = receivedMessagesResponse.data.data || [];
-
-      // Combine and sort messages by createdAt
-      const combinedMessages = [
-        ...sentMessages.map((msg) => ({ ...msg, type: "sent" })),
-        ...receivedMessages.map((msg) => ({ ...msg, type: "received" })),
-      ].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
-
-      setAllMessages(combinedMessages);
-    } catch (error) {
-      console.error("Failed to fetch messages:", error);
-      toast.error("Failed to fetch messages.");
-    } finally {
-      setLoading(false); // Stop loading after fetching
+  
+  const getCurrentUserId = () => {
+    const token = localStorage.getItem("authToken");
+    if (token) {
+      try {
+        const decodedToken = jwtDecode(token);
+        return decodedToken.userId; // Assuming the userId is stored in the token payload
+      } catch (error) {
+        console.error("Error decoding token", error);
+        return null;
+      }
     }
+    return null;
   };
 
-  useEffect(() => {
-    fetchMessages();
-  }, [selectedUser]); // Automatically fetch messages when selectedUser changes
+  const currentUserId = getCurrentUserId(); // Get the current user ID from the token
 
+  // Fetch messages when the selected user changes
+  useEffect(() => {
+    if (selectedUser && currentUserId) {
+      setLoading(true);
+      axios
+        .get(
+          `http://localhost:5000/api/messages/conversation/${currentUserId}/${selectedUser.id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+            },
+          }
+        )
+        .then((res) => {
+          setAllMessages(res.data.data);
+          setLoading(false);
+        })
+        .catch((error) => {
+          toast.error("Error fetching messages.");
+          setLoading(false);
+        });
+      setMessage(""); // Clear message input on user change
+    }
+  }, [selectedUser, currentUserId]);
+
+  // Auto-scroll to the latest message
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [allMessages]);
+
+  // Handle sending a new message
   const handleSendMessage = async () => {
-    if (!selectedUser || !message.trim()) {
-      toast.error("Please select a user and type a message.");
+    const authToken = localStorage.getItem("authToken");
+    if (!authToken) {
+      toast.error("Authentication token not found.");
       return;
     }
 
+    if (!message.trim()) {
+      toast.error("Message cannot be empty.");
+      return;
+    }
+
+    const newMessage = {
+      senderId: currentUserId,
+      recipientId: selectedUser.id,
+      content: message,
+      status: "sent", 
+      timestamp: new Date(),
+    };
+
     try {
-      const token = localStorage.getItem("authToken");
-      await axios.post(
-        `${apiconfig.baseURL}/messages/send`,
+      const response = await axios.post(
+        `http://localhost:5000/api/messages/send`,
+        newMessage,
         {
-          recipientId: selectedUser.id,
-          message,
-        },
-        {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
         }
       );
 
-      toast.success("Message sent successfully!");
+      // Update the state: If the current user sends the message, remove the "sent" status from the last message
+      setAllMessages((prev) => {
+        let updatedMessages = [...prev];
+
+        // If the current user sends a new message, remove "sent" status from the last message they sent
+        if (currentUserId === newMessage.senderId) {
+          updatedMessages = updatedMessages.map((msg, index) => {
+            if (index === updatedMessages.length - 1 && msg.senderId === currentUserId) {
+              return { ...msg, status: null }; // Remove the "sent" status
+            }
+            return msg;
+          });
+        }
+
+        // Add the new message with the "sent" status
+        updatedMessages.push(response.data.data);
+        return updatedMessages;
+      });
+
       setMessage("");
-      fetchMessages(); // Refresh messages after sending
+
+      // Optionally, send the message to the WebSocket server
+      if (socket) {
+        socket.send(JSON.stringify(response.data.data));
+      }
     } catch (error) {
-      console.error("Failed to send message:", error);
       toast.error("Failed to send message.");
+      console.error("Error sending message:", error);
     }
+  };
+
+  // Render messages with dynamic status
+  const renderMessages = () => {
+    return allMessages.map((msg) => {
+      const isCurrentUserSender = msg.senderId === currentUserId;
+      const isSelectedUserSender = msg.senderId === selectedUser.id;
+
+      // Determine the status to display for the message
+      const status =
+        isCurrentUserSender
+          ? "sent"
+          : isSelectedUserSender
+          ? "seen"
+          : msg.status; // Use msg.status as a fallback
+
+      return (
+        <Box
+          key={msg._id}
+          style={{
+            alignSelf: isCurrentUserSender ? "flex-end" : "flex-start",
+            backgroundColor: isCurrentUserSender ? "#007bff" : "#f0f0f0",
+            color: isCurrentUserSender ? "#fff" : "#000",
+            borderRadius: 10,
+            padding: 10,
+            marginBottom: 5,
+            maxWidth: "60%",
+          }}
+        >
+          <Typography variant="body2">{msg.content}</Typography>
+          {msg.status && (
+            <Typography
+              variant="caption"
+              style={{ fontStyle: "italic", marginTop: 5 }}
+            >
+              {status}
+            </Typography>
+          )}
+        </Box>
+      );
+    });
   };
 
   return (
     <Box>
-      <Typography variant="h6" style={{ marginTop: 60 }}>
-        Message Box
+      <Typography variant="h6" style={{ marginTop: 50 }}>
+        Chat with {selectedUser.name || "User"}
       </Typography>
-
-      {/* Loader component */}
-      {loading ? (
-        <Loader />
-      ) : (
-        <Box
-          style={{
-            border: "1px solid #ccc",
-            borderRadius: 5,
-            padding: 10,
-            maxHeight: 400,
-            overflowY: "auto",
-            marginTop: 20,
-            display: "flex",
-            flexDirection: "column",
-            gap: "10px",
-          }}
-        >
-          {/* Display Messages in Interleaved Order */}
-          {allMessages.map((msg, index) => (
-            <Box
-              key={index}
-              style={{
-                alignSelf: msg.type === "sent" ? "flex-end" : "flex-start",
-                backgroundColor: msg.type === "sent" ? "#007bff" : "#f0f0f0",
-                color: msg.type === "sent" ? "#fff" : "#000",
-                borderRadius: 10,
-                padding: 10,
-              }}
-            >
-              <Typography variant="body2">
-                {msg.type === "sent" ? (
-                  <strong>You:</strong>
-                ) : (
-                  <strong>{msg.sender.fullname}:</strong>
-                )}{" "}
-                {msg.message}
-              </Typography>
-            </Box>
-          ))}
-        </Box>
-      )}
-
+      <Box
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "flex-start",
+          marginTop: 20,
+          height: "400px", // Fixed height for the scrollable container
+          overflowY: "auto", // Enable vertical scrolling
+          border: "1px solid #ddd", // Optional: Add border
+          padding: "10px", // Optional: Add padding
+          borderRadius: "5px", // Optional: Rounded corners
+          backgroundColor: "#f9f9f9", // Optional: Background color
+        }}
+      >
+        {loading ? (
+          <Typography>Loading messages...</Typography>
+        ) : (
+          renderMessages()
+        )}
+        <Box ref={messagesEndRef} style={{ height: 1 }}></Box>
+      </Box>
       <TextField
         fullWidth
         multiline
@@ -158,4 +212,9 @@ const MessageApp = ({ selectedUser }) => {
 };
 
 export default MessageApp;
+
+
+
+
+
 
