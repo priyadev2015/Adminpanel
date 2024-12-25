@@ -22,7 +22,7 @@ const AllUserList = () => {
         const userData = response.data;
         setUsers(userData);
 
-        // Automatically select the first tenant if available, else maintenance, then owners
+   
         const firstUser =
           userData.tenants[0] || userData.maintenance[0] || userData.owners[0] || null;
         if (firstUser) {
