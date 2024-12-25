@@ -21,9 +21,7 @@ const AllUserList = () => {
 
         const userData = response.data;
         setUsers(userData);
-
-   
-        const firstUser =
+ const firstUser =
           userData.tenants[0] || userData.maintenance[0] || userData.owners[0] || null;
         if (firstUser) {
           setSelectedUser(firstUser);
