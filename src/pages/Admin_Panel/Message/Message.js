@@ -35,7 +35,7 @@ const MessageApp = ({ selectedUser }) => {
       setLoading(true);
       axios
         .get(
-          `http://localhost:5000/api/messages/conversation/${currentUserId}/${selectedUser.id}`,
+          `https://propertymanagement-nf5c.onrender.com/api/messages/conversation/${currentUserId}/${selectedUser.id}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("authToken")}`,
@@ -82,7 +82,7 @@ const MessageApp = ({ selectedUser }) => {
 
     try {
       const response = await axios.post(
-        `http://localhost:5000/api/messages/send`,
+        `https://propertymanagement-nf5c.onrender.com/api/messages/send`,
         newMessage,
         {
           headers: {
