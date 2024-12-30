@@ -2,9 +2,9 @@ import React, { useEffect, useState } from "react";
 import { Grid, List, ListItem, ListItemText, Typography, Divider } from "@mui/material";
 import axios from "axios";
 import { toast } from "react-toastify";
-import MessageApp from "./Message"; 
-import Loader from "../../../components/Loader/Loader"; 
-import apiconfig from "../../../config/ServiceApi"; 
+import MessageApp from "./Message"; // Message Component
+import Loader from "../../../components/Loader/Loader"; // Loader Component
+import apiconfig from "../../../config/ServiceApi"; // API Config
 
 const AllUserList = () => {
   const [users, setUsers] = useState({ owners: [], tenants: [], maintenance: [] });
@@ -21,7 +21,9 @@ const AllUserList = () => {
 
         const userData = response.data;
         setUsers(userData);
- const firstUser =
+
+        // Automatically select the first tenant if available, else maintenance, then owners
+        const firstUser =
           userData.tenants[0] || userData.maintenance[0] || userData.owners[0] || null;
         if (firstUser) {
           setSelectedUser(firstUser);
@@ -43,7 +45,7 @@ const AllUserList = () => {
 
   return (
     <Grid container spacing={2} style={{ height: "100vh" }}>
-     
+      {/* User List Section */}
       <Grid
         item
         xs={4}
@@ -52,14 +54,14 @@ const AllUserList = () => {
           overflowY: "auto",
           maxHeight: "100vh",
           padding: "20px",
-          backgroundColor: "#fff",
+          backgroundColor: "#fff", // Set background to white
         }}
       >
         <Typography variant="h6" style={{ marginBottom: 10 }}>
           Users
         </Typography>
         <List style={{ maxHeight: "80vh", overflowY: "auto" }}>
-      
+          {/* Displaying Tenants first, followed by Maintenance and Owners */}
           {["tenants", "maintenance", "owners"].map((role) => (
             <React.Fragment key={role}>
               <Typography variant="subtitle1" style={{ marginTop:10, fontWeight: "bold" }}>
@@ -76,7 +78,8 @@ const AllUserList = () => {
                       padding: "10px",
                       borderRadius: "5px",
                       marginBottom: "5px",
-                      transition: "background-color 0.3s", 
+                      transition: "background-color 0.3s", // Smooth transition
+                    }}
                   >
                     <ListItemText primary={user.name || user.tenantName || "No Name"} />
                   </ListItem>
@@ -103,9 +106,6 @@ const AllUserList = () => {
 };
 
 export default AllUserList;
-
-
-
 
 
 
